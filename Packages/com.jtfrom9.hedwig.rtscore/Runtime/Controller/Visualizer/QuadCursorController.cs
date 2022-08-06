@@ -42,7 +42,7 @@ namespace Hedwig.RTSCore.Controller
 
         void ITargetVisualizer.Initialize(IVisualizerTarget target)
         {
-            var visualProp = target.property;
+            var visualProp = target.visualProperty;
             var selectable = target.selectable;
             if (visualProp == null || selectable == null || target.transform == null)
             {

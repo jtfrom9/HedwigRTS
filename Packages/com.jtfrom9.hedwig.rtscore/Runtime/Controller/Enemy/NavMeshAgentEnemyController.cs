@@ -22,6 +22,7 @@ namespace Hedwig.RTSCore.Controller
         Quaternion initialRotation;
         Vector3 initialScale;
         float? _distanceToGround;
+        float? _distanceToHead;
 
         CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -100,6 +101,19 @@ namespace Hedwig.RTSCore.Controller
                     _distanceToGround = mr.bounds.extents.y;
                 }
                 return _distanceToGround.Value;
+            }
+        }
+
+        float IVisualProperty.distanceToHead
+        {
+            get
+            {
+                if (_distanceToHead==null)
+                {
+                    var mr = GetComponent<MeshRenderer>();
+                    _distanceToHead = mr.bounds.extents.y;
+                }
+                return _distanceToHead.Value;
             }
         }
         #endregion

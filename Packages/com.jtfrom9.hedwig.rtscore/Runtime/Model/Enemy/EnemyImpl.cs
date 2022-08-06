@@ -104,7 +104,8 @@ namespace Hedwig.RTSCore
         void IVisualizerTarget.AddVisualizer(ITargetVisualizer targetVisualizer) => visualizers.Add(targetVisualizer);
         ITransform? IVisualizerTarget.transform { get => controller.transform; }
         ISelectable? IVisualizerTarget.selectable { get => this; }
-        IVisualProperty? IVisualizerTarget.property { get => controller.GetProperty(); }
+        IVisualProperty? IVisualizerTarget.visualProperty { get => controller.GetProperty(); }
+        ICharactor? IVisualizerTarget.charactor { get => this; }
         #endregion
 
         public override string ToString()

@@ -24,7 +24,8 @@ namespace Hedwig.RTSCore
 
         ITransform? transform { get; }
         ISelectable? selectable { get; }
-        IVisualProperty? property { get; }
+        IVisualProperty? visualProperty { get; }
+        ICharactor? charactor { get; }
     }
 
     public interface ITargetVisualizer: IDisposable
