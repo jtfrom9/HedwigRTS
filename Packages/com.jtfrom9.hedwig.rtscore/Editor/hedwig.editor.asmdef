@@ -1,0 +1,18 @@
+{
+    "name": "hedwig.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e1a5be51ec4c64be683e19f99fb8a2e6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

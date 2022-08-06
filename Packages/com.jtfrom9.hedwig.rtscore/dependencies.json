@@ -1,0 +1,7 @@
+{
+  "com.cysharp.unitask": "2.3.1",
+  "com.neuecc.unirx": "7.1.0",
+  "jp.hadashikick.vcontainer": "1.11.0",
+  "garettbass.unity-extensions.inspect-in-line": "0.2.0",
+  "com.demigiant.dotween": "git+https://github.com/yoshida190/dotween.git#v1.2.632-upm"
+}

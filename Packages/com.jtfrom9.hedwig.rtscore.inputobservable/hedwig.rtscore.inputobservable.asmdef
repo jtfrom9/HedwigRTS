@@ -1,0 +1,18 @@
+{
+    "name": "hedwig.rtscore.inputobservable",
+    "rootNamespace": "",
+    "references": [
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:e1e8b35632fca4351b739021eee33dbe",
+        "GUID:4952cb1651a67483db0d6ba9954e2654"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

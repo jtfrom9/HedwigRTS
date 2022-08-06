@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbfcafe0a7f054d6cb2ebf3792d6bff7, type: 3}
+  m_Name: CornProjectile
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 1196026542061598138, guid: 19fb4f8e1b810477a8b76656c91747f2, type: 3}
+  type: 0
+  chargable: 0
+  successionCount: 1
+  successionInterval: 0
+  recastTime: 500
+  shake: 0
+  baseSpeed: 10
+  range: 20
+  trajectory: {fileID: 11400000, guid: c7bc473247fb94be6b41ea011ddf6a8b, type: 2}
+  weaponData: {fileID: 0}

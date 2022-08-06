@@ -1,0 +1,13 @@
+{
+  "name": "com.jtfrom9.hedwig.rtscore",
+  "displayName": "Hedwig RTS Core",
+  "author": {
+    "name": "jtfrom9"
+  },
+  "version": "0.0.1",
+  "unity": "2021.3",
+  "description": "",
+  "keywords": [],
+  "license": "MIT",
+  "dependencies": {}
+}
