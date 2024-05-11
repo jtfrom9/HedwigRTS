@@ -13,6 +13,7 @@ using VContainer;
 using VContainer.Unity;
 
 using Hedwig.RTSCore;
+using Hedwig.RTSCore.Model;
 
 public class EnemyTest : LifetimeScope
 {

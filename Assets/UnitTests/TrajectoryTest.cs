@@ -9,25 +9,25 @@ using UnityEngine.TestTools;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-using Hedwig.RTSCore;
+using Hedwig.RTSCore.Model;
 
 public class TrajectoryTest
 {
-    static List<Trajectory.Section>[] testPatterns = new[] {
+    static List<TrajectorySection>[] testPatterns = new[] {
             // 0
-            new List<Trajectory.Section>() {
-                new Trajectory.Section() { factor = 1 },
+            new List<TrajectorySection>() {
+                new TrajectorySection() { factor = 1 },
             },
             // 1
-            new List<Trajectory.Section>() {
-                new Trajectory.Section() { factor = 1 }, // 0 <= v < 0.5
-                new Trajectory.Section() { factor = 1 }, // 0.5 <= v <1, 1
+            new List<TrajectorySection>() {
+                new TrajectorySection() { factor = 1 }, // 0 <= v < 0.5
+                new TrajectorySection() { factor = 1 }, // 0.5 <= v <1, 1
             },
             // 2
-            new List<Trajectory.Section>() {
-                new Trajectory.Section() { factor = 1 },  // 0 <= v < 0.25
-                new Trajectory.Section() { factor = 1 },  // 0.25 <= v < 0.5
-                new Trajectory.Section() { factor = 2 },  // 0.5 <= v < 1, 1
+            new List<TrajectorySection>() {
+                new TrajectorySection() { factor = 1 },  // 0 <= v < 0.25
+                new TrajectorySection() { factor = 1 },  // 0.25 <= v < 0.5
+                new TrajectorySection() { factor = 2 },  // 0.5 <= v < 1, 1
             }
         };
 
@@ -36,7 +36,7 @@ public class TrajectoryTest
     [TestCase(2, ExpectedResult = 4)]
     public int getTotalFactorTest(int index)
     {
-        return Trajectory.getTotalFactor(testPatterns[index]);
+        return TrajectorySection.getTotalFactor(testPatterns[index]);
     }
 
     [TestCase(0, 0, ExpectedResult = 1)]
@@ -47,7 +47,7 @@ public class TrajectoryTest
     [TestCase(2, 2, ExpectedResult = 4)]
     public int sumFactorTest(int listIndex, int i)
     {
-        return Trajectory.sumFactor(testPatterns[listIndex], i);
+        return TrajectorySection.sumFactor(testPatterns[listIndex], i);
     }
 
     [TestCase(0, 0f, ExpectedResult = 0)]
@@ -66,7 +66,7 @@ public class TrajectoryTest
     public int? getSectionIndexTest(int listIndex, float factor)
     {
         var regions = testPatterns[listIndex];
-        return Trajectory.getSectionIndex(regions, factor);
+        return TrajectorySection.getSectionIndex(regions, factor);
     }
 
     [TestCase(0, 0f, 0f, 1f)]
@@ -87,7 +87,7 @@ public class TrajectoryTest
     public void getSectionFactorTest(int listIndex, float factor, float expectedMin, float expectedMax)
     {
         var regions = testPatterns[listIndex];
-        var (min, max) = Trajectory.getSectionFactor(regions, factor);
+        var (min, max) = TrajectorySection.getSectionFactor(regions, factor);
         Debug.Log($"{min}, {max}");
         Assert.That(min, Is.EqualTo(expectedMin).Within(float.Epsilon), "min");
         Assert.That(max, Is.EqualTo(expectedMax).Within(float.Epsilon), "max");
@@ -96,7 +96,7 @@ public class TrajectoryTest
     [Test]
     public void LinearLineTrajectoryTest()
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
         var start = Vector3.zero;
         var end = new Vector3(0, 0, 10);
         var map = trajectory.ToMap(start, end, 10);
@@ -123,21 +123,21 @@ public class TrajectoryTest
     [Test]
     public void TwoLinesTrajectoryTest()
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
-        trajectory.sections = new List<Trajectory.Section>() {
-                new Trajectory.Section() {
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
+        trajectory.sections = new List<TrajectorySection>() {
+                new TrajectorySection() {
                     factor = 1,
-                    type = Trajectory.SectionType.Instruction,
+                    type = TrajectorySectionType.Instruction,
                     toOffset = {
-                        type = Trajectory.OffsetType.Base,
+                        type = TrajectoryOffsetType.Base,
                         value = 20
                     }
                 },
-                new Trajectory.Section() {
+                new TrajectorySection() {
                     factor = 1,
-                    type = Trajectory.SectionType.Instruction,
+                    type = TrajectorySectionType.Instruction,
                     toOffset = {
-                        type = Trajectory.OffsetType.Base,
+                        type = TrajectoryOffsetType.Base,
                         value = 0
                     }
                 }
@@ -174,22 +174,22 @@ public class TrajectoryTest
     [Test]
     public void ParabollaTrajectoryTest_2Section()
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
-        trajectory.sections = new List<Trajectory.Section>() {
-                new Trajectory.Section() {
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
+        trajectory.sections = new List<TrajectorySection>() {
+                new TrajectorySection() {
                     factor = 1,
-                    type = Trajectory.SectionType.Instruction,
+                    type = TrajectorySectionType.Instruction,
                     toOffset = {
-                        type = Trajectory.OffsetType.Base,
+                        type = TrajectoryOffsetType.Base,
                         value = 20
                     },
                     controlPoints = new List<Vector2>() { new Vector2() { x = 0.5f, y = 30} }
                 },
-                new Trajectory.Section() {
+                new TrajectorySection() {
                     factor = 1,
-                    type = Trajectory.SectionType.Instruction,
+                    type = TrajectorySectionType.Instruction,
                     toOffset = {
-                        type = Trajectory.OffsetType.Base,
+                        type = TrajectoryOffsetType.Base,
                         value = 0
                     },
                     controlPoints = new List<Vector2>() { new Vector2() { x = 0.5f, y = 10} }
@@ -228,13 +228,13 @@ public class TrajectoryTest
     [Test]
     public void ParabollaTrajectoryTest_Control()
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
-        trajectory.sections = new List<Trajectory.Section>() {
-                new Trajectory.Section() {
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
+        trajectory.sections = new List<TrajectorySection>() {
+                new TrajectorySection() {
                     factor = 1,
-                    type = Trajectory.SectionType.Instruction,
+                    type = TrajectorySectionType.Instruction,
                     toOffset = {
-                        type = Trajectory.OffsetType.Base,
+                        type = TrajectoryOffsetType.Base,
                         value = 0
                     },
                     controlPoints = new List<Vector2>() { new Vector2() { x=0.5f, y = 30 } }
@@ -269,7 +269,7 @@ public class TrajectoryTest
     [TestCase(2, ExpectedResult = 3)]
     public int MakeMap(int patternIndex)
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
         trajectory.sections = testPatterns[patternIndex];
 
         var start = Vector3.zero;
@@ -283,7 +283,7 @@ public class TrajectoryTest
     [TestCase(2)]
     public void MakeMapFactor(int patternIndex)
     {
-        var trajectory = ScriptableObject.CreateInstance<Trajectory>();
+        var trajectory = ScriptableObject.CreateInstance<TrajectoryObject>();
         trajectory.sections = testPatterns[patternIndex];
         float min = 0;
         for (var i = 0; i < trajectory.sections.Count; i++)

@@ -14,6 +14,8 @@ using VContainer.Unity;
 using UniRx;
 using UniRx.Triggers;
 
+using Hedwig.RTSCore.Model;
+
 namespace Hedwig.RTSCore.Test
 {
     public class TrajectoryComparison : LifetimeScope
@@ -121,16 +123,16 @@ namespace Hedwig.RTSCore.Test
             {
                 projectile.OnEnded.Subscribe(_ =>
                 {
-                    if (projectile.trajectoryMap != null)
-                    {
-                        string log = "";
-                        foreach (var section in projectile.trajectoryMap.Sections)
-                        {
-                            log += $"{section} ({section.numLines} lines), ";
-                        }
-                        Debug.Log($"{projectile} <<Ended>> {log}");
-                        projectile.Dispose();
-                    }
+                    // if (projectile.trajectoryMap != null)
+                    // {
+                    //     string log = "";
+                    //     foreach (var section in projectile.trajectoryMap.Sections)
+                    //     {
+                    //         log += $"{section} ({section.numLines} lines), ";
+                    //     }
+                    //     Debug.Log($"{projectile} <<Ended>> {log}");
+                    // }
+                    projectile.Dispose();
                 });
             }).AddTo(this);
 

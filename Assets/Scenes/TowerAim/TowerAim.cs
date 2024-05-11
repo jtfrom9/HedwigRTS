@@ -17,6 +17,7 @@ using UnityExtensions;
 using Hedwig.RTSCore;
 using Hedwig.RTSCore.InputObservable;
 using Hedwig.RTSCore.Usecase;
+using Hedwig.RTSCore.Model;
 
 public class TowerAim : LifetimeScope
 {
@@ -96,7 +97,7 @@ public class TowerAim : LifetimeScope
 
         setupKey(projectileSelection, launcher);
 
-        launcher.OnProjectilehanged.Subscribe(p =>
+        launcher.OnProjectileChanged.Subscribe(p =>
         {
             showInfo(p);
         }).AddTo(this);
@@ -112,16 +113,16 @@ public class TowerAim : LifetimeScope
         disposables.Dispose();
     }
 
-    void showInfo(ProjectileObject? projectile)
+    void showInfo(IProjectileData? projectile)
     {
         if(textMesh==null) return;
         if (projectile != null)
         {
             textMesh.text = @$"
-Name: {projectile.name}
-Type: {projectile.type}
-Speed: {projectile.baseSpeed}
-Distance: {projectile.range}
+Name: {projectile.Name}
+Type: {projectile.Type}
+Speed: {projectile.BaseSpeed}
+Distance: {projectile.Range}
 ";
         } else {
             textMesh.text = "";

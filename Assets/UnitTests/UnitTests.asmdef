@@ -6,8 +6,9 @@
         "UnityEditor.TestRunner",
         "UniTask",
         "UniRx",
-        "hedwig.rtscore.utility",
-        "hedwig.rtscore.model"
+        "Hedwig.RTSCore.Entity",
+        "Hedwig.RTSCore.Model",
+        "Hedwig.RTSCore.Utility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

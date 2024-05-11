@@ -11,6 +11,8 @@ using UniRx.Triggers;
 using VContainer;
 using VContainer.Unity;
 
+using Hedwig.RTSCore.Model;
+
 namespace Hedwig.RTSCore.Test
 {
     public class KnockbackTest : LifetimeScope
@@ -102,7 +104,7 @@ namespace Hedwig.RTSCore.Test
             {
                 if (config.weaponData != null)
                 {
-                    textMesh.text = $"{config.name}: attack: {config.weaponData.attack}, power: {config.weaponData.power}";
+                    textMesh.text = $"{config.name}: attack: {config.weaponData.Attack}, power: {config.weaponData.Power}";
                 }
             }
         }

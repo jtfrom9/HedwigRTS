@@ -15,13 +15,13 @@
       "hash": "9f1c3648a838f759c70b08bb66468532951e0ea7"
     },
     "com.jtfrom9.hedwig.rtscore": {
-      "version": "file:com.jtfrom9.hedwig.rtscore",
+      "version": "file:Hedwig.RTSCore",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
     "com.jtfrom9.hedwig.rtscore.inputobservable": {
-      "version": "file:com.jtfrom9.hedwig.rtscore.inputobservable",
+      "version": "file:Hedwig.RTSCore.InputObservable",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

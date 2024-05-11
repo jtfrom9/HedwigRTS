@@ -16,6 +16,8 @@ using UniRx;
 using UniRx.Triggers;
 using UnityExtensions;
 
+using Hedwig.RTSCore.Model;
+
 namespace Hedwig.RTSCore.Test
 {
     public class ProjectileTest : LifetimeScope
@@ -77,7 +79,7 @@ namespace Hedwig.RTSCore.Test
             }).AddTo(this);
             enemySelection.Select(0);
 
-            var shotProjectiles = projectileObjects.Where(p => p.type == ProjectileType.Fire).ToList();
+            var shotProjectiles = projectileObjects.Where(p => p.Type == ProjectileType.Fire).ToList();
             var projectileSelection = new Selection<ProjectileObject>(shotProjectiles);
             CancellationTokenSource? cts = null;
             projectileSelection.OnCurrentChanged
@@ -103,7 +105,7 @@ namespace Hedwig.RTSCore.Test
             {
                 if (can)
                 {
-                    if (launcher.projectileObject!.type == ProjectileType.Fire)
+                    if (launcher.projectileObject!.Type == ProjectileType.Fire)
                     {
                         launcher.Fire();
                     }
@@ -173,32 +175,32 @@ namespace Hedwig.RTSCore.Test
                     var lateCount = (willHitFrame == 0) ? "-" : (Time.frameCount - willHitFrame).ToString();
                     var transform = projectile.controller.transform;
                     switch(e.type) {
-                        case Projectile.EventType.BeforeMove:
+                        case ProjectileEventType.BeforeMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeMove @{transform.Position} to {e.to}");
                             break;
-                        case Projectile.EventType.AfterMove:
+                        case ProjectileEventType.AfterMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} AfterMove @{transform.Position} (late:{lateCount})");
                             break;
-                        case Projectile.EventType.BeforeLastMove:
+                        case ProjectileEventType.BeforeLastMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeLastMove @{transform.Position} -> {e.willHit!.Value.point} (late:{lateCount})");
                             break;
-                        case Projectile.EventType.AfterLastMove:
+                        case ProjectileEventType.AfterLastMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} AfterLastMove @{transform.Position} (late:{lateCount})");
                             break;
-                        case Projectile.EventType.WillHit:
+                        case ProjectileEventType.WillHit:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} WillHit @{transform.Position} ray: {e.ray}, maxDist: {e.maxDistance!.Value} point: {e.willHit!.Value.point} distance: {e.willHit!.Value.distance}");
                             willHitFrame = Time.frameCount;
                             break;
-                        case Projectile.EventType.Trigger:
+                        case ProjectileEventType.Trigger:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} Trigger with <{e.collider!.gameObject.name}> @{transform.Position} (late:{lateCount})");
                             break;
-                        case Projectile.EventType.OnKill:
+                        case ProjectileEventType.OnKill:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} OnKill (late:{lateCount})");
                             break;
-                        case Projectile.EventType.OnComplete:
+                        case ProjectileEventType.OnComplete:
                             Debug.Log($"[{GetHashCode():x}] frame:{Time.frameCount} OnComplete (late:{lateCount})");
                             break;
-                        case Projectile.EventType.OnPause:
+                        case ProjectileEventType.OnPause:
                             Debug.Log($"[{GetHashCode():x}] frame:{Time.frameCount} OnPause (late:{lateCount})");
                             break;
                     }
@@ -242,8 +244,8 @@ Target: {info.target}
 
         void setupUI(TextMeshProUGUI textMesh, ILauncher launcher)
         {
-            launcher.OnProjectilehanged.Where(config => config!=null).Subscribe(config => {
-                info.config = config!.name;
+            launcher.OnProjectileChanged.Where(config => config!=null).Subscribe(config => {
+                info.config = config!.Name;
                 updateText();
             }).AddTo(this);
             launcher.OnTargetChanged.Where(target => target != null).Subscribe(target => {
@@ -258,8 +260,8 @@ Target: {info.target}
             launcher.OnRecastTimeUpdated.Subscribe(ratio =>
             {
                 info.recastRatio = ratio;
-                info.elapsed = (int)(ratio * launcher.projectileObject!.recastTime /(float)100);
-                info.maxTime = launcher.projectileObject!.recastTime;
+                info.elapsed = (int)(ratio * launcher.projectileObject!.RecastTime /(float)100);
+                info.maxTime = launcher.projectileObject!.RecastTime;
                 updateText();
             }).AddTo(this);
         }
