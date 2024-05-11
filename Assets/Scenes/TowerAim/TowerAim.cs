@@ -16,6 +16,7 @@ using UnityExtensions;
 
 using Hedwig.RTSCore;
 using Hedwig.RTSCore.InputObservable;
+using Hedwig.RTSCore.Usecase;
 
 public class TowerAim : LifetimeScope
 {

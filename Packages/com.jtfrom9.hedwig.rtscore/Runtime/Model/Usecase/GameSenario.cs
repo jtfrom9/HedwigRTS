@@ -5,7 +5,7 @@ using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-namespace Hedwig.RTSCore
+namespace Hedwig.RTSCore.Usecase
 {
     public class GameSenario
     {
