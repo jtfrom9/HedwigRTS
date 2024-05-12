@@ -1,7 +1,9 @@
 #nullable enable
 
+using System;
 using UnityEngine;
 using UnityEngine.Search;
+using VContainer;
 
 namespace Hedwig.RTSCore
 {
@@ -26,4 +28,17 @@ namespace Hedwig.RTSCore
             return cursor;
         }
     }
+
+    public static class GlobalVisualizersObjectDIExtension
+    {
+        public static void SetupVisualizer(this IContainerBuilder builder, GlobalVisualizersObject? globalVisualizersObject)
+        {
+            if (globalVisualizersObject == null)
+            {
+                throw new ArgumentNullException("visualizersObject is null");
+            }
+            builder.RegisterInstance<GlobalVisualizersObject>(globalVisualizersObject).AsImplementedInterfaces();
+        }
+    }
+
 }

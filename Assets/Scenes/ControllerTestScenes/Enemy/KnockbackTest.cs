@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Test
         EnemyManagerObject? enemyManagerObject;
 
         [SerializeField]
-        VisualizersObject? visualizersObject;
+        GlobalVisualizersObject? globalVisualizersObject;
 
         [SerializeField]
         List<ProjectileObject> projectileObjects = new List<ProjectileObject>();
@@ -38,12 +38,9 @@ namespace Hedwig.RTSCore.Test
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject!);
-            builder.RegisterInstance<VisualizersObject>(visualizersObject!)
-                .AsImplementedInterfaces();
-            builder.Register<IEnemyManager, EnemyManagerImpl>(Lifetime.Singleton);
-            builder.Register<ILauncher, LauncherImpl>(Lifetime.Singleton);
-            builder.RegisterInstance<ILauncherController>(ControllerBase.Find<ILauncherController>());
+            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupVisualizer(globalVisualizersObject);
+            builder.SetupLauncher();
         }
 
         void Start()

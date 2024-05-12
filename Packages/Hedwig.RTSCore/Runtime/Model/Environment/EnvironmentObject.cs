@@ -19,7 +19,20 @@ namespace Hedwig.RTSCore.Model
         GameObject? prefab;
 
         [SerializeField, InspectInline]
-        public EnvironmentEffectsObject? environmentEffects;
+        List<HitEffect> hitEffects = new List<HitEffect>();
+
+        IEnumerable<IEffect?> createEffects(IEnvironment environment, Vector3 position, Vector3 direction)
+        {
+            foreach (var effect in hitEffects)
+            {
+                yield return effect.Create(environment.controller, position, direction);
+            }
+        }
+
+        IEffect[] IEnvironmentEffectFactory.CreateEffects(IEnvironment environment, Vector3 position, Vector3 direction)
+            => createEffects(environment, position, direction)
+                .WhereNotNull()
+                .ToArray();
 
         IEnvironment? IEnvironmentFactory.Create()
         {
@@ -29,11 +42,6 @@ namespace Hedwig.RTSCore.Model
             var environment = new EnvironmentImpl(this, environmentController);
             environmentController.Initialize(environment);
             return environment;
-        }
-
-        IEffect[] IEnvironmentEffectFactory.CreateEffects(IEnvironment environment, Vector3 position, Vector3 direction)
-        {
-            return environmentEffects?.CreateEffects(environment, position, direction) ?? new IEffect[] { };
         }
     }
 

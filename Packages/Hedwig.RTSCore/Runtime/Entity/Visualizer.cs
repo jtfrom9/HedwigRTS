@@ -35,6 +35,6 @@ namespace Hedwig.RTSCore
 
     public interface ITargetVisualizerFactory
     {
-        IEnumerable<ITargetVisualizer> CreateVisualizers(IVisualizerTarget target);
+        IEnumerable<ITargetVisualizer> CreateTargetVisualizers(IVisualizerTarget target);
     }
 }

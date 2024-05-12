@@ -48,7 +48,7 @@ namespace Hedwig.RTSCore.Model
 
         void addEnemy(IEnemy enemy)
         {
-            var visualizers = targetVisualizersFactory.CreateVisualizers(enemy);
+            var visualizers = targetVisualizersFactory.CreateTargetVisualizers(enemy);
             foreach(var visualizer in visualizers) {
                 enemy.AddVisualizer(visualizer);
             }

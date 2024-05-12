@@ -28,7 +28,7 @@ public class TowerAim : LifetimeScope
     [SerializeField, InspectInline] EnemyManagerObject? enemyManagerObject;
     [SerializeField, InspectInline] EnemyObject? defaultEnemyObject;
     [SerializeField, InspectInline] EnvironmentObject? environmentObject;
-    [SerializeField, InspectInline] VisualizersObject? visualizersObject;
+    [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField, InspectInline] List<ProjectileObject> projectiles = new List<ProjectileObject>();
     [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
     [SerializeField] Transform? cameraTarget;
@@ -50,7 +50,7 @@ public class TowerAim : LifetimeScope
     {
         builder.SetupEnemyManager(enemyManagerObject);
         // builder.SetupEnvironment(environmentObject);
-        builder.SetupVisualizer(visualizersObject);
+        builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
         builder.SetupLauncher();
     }

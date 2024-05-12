@@ -28,7 +28,7 @@ namespace Hedwig.RTSCore.Test
         EnemyManagerObject? enemyManagerObject;
 
         [SerializeField]
-        VisualizersObject? visualizersObject;
+        GlobalVisualizersObject? globalVisualizersObject;
 
         [SerializeField]
         Button? goButton;
@@ -49,10 +49,8 @@ namespace Hedwig.RTSCore.Test
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject!);
-            builder.RegisterInstance<VisualizersObject>(visualizersObject!)
-                .AsImplementedInterfaces();
-            builder.Register<IEnemyManager, EnemyManagerImpl>(Lifetime.Singleton);
+            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupVisualizer(globalVisualizersObject);
         }
 
         void Start()

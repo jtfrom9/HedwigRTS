@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: DefaultEnvironment
   m_EditorClassIdentifier: 
   prefab: {fileID: 0}
-  environmentEffects: {fileID: 11400000, guid: 2d56eaca2412043df9b6c1053032b812, type: 2}
+  hitEffects:
+  - {fileID: 11400000, guid: 3cd4d04697c26453bb6f96d2c70dcd45, type: 2}

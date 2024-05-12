@@ -12,4 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c78668d1cc3554915a18fc409bedf980, type: 3}
   m_Name: DefaultEnemyManager
   m_EditorClassIdentifier: 
-  _effects: {fileID: 11400000, guid: 3e30682e156974cfd96c2dbb5158bae7, type: 2}
+  damageEffects:
+  - {fileID: 11400000, guid: 166ef51c20bcd4d1ba0d719f26a95a44, type: 2}
+  - {fileID: 11400000, guid: 8dc70f72ff8be484084fcee65726a383, type: 2}
+  hitEffects:
+  - {fileID: 11400000, guid: 3cd4d04697c26453bb6f96d2c70dcd45, type: 2}
+  targetVisualizers:
+  - {fileID: 11400000, guid: 3f29026d7a89e4e20b2cc97e776f0270, type: 2}
+  - {fileID: 11400000, guid: 3454dad39d66a48ebaba10a4cf86e2cd, type: 2}
