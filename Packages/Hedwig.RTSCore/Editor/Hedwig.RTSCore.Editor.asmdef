@@ -1,5 +1,5 @@
 {
-    "name": "hedwig.editor",
+    "name": "Hedwig.RTSCore.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:e1a5be51ec4c64be683e19f99fb8a2e6"
