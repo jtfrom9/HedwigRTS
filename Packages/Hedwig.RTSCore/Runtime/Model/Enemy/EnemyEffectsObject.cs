@@ -8,7 +8,7 @@ using UnityExtensions;
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Enemy/Effects", fileName = "EnemyEffects")]
-    public class EnemyEffectsObject : ScriptableObject, IEnemyAttackedEffectFactory
+    public class EnemyEffectsObject : ScriptableObject
     {
         [SerializeField, InspectInline]
         List<DamageEffect> damageEffects = new List<DamageEffect>();
@@ -30,7 +30,7 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
-        IEffect[] IEnemyAttackedEffectFactory.CreateAttackedEffects(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        public IEffect[] CreateAttackedEffects(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
             => createEffects(enemy, hitObject, e)
                 .WhereNotNull()
                 .ToArray();

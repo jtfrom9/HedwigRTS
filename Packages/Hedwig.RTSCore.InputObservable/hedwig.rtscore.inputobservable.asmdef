@@ -2,9 +2,10 @@
     "name": "Hedwig.RTSCore.InputObservable",
     "rootNamespace": "",
     "references": [
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
-        "GUID:e1e8b35632fca4351b739021eee33dbe",
-        "GUID:aa4c604b628a44f78addd4ef84ec169d"
+        "UniRx",
+        "VContainer",
+        "InputObservable",
+        "Hedwig.RTSCore.Entity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

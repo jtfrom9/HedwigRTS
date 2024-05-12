@@ -36,27 +36,23 @@ public class TowerAim : LifetimeScope
     [SerializeField] bool randomWalk = true;
     [SerializeField] int spawnCondition = 10;
 
-    [Inject] IEnemyManager? enemyManager;
-    [Inject] IMouseOperation? mouseOperation;
-    [Inject] IGlobalVisualizerFactory? globalVisualizerFactory;
-    [Inject] ITargetVisualizerFactory? targetVisualizerFactory;
-    [Inject] ILauncher? launcher;
-    [Inject] IEnvironment? environment;
+#pragma warning disable CS8618
+    [Inject] IEnemyManager enemyManager;
+    [Inject] IMouseOperation mouseOperation;
+    [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
+    [Inject] ILauncher launcher;
+    // [Inject] IEnvironment environment;
+#pragma warning restore CS8618
 
     CompositeDisposable disposables = new CompositeDisposable();
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject!);
-        builder.RegisterInstance<EnvironmentObject>(environmentObject!);
-        builder.RegisterInstance<IEnvironmentController>(ControllerBase.Find<IEnvironmentController>());
-        builder.Register<EnvironmentImpl>(Lifetime.Singleton).AsImplementedInterfaces();
-        builder.RegisterInstance<VisualizersObject>(visualizersObject!).AsImplementedInterfaces();
-        builder.Register<IEnemyManager, EnemyManagerImpl>(Lifetime.Singleton);
-        builder.RegisterInstance<InputObservableMouseHandler>(inputObservableCusrorManager!)
-            .AsImplementedInterfaces();
-        builder.Register<LauncherImpl>(Lifetime.Singleton).AsImplementedInterfaces();
-        builder.RegisterInstance<ILauncherController>(ControllerBase.Find<ILauncherController>());
+        builder.SetupEnemyManager(enemyManagerObject);
+        // builder.SetupEnvironment(environmentObject);
+        builder.SetupVisualizer(visualizersObject);
+        builder.Setup(inputObservableCusrorManager);
+        builder.SetupLauncher();
     }
 
     void Start()
@@ -64,15 +60,7 @@ public class TowerAim : LifetimeScope
         if (enemyManager == null || defaultEnemyObject==null) return;
         enemyManager.Initialize(defaultEnemyObject);
 
-        if(launcher==null) return;
         launcher.Initialize();
-
-        if(globalVisualizerFactory==null) return;
-        if(globalVisualizerFactory==null) return;
-        if(mouseOperation==null) return;
-        if(cameraTarget==null) return;
-
-        if(environmentObject==null) return;
 
         var token = this.GetCancellationTokenOnDestroy();
         if (randomWalk)

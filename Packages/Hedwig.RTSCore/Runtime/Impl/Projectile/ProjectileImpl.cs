@@ -8,14 +8,14 @@ using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class ProjectileImpl : IProjectile, IHitObject
     {
         IProjectileController projectileController;
-        ProjectileObject projectileObject;
+        IProjectileData projectileData;
         ProjectileOption option = new ProjectileOption();
-        TrajectoryMap? map = null;
+        ITrajectoryMap? map = null;
 
         ProjectileEndReason endReason = ProjectileEndReason.Expired;
         CompositeDisposable disposables = new CompositeDisposable();
@@ -27,20 +27,20 @@ namespace Hedwig.RTSCore.Model
             return from + ((to - from).normalized * range);
         }
 
-        Vector3 toPoint(TrajectoryLineMap line, float range, bool spear)
-        {
-            if (spear)
-            {
-                var (from, to) = line.GetPoints();
-                return toSpearPoint(from, to, range);
-            }
-            else
-            {
-                return line.GetToPoint();
-            }
-        }
+        // Vector3 toPoint(TrajectoryLineMap line, float range, bool spear)
+        // {
+        //     if (spear)
+        //     {
+        //         var (from, to) = line.GetPoints();
+        //         return toSpearPoint(from, to, range);
+        //     }
+        //     else
+        //     {
+        //         return line.GetToPoint();
+        //     }
+        // }
 
-        async UniTask<bool> curveMainLoop(TrajectorySectionMap section)
+        async UniTask<bool> curveMainLoop(ITrajectorySectionMap section)
         {
             //
             // Move to the pont which premaild by trajectory setting
@@ -57,7 +57,7 @@ namespace Hedwig.RTSCore.Model
             return false;
         }
 
-        async UniTask<bool> homingMainLoop(TrajectorySectionMap section, ITransform target)
+        async UniTask<bool> homingMainLoop(ITrajectorySectionMap section, ITransform target)
         {
             var prevDir = Vector3.zero;
             var from = section.Lines.First().GetFromPoint();
@@ -80,19 +80,19 @@ namespace Hedwig.RTSCore.Model
                 var exitLoop = await projectileController.Move(to, line.GetAccelatedSpeed());
                 if (exitLoop)
                     return true;
-                section.AddDynamic(new TrajectoryLineMap(section, index, line.fromFactor, line.toFactor));
+                section.AddDynamicLine(index, line.fromFactor, line.toFactor);
                 from = to; // update next 'from' position
                 prevDir = dir;
             }
             return false;
         }
 
-        async UniTask mainLoop(ProjectileObject projectileObject, ITransform target)
+        async UniTask mainLoop(IProjectileData projectileObject, ITransform target)
         {
             var globalFromPoint = projectileController.transform.Position;
             var globalToPoint = target.Position + target.ShakeRandom(projectileObject.Shake);
 
-            if (projectileObject.trajectory == null) {
+            if (!projectileObject.HasMap) {
                 //
                 // linear Move if no trajectory
                 //
@@ -102,7 +102,7 @@ namespace Hedwig.RTSCore.Model
             }
             else
             {
-                map = projectileObject.trajectory.ToMap(globalFromPoint, globalToPoint, projectileObject.BaseSpeed);
+                map = projectileObject.ToMap(globalFromPoint, globalToPoint);
                 var sections = map.Sections.ToList();
 
                 //
@@ -154,10 +154,10 @@ namespace Hedwig.RTSCore.Model
             projectileController.Dispose();
         }
 
-        async UniTaskVoid start(ProjectileObject projectileObject, ITransform target)
+        async UniTaskVoid start(IProjectileData projectileData, ITransform target)
         {
             onStarted.OnNext(Unit.Default);
-            await mainLoop(projectileObject, target);
+            await mainLoop(projectileData, target);
             if (option.DestroyAtEnd)
             {
                 dispose();
@@ -176,7 +176,7 @@ namespace Hedwig.RTSCore.Model
         void IProjectile.Start(ITransform target, in ProjectileOption? option)
         {
             if (option != null) this.option = option.Value;
-            start(projectileObject, target).Forget();
+            start(projectileData, target).Forget();
         }
         #endregion
 
@@ -197,7 +197,7 @@ namespace Hedwig.RTSCore.Model
         HitType IHitObject.type {
             get
             {
-                switch (projectileObject.Type)
+                switch (projectileData.Type)
                 {
                     case ProjectileType.Grenade:
                         return HitType.Range;
@@ -206,8 +206,8 @@ namespace Hedwig.RTSCore.Model
                 }
             }
         }
-        int IHitObject.attack { get => projectileObject?.weaponData?.Attack ?? 0; }
-        float IHitObject.power { get => projectileObject?.weaponData?.Power ?? 0; }
+        int IHitObject.attack { get => projectileData?.WeaponData?.Attack ?? 0; }
+        float IHitObject.power { get => projectileData?.WeaponData?.Power ?? 0; }
         float _speed;
         float IHitObject.speed { get => _speed; }
         Vector3 IHitObject.direction { get => projectileController.transform.Forward; }
@@ -239,10 +239,10 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
-        public ProjectileImpl(IProjectileController projectileController, ProjectileObject projectileObject)
+        public ProjectileImpl(IProjectileController projectileController, IProjectileData projectileData)
         {
             this.projectileController = projectileController;
-            this.projectileObject = projectileObject;
+            this.projectileData = projectileData;
 
             projectileController.OnEvent.Subscribe(e =>
             {

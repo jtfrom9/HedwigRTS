@@ -27,7 +27,7 @@ namespace Hedwig.RTSCore.Model
         public int Attack { get => _Attack; }
         public int Deffence { get => _Deffence; }
 
-        public IEnemy? Create(IEnemyEvent enemyEvent, Vector3? position)
+        IEnemy? IEnemyFactory.Create(IEnemyEvent enemyEvent, Vector3? position)
         {
             if (prefab == null) return null;
             var go = Instantiate(prefab);

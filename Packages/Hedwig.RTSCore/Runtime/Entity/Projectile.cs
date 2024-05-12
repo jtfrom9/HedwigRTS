@@ -9,6 +9,41 @@ using Cysharp.Threading.Tasks;
 
 namespace Hedwig.RTSCore
 {
+    public interface ITrajectoryLineMap
+    {
+        float fromFactor { get; }
+        float toFactor { get; }
+        bool IsFirst { get; }
+
+        Vector3 GetFromPoint();
+        Vector3 GetToPoint();
+        float GetAccelatedSpeed();
+        (Vector3, Vector3) GetPoints() => (GetFromPoint(), GetToPoint());
+    }
+
+    public interface ITrajectorySectionMap
+    {
+        float adjustMaxAngle { get; }
+        int numLines { get; }
+        float speed { get; }
+        float additionalSpeed { get; }
+
+        bool IsCurve { get; }
+        bool IsHoming { get; }
+
+        IEnumerable<ITrajectoryLineMap> Lines { get; }
+
+        void AddDynamicLine(int index,
+            float fromFactor,
+            float totFactor);
+    }
+
+    public interface ITrajectoryMap
+    {
+        IEnumerable<ITrajectorySectionMap> Sections { get; }
+        IEnumerable<ITrajectoryLineMap> Lines { get; }
+    }
+
     public enum ProjectileType
     {
         Fire,
@@ -30,6 +65,16 @@ namespace Hedwig.RTSCore
         IWeaponData? WeaponData { get; }
 
         Vector3[] MakePoints(Vector3 from, Vector3 to);
+        bool HasMap { get; }
+        ITrajectoryMap ToMap(Vector3 from, Vector3 to);
+
+        IProjectileFactory Factory { get; }
+    }
+
+    public interface IProjectileFactory
+    {
+        IProjectile? Create(Vector3 start);
+        IObservable<IProjectile> OnCreated { get; }
     }
 
     public enum ProjectileStatus
@@ -98,12 +143,6 @@ namespace Hedwig.RTSCore
         public bool? destroyAtEnd;
 
         public bool DestroyAtEnd { get => destroyAtEnd ?? true; }
-    }
-
-    public interface IProjectileFactory
-    {
-        IProjectile? Create(Vector3 start);
-        IObservable<IProjectile> OnCreated { get; }
     }
 
     public interface IProjectile: IDisposable

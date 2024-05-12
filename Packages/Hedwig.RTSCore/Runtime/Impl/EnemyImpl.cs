@@ -113,12 +113,12 @@ namespace Hedwig.RTSCore.Model
             return $"{controller.name}.Impl({enemyData.Name})";
         }
 
-        public EnemyImpl(IEnemyData enemyObject, IEnemyController enemyController, IEnemyEvent enemyEvent)
+        public EnemyImpl(IEnemyData enemyData, IEnemyController enemyController, IEnemyEvent enemyEvent)
         {
-            this.enemyData = enemyObject;
+            this.enemyData = enemyData;
             this.enemyController = enemyController;
             this.enemyEvent = enemyEvent;
-            this.health = new ReactiveProperty<int>(enemyObject.MaxHealth);
+            this.health = new ReactiveProperty<int>(enemyData.MaxHealth);
         }
     }
 }

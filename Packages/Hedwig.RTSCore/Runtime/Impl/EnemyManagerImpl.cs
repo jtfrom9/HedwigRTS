@@ -13,7 +13,7 @@ namespace Hedwig.RTSCore.Model
         ReactiveCollection<IEnemy> _enemies = new ReactiveCollection<IEnemy>();
         CompositeDisposable disposable = new CompositeDisposable();
 
-        EnemyManagerObject enemyManagerObject;
+        IEnemyAttackedEffectFactory attackedEffectFactory;
         ITargetVisualizerFactory targetVisualizersFactory;
 
         void equipHitTransformEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
@@ -26,7 +26,7 @@ namespace Hedwig.RTSCore.Model
 
         void equipHitVisualEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
         {
-            var effects = enemyManagerObject.effects?.CreateAttackedEffects(enemy, hitObject, in e) ?? Array.Empty<IEffect>();
+            var effects = attackedEffectFactory.CreateAttackedEffects(enemy, hitObject, in e);
             foreach (var effect in effects)
             {
                 effect?.PlayAndDispose().Forget();
@@ -107,9 +107,9 @@ namespace Hedwig.RTSCore.Model
         #endregion
 
         // ctor
-        public EnemyManagerImpl(EnemyManagerObject enemyManagerObject, ITargetVisualizerFactory targetVisualizersFactory)
+        public EnemyManagerImpl(IEnemyAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
         {
-            this.enemyManagerObject = enemyManagerObject;
+            this.attackedEffectFactory = attackedEffectFactory;
             this.targetVisualizersFactory = targetVisualizersFactory;
         }
     }

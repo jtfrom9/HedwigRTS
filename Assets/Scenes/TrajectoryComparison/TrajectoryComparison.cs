@@ -15,6 +15,7 @@ using UniRx;
 using UniRx.Triggers;
 
 using Hedwig.RTSCore.Model;
+using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Test
 {
@@ -60,7 +61,7 @@ namespace Hedwig.RTSCore.Test
             var root = GameObject.Find("Root");
             if (root == null) { throw new InvalidConditionException("no root"); }
 
-            builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject!);
+            builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject!).AsImplementedInterfaces();
             builder.RegisterInstance<VisualizersObject>(visualizersObject!)
                 .AsImplementedInterfaces();
             builder.Register<IEnemyManager, EnemyManagerImpl>(Lifetime.Singleton);

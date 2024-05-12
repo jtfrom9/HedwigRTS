@@ -7,19 +7,17 @@ using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class EnvironmentImpl : IEnvironment, IEnvironmentEvent
     {
         IEnvironmentController environmentController;
-        EnvironmentObject environmentObject;
+        IEnvironmentEffectFactory effectFactory;
 
         void IEnvironmentEvent.OnHit(IHitObject hitObject)
         {
             Debug.Log($"{this}: OnHit");
-            var effects = environmentObject.environmentEffects?.CreateEffects(this,
-                hitObject.position,
-                -hitObject.direction) ?? Array.Empty<IEffect>();
+            var effects = effectFactory.CreateEffects(this, hitObject.position, -hitObject.direction);
             foreach (var effect in effects)
             {
                 effect.PlayAndDispose().Forget();
@@ -33,9 +31,9 @@ namespace Hedwig.RTSCore.Model
             return $"{environmentController.name}.Impl";
         }
 
-        public EnvironmentImpl(EnvironmentObject environmentObject, IEnvironmentController environmentController)
+        public EnvironmentImpl(IEnvironmentEffectFactory effectFactory, IEnvironmentController environmentController)
         {
-            this.environmentObject = environmentObject;
+            this.effectFactory = effectFactory;
             this.environmentController = environmentController;
         }
     }

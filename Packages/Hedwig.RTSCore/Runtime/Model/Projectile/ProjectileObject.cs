@@ -8,10 +8,9 @@ using UnityEngine.Search;
 using UniRx;
 using UnityExtensions;
 
-using Hedwig.RTSCore.Model;
-using UnityEditor.ProjectWindowCallback;
+using Hedwig.RTSCore.Impl;
 
-namespace Hedwig.RTSCore
+namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Projectile/Projectile", fileName = "Projectile")]
     public class ProjectileObject : ScriptableObject, IProjectileData, IProjectileFactory
@@ -76,13 +75,30 @@ namespace Hedwig.RTSCore
         public float Range { get => range; }
         public IWeaponData? WeaponData { get => weaponData; }
 
-        public Vector3[] MakePoints(Vector3 from, Vector3 to) {
-            if(trajectory==null) {
+        public Vector3[] MakePoints(Vector3 from, Vector3 to)
+        {
+            if (trajectory == null)
+            {
                 return new Vector3[] { };
-            }else {
+            }
+            else
+            {
                 return trajectory.MakePoints(from, to, baseSpeed);
             }
         }
+
+        public bool HasMap { get => trajectory != null; }
+
+        public ITrajectoryMap ToMap(Vector3 from, Vector3 to)
+        {
+            if (trajectory == null)
+            {
+                throw new InvalidConditionException("No Trajection");
+            }
+            return trajectory.ToMap(from, to, baseSpeed);
+        }
+
+        public IProjectileFactory Factory { get => this; }
         #endregion
 
         #region IProjectileFactory

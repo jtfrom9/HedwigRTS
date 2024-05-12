@@ -54,4 +54,9 @@ namespace Hedwig.RTSCore
     {
         IEffect[] CreateAttackedEffects(IEnemy enemy, IHitObject? hitObject, in DamageEvent e);
     }
+
+    public interface IEnvironmentEffectFactory
+    {
+        IEffect[] CreateEffects(IEnvironment environment, Vector3 position, Vector3 direction);
+    }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Hedwig.RTSCore.Model
 {
-    public class TrajectoryLineMap
+    public class TrajectoryLineMap: ITrajectoryLineMap
     {
         TrajectorySectionMap sectionMap;
         int index;
@@ -80,7 +80,7 @@ namespace Hedwig.RTSCore.Model
         }
     }
 
-    public class TrajectorySectionMap
+    public class TrajectorySectionMap: ITrajectorySectionMap
     {
         TrajectoryMap parent;
         TrajectorySection section;
@@ -175,11 +175,12 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
-        public void AddDynamic(TrajectoryLineMap line) {
-            _dynamicLineMaps.Add(line);
+        public void AddDynamicLine(int index, float fromFactor, float totFactor)
+        {
+            _dynamicLineMaps.Add(new TrajectoryLineMap(this, index, fromFactor, totFactor));
         }
 
-        public IReadOnlyList<TrajectoryLineMap> Lines { get => _lineMaps; }
+        public IEnumerable<ITrajectoryLineMap> Lines { get => _lineMaps; }
 
         public override string ToString()
         {
@@ -207,20 +208,20 @@ namespace Hedwig.RTSCore.Model
         }
     }
 
-    public class TrajectoryMap
+    public class TrajectoryMap: ITrajectoryMap
     {
         TrajectoryObject _trajectory;
         float _baseSpeed;
         List<TrajectorySectionMap> _sectionMaps = new List<TrajectorySectionMap>();
 
-        public IList<TrajectorySectionMap> Sections { get => _sectionMaps; }
+        public IEnumerable<ITrajectorySectionMap> Sections { get => _sectionMaps; }
         public float baseSpeed { get => _baseSpeed; }
 
-        public IEnumerable<TrajectoryLineMap> Lines
+        public IEnumerable<ITrajectoryLineMap> Lines
         {
             get
             {
-                foreach (var sectionMap in Sections)
+                foreach (var sectionMap in _sectionMaps)
                 {
                     foreach (var lineMap in sectionMap.Lines)
                     {
@@ -236,6 +237,8 @@ namespace Hedwig.RTSCore.Model
             this._baseSpeed = baseSpeed;
         }
 
+
+
         public static TrajectoryMap Create(in TrajectoryObject trajectory, Vector3 globalFrom, Vector3 globalTo, float baseSpeed)
         {
             Vector3 from = globalFrom;
@@ -248,7 +251,7 @@ namespace Hedwig.RTSCore.Model
                     var (minfactor, maxfactor) = trajectory.GetSectionFactor(index);
                     var baseTo = Vector3.Lerp(globalFrom, globalTo, maxfactor);
                     var to = section.toOffset.ToPoint(baseTo.Y(from.y), baseTo);
-                    map.Sections.Add(new TrajectorySectionMap(map, section, index,
+                    map._sectionMaps.Add(new TrajectorySectionMap(map, section, index,
                         from, baseTo, to,
                         minfactor, maxfactor));
                     from = to;
@@ -256,7 +259,7 @@ namespace Hedwig.RTSCore.Model
             }
             else
             {
-                map.Sections.Add(new TrajectorySectionMap(
+                map._sectionMaps.Add(new TrajectorySectionMap(
                     map,
                     new TrajectorySection()
                     {

@@ -3,14 +3,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cysharp.Threading.Tasks;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class GrenadeLauncherHandler : ILauncherHandler
     {
         ILauncherHandlerEvent handlerEvent;
-        ProjectileObject projectileObject;
+        IProjectileData projectileData;
 
         ITransform? _start = null;
         ITransform? _target = null;
@@ -32,10 +31,10 @@ namespace Hedwig.RTSCore.Model
                 return;
 
             handlerEvent.OnBeforeFire();
-            var projectile = projectileObject.Create(_start.Position);
+            var projectile = projectileData.Factory.Create(_start.Position);
             if (projectile == null)
             {
-                Debug.LogError($"fiail to create {projectileObject.name}");
+                Debug.LogError($"fiail to create {projectileData.Name}");
                 return;
             }
             projectile.Start(_target);
@@ -54,10 +53,10 @@ namespace Hedwig.RTSCore.Model
 
         public GrenadeLauncherHandler(
             ILauncherHandlerEvent handlerEvent,
-            ProjectileObject projectileObject)
+            IProjectileData projectileData)
         {
             this.handlerEvent = handlerEvent;
-            this.projectileObject = projectileObject;
+            this.projectileData = projectileData;
         }
     }
 }

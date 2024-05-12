@@ -1,9 +1,11 @@
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 using UnityExtensions;
+using VContainer;
 
 namespace Hedwig.RTSCore
 {
@@ -16,7 +18,8 @@ namespace Hedwig.RTSCore
         [SerializeField, InspectInline]
         TargetVisualizersObject? _targets;
 
-        IFreeCursorVisualizer IGlobalVisualizerFactory.CreateFreeCursor() {
+        IFreeCursorVisualizer IGlobalVisualizerFactory.CreateFreeCursor()
+        {
             var globalFactory = (_global as IGlobalVisualizerFactory);
             if (globalFactory == null)
             {
@@ -33,6 +36,18 @@ namespace Hedwig.RTSCore
                 throw new InvalidConditionException("no target visualizer object");
             }
             return targetsFactory.CreateVisualizers(target);
+        }
+    }
+
+    public static class VisualizersObjectDIExtension
+    {
+        public static void SetupVisualizer(this IContainerBuilder builder, VisualizersObject? visualizersObject)
+        {
+            if (visualizersObject == null)
+            {
+                throw new ArgumentNullException("visualizersObject is null");
+            }
+            builder.RegisterInstance<VisualizersObject>(visualizersObject).AsImplementedInterfaces();
         }
     }
 }

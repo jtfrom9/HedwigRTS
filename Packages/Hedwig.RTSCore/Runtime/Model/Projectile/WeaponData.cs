@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Hedwig.RTSCore
+namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Projectile/WeaponData", fileName = "WeaponData")]
     public class WeaponData : ScriptableObject, IWeaponData

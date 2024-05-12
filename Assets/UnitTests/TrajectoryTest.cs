@@ -145,18 +145,19 @@ public class TrajectoryTest
         var start = Vector3.zero;
         var end = new Vector3(0, 0, 10);
         var map = trajectory.ToMap(start, end, 10);
+        var sections = map.Sections.Cast<TrajectorySectionMap>().ToList();
         foreach (var sectionMap in map.Sections) Debug.Log(sectionMap);
         Assert.That(map.Sections.Count, Is.EqualTo(2));
-        Assert.That(map.Sections[0].from, Is.EqualTo(start));
-        Assert.That(map.Sections[0].to, Is.EqualTo(new Vector3(0, 20, 5)));
-        Assert.That(map.Sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 5)));
-        Assert.That(map.Sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
-        Assert.That(map.Sections[0].maxfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
-        Assert.That(map.Sections[1].from, Is.EqualTo(new Vector3(0, 20, 5)));
-        Assert.That(map.Sections[1].to, Is.EqualTo(end));
-        Assert.That(map.Sections[1].baseEnd, Is.EqualTo(end));
-        Assert.That(map.Sections[1].minfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
-        Assert.That(map.Sections[1].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
+        Assert.That(sections[0].from, Is.EqualTo(start));
+        Assert.That(sections[0].to, Is.EqualTo(new Vector3(0, 20, 5)));
+        Assert.That(sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 5)));
+        Assert.That(sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
+        Assert.That(sections[0].maxfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
+        Assert.That(sections[1].from, Is.EqualTo(new Vector3(0, 20, 5)));
+        Assert.That(sections[1].to, Is.EqualTo(end));
+        Assert.That(sections[1].baseEnd, Is.EqualTo(end));
+        Assert.That(sections[1].minfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
+        Assert.That(sections[1].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
 
         var lines = map.Lines.ToArray();
         Assert.That(lines.Length, Is.EqualTo(2));
@@ -198,18 +199,19 @@ public class TrajectoryTest
         var start = Vector3.zero;
         var end = new Vector3(0, 0, 10);
         var map = trajectory.ToMap(start, end, 10);
+        var sections = map.Sections.Cast<TrajectorySectionMap>().ToList();
         foreach (var sectionMap in map.Sections) Debug.Log(sectionMap);
         Assert.That(map.Sections.Count, Is.EqualTo(2));
-        Assert.That(map.Sections[0].from, Is.EqualTo(start));
-        Assert.That(map.Sections[0].to, Is.EqualTo(new Vector3(0, 20, 5)));
-        Assert.That(map.Sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 5)));
-        Assert.That(map.Sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
-        Assert.That(map.Sections[0].maxfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
-        Assert.That(map.Sections[1].from, Is.EqualTo(new Vector3(0, 20, 5)));
-        Assert.That(map.Sections[1].to, Is.EqualTo(end));
-        Assert.That(map.Sections[1].baseEnd, Is.EqualTo(end));
-        Assert.That(map.Sections[1].minfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
-        Assert.That(map.Sections[1].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
+        Assert.That(sections[0].from, Is.EqualTo(start));
+        Assert.That(sections[0].to, Is.EqualTo(new Vector3(0, 20, 5)));
+        Assert.That(sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 5)));
+        Assert.That(sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
+        Assert.That(sections[0].maxfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
+        Assert.That(sections[1].from, Is.EqualTo(new Vector3(0, 20, 5)));
+        Assert.That(sections[1].to, Is.EqualTo(end));
+        Assert.That(sections[1].baseEnd, Is.EqualTo(end));
+        Assert.That(sections[1].minfactor, Is.EqualTo(0.5f).Within(float.Epsilon));
+        Assert.That(sections[1].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
 
         var lines = map.Lines.ToArray();
         // Assert.That(lines.Length, Is.EqualTo(pointCount - 1));
@@ -243,13 +245,14 @@ public class TrajectoryTest
         var start = Vector3.zero;
         var end = new Vector3(0, 0, 10);
         var map = trajectory.ToMap(start, end, 10);
+        var sections = map.Sections.Cast<TrajectorySectionMap>().ToList();
         foreach (var sectionMap in map.Sections) Debug.Log(sectionMap);
         Assert.That(map.Sections.Count, Is.EqualTo(1));
-        Assert.That(map.Sections[0].from, Is.EqualTo(start));
-        Assert.That(map.Sections[0].to, Is.EqualTo(new Vector3(0, 0, 10)));
-        Assert.That(map.Sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 10)));
-        Assert.That(map.Sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
-        Assert.That(map.Sections[0].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
+        Assert.That(sections[0].from, Is.EqualTo(start));
+        Assert.That(sections[0].to, Is.EqualTo(new Vector3(0, 0, 10)));
+        Assert.That(sections[0].baseEnd, Is.EqualTo(new Vector3(0, 0, 10)));
+        Assert.That(sections[0].minfactor, Is.EqualTo(0f).Within(float.Epsilon));
+        Assert.That(sections[0].maxfactor, Is.EqualTo(1f).Within(float.Epsilon));
 
         var lines = map.Lines.ToArray();
         Vector3 prev = start;
@@ -275,7 +278,7 @@ public class TrajectoryTest
         var start = Vector3.zero;
         var end = new Vector3(0, 0, 10);
         var map = trajectory.ToMap(start, end, 10);
-        return map.Sections.Count;
+        return map.Sections.ToList().Count;
     }
 
     [TestCase(0)]

@@ -8,7 +8,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UniRx;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class LauncherImpl : ILauncher, ILauncherHandlerEvent
     {
@@ -75,19 +75,18 @@ namespace Hedwig.RTSCore.Model
             this.launcherHandler?.Dispose();
             this.launcherHandler = null;
 
-            var projectileObject = projectileData as ProjectileObject; // FIXME
-            if (projectileData!=null && projectileObject != null)
+            if (projectileData != null)
             {
                 switch (projectileData.Type)
                 {
                     case ProjectileType.Fire:
-                        this.launcherHandler = new ShotLauncherHandler(this, projectileObject, option);
+                        this.launcherHandler = new ShotLauncherHandler(this, projectileData, option);
                         break;
                     case ProjectileType.Burst:
-                        this.launcherHandler = new BurstLauncherHandler(this, projectileObject);
+                        this.launcherHandler = new BurstLauncherHandler(this, projectileData);
                         break;
                     case ProjectileType.Grenade:
-                        this.launcherHandler = new GrenadeLauncherHandler(this, projectileObject);
+                        this.launcherHandler = new GrenadeLauncherHandler(this, projectileData);
                         break;
                 }
             }
@@ -108,7 +107,7 @@ namespace Hedwig.RTSCore.Model
             setProjectileCore(projectileData, option);
         }
 
-        async UniTask setProjectileAsync(IProjectileData? projectileObject, ProjectileOption? option, CancellationToken cancellationToken)
+        async UniTask setProjectileAsync(IProjectileData? projectileData, ProjectileOption? option, CancellationToken cancellationToken)
         {
             if (!initialized)
             {
@@ -123,7 +122,7 @@ namespace Hedwig.RTSCore.Model
                     return;
                 }
             }
-            setProjectileCore(projectileObject, option);
+            setProjectileCore(projectileData, option);
         }
 
         void setTarget(ITransformProvider? target)

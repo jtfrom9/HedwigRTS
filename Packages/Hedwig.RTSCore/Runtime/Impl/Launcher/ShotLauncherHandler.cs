@@ -8,12 +8,12 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UniRx;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class ShotLauncherHandler: ILauncherHandler
     {
         ILauncherHandlerEvent handlerEvent;
-        ProjectileObject projectileObject;
+        IProjectileData projectileObject;
         ProjectileOption? option;
 
         public void Fire(ITransform start, ITransform target)
@@ -24,9 +24,9 @@ namespace Hedwig.RTSCore.Model
                 for (var i = 0; i < projectileObject.SuccessionCount; i++)
                 {
                     var cts = new CancellationTokenSource();
-                    var projectile = projectileObject.Create(start.Position);
+                    var projectile = projectileObject.Factory.Create(start.Position);
                     if(projectile==null) {
-                        Debug.LogError($"fiail to create {projectileObject.name}");
+                        Debug.LogError($"fiail to create {projectileObject.Name}");
                         break;
                     }
                     var disposable = projectile.OnDestroy.Subscribe(_ =>
@@ -81,7 +81,7 @@ namespace Hedwig.RTSCore.Model
 
         public ShotLauncherHandler(
             ILauncherHandlerEvent  handlerEvent,
-            ProjectileObject projectileObject,
+            IProjectileData projectileObject,
             ProjectileOption? option)
         {
             this.handlerEvent = handlerEvent;
