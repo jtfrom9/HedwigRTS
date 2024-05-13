@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityExtensions;
 using VContainer;
 
+using Hedwig.RTSCore.Impl;
+
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Enemy/Manager", fileName = "EnemyManager")]

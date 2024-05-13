@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 
+using Hedwig.RTSCore.Impl;
+
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Enemy/Enemy", fileName = "Enemy")]

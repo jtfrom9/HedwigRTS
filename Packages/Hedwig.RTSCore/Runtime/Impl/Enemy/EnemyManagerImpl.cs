@@ -6,7 +6,7 @@ using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
 
-namespace Hedwig.RTSCore.Model
+namespace Hedwig.RTSCore.Impl
 {
     public class EnemyManagerImpl: IEnemyManager, IEnemyEvent
     {
@@ -66,9 +66,9 @@ namespace Hedwig.RTSCore.Model
         #region IEnemyManager
         IReadOnlyReactiveCollection<IEnemy> IEnemyManager.Enemies { get => _enemies; }
 
-        IEnemy IEnemyManager.Spawn(IEnemyFactory enemyObject, Vector3 position)
+        IEnemy IEnemyManager.Spawn(IEnemyFactory enemyFactory, Vector3 position)
         {
-            var enemy = enemyObject.Create(this, position);
+            var enemy = enemyFactory.Create(this, position);
             if (enemy == null)
             {
                 throw new InvalidCastException("fail to spwawn");
