@@ -2,10 +2,15 @@
 
 namespace Hedwig.RTSCore
 {
+    public interface IEnvironmentEvent
+    {
+        void OnHit(IHitObject hitObject);
+    }
+
     public interface IEnvironmentController: ITransformProvider
     {
         void Initialize(IEnvironmentEvent environmentEvent);
-        string name { get; }
+        string Name { get; }
     }
 
     public interface IEnvironmentFactory
@@ -13,13 +18,8 @@ namespace Hedwig.RTSCore
         IEnvironment? Create();
     }
 
-    public interface IEnvironmentEvent
-    {
-        void OnHit(IHitObject hitObject);
-    }
-
     public interface IEnvironment
     {
-        IEnvironmentController controller { get; }
+        IEnvironmentController Controller { get; }
     }
 }

@@ -17,18 +17,18 @@ namespace Hedwig.RTSCore.Impl
         void IEnvironmentEvent.OnHit(IHitObject hitObject)
         {
             Debug.Log($"{this}: OnHit");
-            var effects = effectFactory.CreateEffects(this, hitObject.position, -hitObject.direction);
+            var effects = effectFactory.CreateEffects(this, hitObject.Position, -hitObject.Direction);
             foreach (var effect in effects)
             {
                 effect.PlayAndDispose().Forget();
             }
         }
 
-        IEnvironmentController IEnvironment.controller { get => environmentController; }
+        IEnvironmentController IEnvironment.Controller { get => environmentController; }
 
         public override string ToString()
         {
-            return $"{environmentController.name}.Impl";
+            return $"{environmentController.Name}.Impl";
         }
 
         public EnvironmentImpl(IEnvironmentEffectFactory effectFactory, IEnvironmentController environmentController)

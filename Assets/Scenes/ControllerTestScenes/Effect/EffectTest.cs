@@ -67,7 +67,7 @@ namespace Hedwig.RTSCore.Teset
             {
                 var hit = new RaycastHit();
                 var origin = Camera.main.transform.position;
-                var dir = target.transform.Position - origin;
+                var dir = target.Transform.Position - origin;
                 if (!Physics.Raycast(origin, dir, out hit, 100))
                 {
                     Debug.LogError("failed not raycast");
@@ -84,7 +84,7 @@ namespace Hedwig.RTSCore.Teset
         class DummyMobileObject : MonoBehaviour, ITransformProvider
         {
             ITransform _transform = new CachedTransform();
-            ITransform ITransformProvider.transform { get => _transform; }
+            ITransform ITransformProvider.Transform { get => _transform; }
 
             public void Dispose() { Destroy(gameObject); }
             void Awake()

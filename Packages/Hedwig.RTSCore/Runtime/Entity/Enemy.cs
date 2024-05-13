@@ -12,13 +12,13 @@ namespace Hedwig.RTSCore
 {
     public struct DamageEvent
     {
-        public readonly int damage;
-        public readonly int actualDamage;
+        public readonly int Damage;
+        public readonly int ActualDamage;
 
         public DamageEvent(int damage, int actualDamage = 0)
         {
-            this.damage = damage;
-            this.actualDamage = actualDamage;
+            this.Damage = damage;
+            this.ActualDamage = actualDamage;
         }
     }
 
@@ -26,7 +26,7 @@ namespace Hedwig.RTSCore
     {
         void Initialize(string name, IEnemyControllerEvent controllerEvent, Vector3? position);
 
-        string name { get; }
+        string Name { get; }
         void SetDestination(Vector3 pos);
         void Stop();
         IVisualProperty GetProperty();
@@ -45,7 +45,7 @@ namespace Hedwig.RTSCore
         void SetDestination(Vector3 pos);
         void Stop();
 
-        IEnemyController controller { get; }
+        IEnemyController Controller { get; }
 
         void Damaged(int damange);
         void ResetPos();
@@ -79,7 +79,7 @@ namespace Hedwig.RTSCore
     public interface IEnemyManager : IDisposable
     {
         IReadOnlyReactiveCollection<IEnemy> Enemies { get; }
-        IEnemy Spawn(IEnemyFactory enemyObject, Vector3 position);
+        IEnemy Spawn(IEnemyFactory enemyFactory, Vector3 position);
 
         void Initialize(IEnemyData defaultEnemyObject);
     }

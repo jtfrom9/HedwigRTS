@@ -86,20 +86,20 @@ namespace Hedwig.RTSCore.Test
 
             if (towerView)
             {
-                Camera.main.MoveWithLookAt(tower, enemy.controller.transform.Position, 1);
+                Camera.main.MoveWithLookAt(tower, enemy.Controller.Transform.Position, 1);
             }
             else
             {
                 if (birdView)
                 {
-                    Camera.main.Tracking(enemy.controller.transform,
+                    Camera.main.Tracking(enemy.Controller.Transform,
                         new Vector3(0, 10, -3),
                         new Vector3(80, 0, 0),
                         1);
                 }
                 else
                 {
-                    Camera.main.Tracking(enemy.controller.transform,
+                    Camera.main.Tracking(enemy.Controller.Transform,
                         new Vector3(0, 3f, -3),
                         new Vector3(30, 0, 0),
                         1);
@@ -183,13 +183,13 @@ namespace Hedwig.RTSCore.Test
             var go = Instantiate(bulletPrefab);
             go.transform.position = tower;
 
-            go.transform.DOMove(e.controller.transform.Position, 3).OnComplete(() =>
+            go.transform.DOMove(e.Controller.Transform.Position, 3).OnComplete(() =>
             {
                 Destroy(go);
             });
 
             var start = go.transform.position;
-            var end = e.controller.transform.Position;
+            var end = e.Controller.Transform.Position;
             var dir = end - start;
             Debug.Log(dir.magnitude);
 
@@ -204,7 +204,7 @@ namespace Hedwig.RTSCore.Test
             if (!towerView) return;
             var e = selection.Current as IEnemy;
             if (e == null) return;
-            Debug.DrawLine(tower, e.controller.transform.Position, Color.red, 100);
+            Debug.DrawLine(tower, e.Controller.Transform.Position, Color.red, 100);
         }
 
         void update(Selection<IEnemy> selection, IEnemyManager enemyManager)

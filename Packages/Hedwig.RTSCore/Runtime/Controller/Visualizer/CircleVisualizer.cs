@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Controller
             }
         }
 
-        ITransform ITransformProvider.transform { get => _transform; }
+        ITransform ITransformProvider.Transform { get => _transform; }
 
         [ContextMenu("Init")]
         void IFreeCursorVisualizer.Initialize()

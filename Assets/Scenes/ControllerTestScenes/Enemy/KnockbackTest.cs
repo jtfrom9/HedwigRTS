@@ -67,7 +67,7 @@ namespace Hedwig.RTSCore.Test
 
             var enemy = enemyManager.Enemies[0];
             enemy.SetDestination(Vector3.zero);
-            launcher.SetTarget(enemy.controller);
+            launcher.SetTarget(enemy.Controller);
 
             setupKey(configSelection, launcher, enemy);
         }

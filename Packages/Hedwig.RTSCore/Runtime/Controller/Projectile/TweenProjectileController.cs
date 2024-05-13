@@ -58,10 +58,10 @@ namespace Hedwig.RTSCore.Controller
             {
                 onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.Trigger)
                 {
-                    collider = collider,
-                    willHit = willCastHit,
-                    endReason = endReason,
-                    speed = _lastSpeed
+                    Collider = collider,
+                    WillHit = willCastHit,
+                    EndReason = endReason,
+                    Speed = _lastSpeed
                 });
                 // request cancel
                 _transform.Raw.DOKill();
@@ -78,9 +78,9 @@ namespace Hedwig.RTSCore.Controller
                 _transform.Raw.DOKill();
                 onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.WillHit)
                 {
-                    willHit = hit,
-                    ray = ray,
-                    maxDistance = distance
+                    WillHit = hit,
+                    Ray = ray,
+                    MaxDistance = distance
                 });
             }
         }
@@ -129,7 +129,7 @@ namespace Hedwig.RTSCore.Controller
             var castEveryFrame = speed > castingEveryFrameSpeed;
             onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.BeforeMove)
             {
-                to = to
+                To = to
             });
 
             var dir = (to - _transform.Position).normalized;
@@ -169,7 +169,7 @@ namespace Hedwig.RTSCore.Controller
             {
                 onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.BeforeLastMove)
                 {
-                    willHit = willCastHit
+                    WillHit = willCastHit
                 });
 
                 // move to will hit point
@@ -205,11 +205,11 @@ namespace Hedwig.RTSCore.Controller
         #endregion
 
         #region IMobileObject
-        ITransform ITransformProvider.transform { get => _transform; }
+        ITransform ITransformProvider.Transform { get => _transform; }
         #endregion
 
         #region IProjectileController
-        string IProjectileController.name { get => _name; }
+        string IProjectileController.Name { get => _name; }
         UniTask<bool> IProjectileController.Move(Vector3 to, float speed) => move(to, speed);
         UniTask IProjectileController.LastMove(float speed) => lastMove(speed);
         IObservable<ProjectileEventArg> IProjectileController.OnEvent { get => onEvent; }

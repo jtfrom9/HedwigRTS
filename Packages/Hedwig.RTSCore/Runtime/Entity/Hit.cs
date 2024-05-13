@@ -24,12 +24,12 @@ namespace Hedwig.RTSCore
 
     public interface IHitObject
     {
-        HitType type { get; }
-        int attack { get; }
-        float power { get; }
-        float speed { get; }
-        Vector3 direction { get; }
-        Vector3 position{ get; }
+        HitType Type { get; }
+        int Attack { get; }
+        float Power { get; }
+        float Speed { get; }
+        Vector3 Direction { get; }
+        Vector3 Position{ get; }
     }
 
     public interface IHitHandler

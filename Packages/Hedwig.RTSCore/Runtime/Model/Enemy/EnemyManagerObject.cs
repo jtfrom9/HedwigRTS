@@ -23,12 +23,12 @@ namespace Hedwig.RTSCore.Model
         {
             foreach (var damageEffect in damageEffects)
             {
-                yield return damageEffect.Create(enemy.controller, e.actualDamage);
+                yield return damageEffect.Create(enemy.Controller, e.ActualDamage);
             }
             foreach (var hitEffect in hitEffects)
             {
-                yield return hitEffect.Create(enemy.controller,
-                    hitObject?.position ?? enemy.controller.transform.Position,
+                yield return hitEffect.Create(enemy.Controller,
+                    hitObject?.Position ?? enemy.Controller.Transform.Position,
                     Vector3.zero);
             }
         }

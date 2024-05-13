@@ -10,7 +10,7 @@ namespace Hedwig.RTSCore
 {
     public interface ISelectable
     {
-        IReadOnlyReactiveProperty<bool> selected { get; }
+        IReadOnlyReactiveProperty<bool> Selected { get; }
         void Select(bool v);
     }
 }

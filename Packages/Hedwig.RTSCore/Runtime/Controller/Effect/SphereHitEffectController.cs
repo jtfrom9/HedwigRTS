@@ -33,7 +33,7 @@ namespace Hedwig.RTSCore.Controller
         void IHitEffect.Initialize(ITransformProvider parent, Vector3 position, Vector3 direction)
         {
             transform.position = position;
-            transform.SetParent(parent.transform);
+            transform.SetParent(parent.Transform);
         }
         #endregion
 

@@ -39,7 +39,7 @@ namespace Hedwig.RTSCore.Impl
         {
             if (trajectoryVisualizer != null)
             {
-                trajectoryVisualizer.SetStartTarget(launcherController.mazzle);
+                trajectoryVisualizer.SetStartTarget(launcherController.Mazzle);
             }
             launcherController.Initialize(this);
             initialized = true;
@@ -132,7 +132,7 @@ namespace Hedwig.RTSCore.Impl
                 throw new InvalidConditionException("LauncherManager is not Initalized");
             }
             _target = target;
-            trajectoryVisualizer?.SetEndTarget(target?.transform);
+            trajectoryVisualizer?.SetEndTarget(target?.Transform);
             setCanFire();
             if(_target!=null) {
                 handleTriggerOn();
@@ -155,7 +155,7 @@ namespace Hedwig.RTSCore.Impl
                 return;
             if (!canFire.Value)
                 return;
-            launcherHandler.Fire(launcherController.mazzle, _target.transform);
+            launcherHandler.Fire(launcherController.Mazzle, _target.Transform);
         }
 
         void handleTriggerOn()
@@ -167,7 +167,7 @@ namespace Hedwig.RTSCore.Impl
                 return;
             if (triggerReq && canFire.Value)
             {
-                launcherHandler.TriggerOn(launcherController.mazzle, _target.transform);
+                launcherHandler.TriggerOn(launcherController.Mazzle, _target.Transform);
                 triggered = true;
             }
         }
@@ -197,7 +197,7 @@ namespace Hedwig.RTSCore.Impl
             if(!canFire.Value) {
                 return;
             }
-            launcherHandler.TriggerOn(launcherController.mazzle, _target.transform);
+            launcherHandler.TriggerOn(launcherController.Mazzle, _target.Transform);
             triggered = true;
         }
 
@@ -239,11 +239,11 @@ namespace Hedwig.RTSCore.Impl
 
         #region ILauncher
         void ILauncher.Initialize() => initialize();
-        IProjectileData? ILauncher.projectileObject { get => _projectileData; }
+        IProjectileData? ILauncher.ProjectileData { get => _projectileData; }
         void ILauncher.SetProjectile(IProjectileData? projectileObject, ProjectileOption? option) => setProjectile(projectileObject, option);
         UniTask ILauncher.SetProjectileAsync(IProjectileData? projectileObject, ProjectileOption? option, CancellationToken cancellationToken) 
             => setProjectileAsync(projectileObject, option, cancellationToken);
-        ITransformProvider? ILauncher.target { get => _target; }
+        ITransformProvider? ILauncher.Target { get => _target; }
         void ILauncher.SetTarget(ITransformProvider? target) => setTarget(target);
 
         IReadOnlyReactiveProperty<bool> ILauncher.CanFire { get => canFire; }

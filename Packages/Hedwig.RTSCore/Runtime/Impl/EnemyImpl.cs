@@ -18,7 +18,7 @@ namespace Hedwig.RTSCore.Model
         ReactiveProperty<int> health;
 
         int calcDamage(IHitObject hitObject) {
-            return hitObject.attack;
+            return hitObject.Attack;
         }
 
         int calcActualDamage(int damage)
@@ -72,7 +72,7 @@ namespace Hedwig.RTSCore.Model
 
         #region ISelectable
         void ISelectable.Select(bool v) { _selected.Value = v; }
-        IReadOnlyReactiveProperty<bool> ISelectable.selected { get => _selected; }
+        IReadOnlyReactiveProperty<bool> ISelectable.Selected { get => _selected; }
         #endregion
 
         #region IDisposable
@@ -94,7 +94,7 @@ namespace Hedwig.RTSCore.Model
         public void SetDestination(Vector3 pos) => enemyController.SetDestination(pos);
         public void Stop() => enemyController.Stop();
 
-        public IEnemyController controller { get => enemyController; }
+        public IEnemyController Controller { get => enemyController; }
 
         void IEnemy.Damaged(int damage) => damaged(damage);
         void IEnemy.ResetPos() => enemyController.ResetPos();
@@ -102,15 +102,15 @@ namespace Hedwig.RTSCore.Model
 
         #region IVisualizerTarget
         void IVisualizerTarget.AddVisualizer(ITargetVisualizer targetVisualizer) => visualizers.Add(targetVisualizer);
-        ITransform? IVisualizerTarget.transform { get => controller.transform; }
-        ISelectable? IVisualizerTarget.selectable { get => this; }
-        IVisualProperty? IVisualizerTarget.visualProperty { get => controller.GetProperty(); }
-        ICharactor? IVisualizerTarget.charactor { get => this; }
+        ITransform? IVisualizerTarget.Transform { get => Controller.Transform; }
+        ISelectable? IVisualizerTarget.Selectable { get => this; }
+        IVisualProperty? IVisualizerTarget.VisualProperty { get => Controller.GetProperty(); }
+        ICharactor? IVisualizerTarget.Charactor { get => this; }
         #endregion
 
         public override string ToString()
         {
-            return $"{controller.name}.Impl({enemyData.Name})";
+            return $"{Controller.Name}.Impl({enemyData.Name})";
         }
 
         public EnemyImpl(IEnemyData enemyData, IEnemyController enemyController, IEnemyEvent enemyEvent)

@@ -101,7 +101,7 @@ namespace Hedwig.RTSCore.Controller
         }
 
         #region ITrajectoryVisualizer
-        bool ITrajectoryVisualizer.visible { get => _visible; }
+        bool ITrajectoryVisualizer.Visible { get => _visible; }
 
         void ITrajectoryVisualizer.SetStartTarget(ITransform? target)
         {

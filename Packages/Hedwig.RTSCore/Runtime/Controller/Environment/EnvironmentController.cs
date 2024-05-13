@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Controller
             _disposed = true;
         }
 
-        ITransform ITransformProvider.transform { get => _transform; }
+        ITransform ITransformProvider.Transform { get => _transform; }
 
         void IDisposable.Dispose()
         {
@@ -44,7 +44,7 @@ namespace Hedwig.RTSCore.Controller
             count = 0;
         }
 
-        string IEnvironmentController.name { get => _name; }
+        string IEnvironmentController.Name { get => _name; }
         void IEnvironmentController.Initialize(IEnvironmentEvent environmentEvent)
         {
             if(gameObject.name=="") {

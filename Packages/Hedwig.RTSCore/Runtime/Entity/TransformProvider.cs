@@ -7,7 +7,7 @@ namespace Hedwig.RTSCore
 {
     public interface ITransformProvider: IDisposable
     {
-        ITransform transform { get; }
+        ITransform Transform { get; }
     }
 
     public static class TransformProviderFactory
@@ -17,7 +17,7 @@ namespace Hedwig.RTSCore
             GameObject _gameObject;
             CachedTransform _transform;
 
-            ITransform ITransformProvider.transform { get => _transform; }
+            ITransform ITransformProvider.Transform { get => _transform; }
 
             public void Dispose()
             {

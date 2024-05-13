@@ -89,11 +89,11 @@ namespace Hedwig.RTSCore.Controller
         #endregion
 
         #region IMobileObject
-        ITransform ITransformProvider.transform { get => _transform; }
+        ITransform ITransformProvider.Transform { get => _transform; }
         #endregion
 
         #region ICharactor
-        float IVisualProperty.distanceToGround
+        float IVisualProperty.DistanceToGround
         {
             get {
                 if(_distanceToGround==null) {
@@ -104,7 +104,7 @@ namespace Hedwig.RTSCore.Controller
             }
         }
 
-        float IVisualProperty.distanceToHead
+        float IVisualProperty.DistanceToHead
         {
             get
             {
@@ -119,7 +119,7 @@ namespace Hedwig.RTSCore.Controller
         #endregion
 
         #region IEnemyController
-        string IEnemyController.name { get => _name; }
+        string IEnemyController.Name { get => _name; }
         void IEnemyController.SetDestination(Vector3 pos)
         {
             _agent!.isStopped = false;

@@ -44,17 +44,17 @@ namespace Hedwig.RTSCore.Controller
         {
             if (target != null)
             {
-                _disposable = target.transform.OnPositionChanged.Subscribe(pos =>
+                _disposable = target.Transform.OnPositionChanged.Subscribe(pos =>
                 {
                     transform.LookAt(pos);
                 }).AddTo(this);
-                transform.LookAt(target.transform.Position);
+                transform.LookAt(target.Transform.Position);
             }
         }
 
         #region ILauncher
 
-        ITransform ILauncherController.mazzle { get => _mazzleTranform; }
+        ITransform ILauncherController.Mazzle { get => _mazzleTranform; }
 
          void ILauncherController.Initialize(ILauncher launcher)
         {

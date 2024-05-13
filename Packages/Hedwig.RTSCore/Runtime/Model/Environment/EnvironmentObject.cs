@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Model
         {
             foreach (var effect in hitEffects)
             {
-                yield return effect.Create(environment.controller, position, direction);
+                yield return effect.Create(environment.Controller, position, direction);
             }
         }
 

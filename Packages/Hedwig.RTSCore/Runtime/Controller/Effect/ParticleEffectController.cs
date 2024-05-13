@@ -44,7 +44,7 @@ namespace Hedwig.RTSCore.Controller
         {
             transform.position = position;
             transform.LookAt(position + direction);
-            transform.SetParent(parent.transform, worldPositionStays: true);
+            transform.SetParent(parent.Transform, worldPositionStays: true);
         }
         #endregion
 

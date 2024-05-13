@@ -73,7 +73,7 @@ namespace Hedwig.RTSCore.Test
             enemySelection.OnCurrentChanged.Subscribe(enemy =>
             {
                 (enemy as ISelectable)?.Select(true);
-                launcher.SetTarget(enemy.controller);
+                launcher.SetTarget(enemy.Controller);
             }).AddTo(this);
             enemySelection.Select(0);
 
@@ -103,7 +103,7 @@ namespace Hedwig.RTSCore.Test
             {
                 if (can)
                 {
-                    if (launcher.projectileObject!.Type == ProjectileType.Fire)
+                    if (launcher.ProjectileData!.Type == ProjectileType.Fire)
                     {
                         launcher.Fire();
                     }
@@ -160,7 +160,7 @@ namespace Hedwig.RTSCore.Test
                 projectile.OnEnded.Subscribe(_ =>
                 {
                     stopwatch.Stop();
-                    Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} Ended @({projectile.controller.transform.Position}, elapsed:{stopwatch.ElapsedMilliseconds}ms");
+                    Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} Ended @({projectile.Controller.Transform.Position}, elapsed:{stopwatch.ElapsedMilliseconds}ms");
                 }).AddTo(this);
 
                 projectile.OnDestroy.Subscribe(_ =>
@@ -169,28 +169,28 @@ namespace Hedwig.RTSCore.Test
                     liveProjectiles.Remove(projectile);
                 }).AddTo(this);
 
-                projectile.controller.OnEvent.Subscribe(e => {
+                projectile.Controller.OnEvent.Subscribe(e => {
                     var lateCount = (willHitFrame == 0) ? "-" : (Time.frameCount - willHitFrame).ToString();
-                    var transform = projectile.controller.transform;
-                    switch(e.type) {
+                    var transform = projectile.Controller.Transform;
+                    switch(e.Type) {
                         case ProjectileEventType.BeforeMove:
-                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeMove @{transform.Position} to {e.to}");
+                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeMove @{transform.Position} to {e.To}");
                             break;
                         case ProjectileEventType.AfterMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} AfterMove @{transform.Position} (late:{lateCount})");
                             break;
                         case ProjectileEventType.BeforeLastMove:
-                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeLastMove @{transform.Position} -> {e.willHit!.Value.point} (late:{lateCount})");
+                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} BeforeLastMove @{transform.Position} -> {e.WillHit!.Value.point} (late:{lateCount})");
                             break;
                         case ProjectileEventType.AfterLastMove:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} AfterLastMove @{transform.Position} (late:{lateCount})");
                             break;
                         case ProjectileEventType.WillHit:
-                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} WillHit @{transform.Position} ray: {e.ray}, maxDist: {e.maxDistance!.Value} point: {e.willHit!.Value.point} distance: {e.willHit!.Value.distance}");
+                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} WillHit @{transform.Position} ray: {e.Ray}, maxDist: {e.MaxDistance!.Value} point: {e.WillHit!.Value.point} distance: {e.WillHit!.Value.distance}");
                             willHitFrame = Time.frameCount;
                             break;
                         case ProjectileEventType.Trigger:
-                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} Trigger with <{e.collider!.gameObject.name}> @{transform.Position} (late:{lateCount})");
+                            Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} Trigger with <{e.Collider!.gameObject.name}> @{transform.Position} (late:{lateCount})");
                             break;
                         case ProjectileEventType.OnKill:
                             Debug.Log($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} OnKill (late:{lateCount})");
@@ -204,7 +204,7 @@ namespace Hedwig.RTSCore.Test
                     }
                 }).AddTo(this);
 
-                projectile.controller.transform.OnPositionChanged.Subscribe(pos => {
+                projectile.Controller.Transform.OnPositionChanged.Subscribe(pos => {
                     if (pos.z > 1)
                     {
                         Debug.LogWarning($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} {pos}");
@@ -258,8 +258,8 @@ Target: {info.target}
             launcher.OnRecastTimeUpdated.Subscribe(ratio =>
             {
                 info.recastRatio = ratio;
-                info.elapsed = (int)(ratio * launcher.projectileObject!.RecastTime /(float)100);
-                info.maxTime = launcher.projectileObject!.RecastTime;
+                info.elapsed = (int)(ratio * launcher.ProjectileData!.RecastTime /(float)100);
+                info.maxTime = launcher.ProjectileData!.RecastTime;
                 updateText();
             }).AddTo(this);
         }

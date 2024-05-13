@@ -35,25 +35,25 @@ namespace Hedwig.RTSCore.Controller
         void init(ITransform parent, IVisualProperty property)
         {
             transform.SetParent(parent);
-            transform.localPosition = Vector3.down * property.distanceToGround;
+            transform.localPosition = Vector3.down * property.DistanceToGround;
             transform.DOScale(Vector3.one * 1.5f, 1).SetLoops(-1, LoopType.Yoyo);
             gameObject.SetActive(false);
         }
 
         void ITargetVisualizer.Initialize(IVisualizerTarget target)
         {
-            var visualProp = target.visualProperty;
-            var selectable = target.selectable;
-            if (visualProp == null || selectable == null || target.transform == null)
+            var visualProp = target.VisualProperty;
+            var selectable = target.Selectable;
+            if (visualProp == null || selectable == null || target.Transform == null)
             {
                 return;
             }
             var gameObject = this.gameObject;
-            selectable.selected.Subscribe(v =>
+            selectable.Selected.Subscribe(v =>
             {
                 gameObject.SetActive(v);
             }).AddTo(this);
-            init(target.transform, visualProp);
+            init(target.Transform, visualProp);
         }
     }
 }

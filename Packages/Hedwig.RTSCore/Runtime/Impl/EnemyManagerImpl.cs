@@ -16,15 +16,15 @@ namespace Hedwig.RTSCore.Model
         IEnemyAttackedEffectFactory attackedEffectFactory;
         ITargetVisualizerFactory targetVisualizersFactory;
 
-        void equipHitTransformEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitTransformEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
         {
-            if (hitObject != null && e.actualDamage > 0)
+            if (hitObject != null && e.ActualDamage > 0)
             {
-                enemy.controller.Knockback(hitObject.direction, hitObject.power);
+                enemy.Controller.Knockback(hitObject.Direction, hitObject.Power);
             }
         }
 
-        void equipHitVisualEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitVisualEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
         {
             var effects = attackedEffectFactory.CreateAttackedEffects(enemy, hitObject, in e);
             foreach (var effect in effects)
@@ -35,8 +35,8 @@ namespace Hedwig.RTSCore.Model
 
         void onEnemyAttacked(IEnemy enemy, IHitObject? hitObject, in DamageEvent damageEvent)
         {
-            equipHitVisualEffect(enemy, hitObject, damageEvent);
-            equipHitTransformEffect(enemy, hitObject, damageEvent);
+            playHitVisualEffect(enemy, hitObject, damageEvent);
+            playHitTransformEffect(enemy, hitObject, damageEvent);
         }
 
         async void onEnemyDeath(IEnemy enemy)

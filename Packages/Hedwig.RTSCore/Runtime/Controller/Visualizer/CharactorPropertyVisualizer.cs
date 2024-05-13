@@ -34,7 +34,7 @@ namespace Hedwig.RTSCore.Controller
         void init(ITransform parent, IVisualProperty property)
         {
             transform.SetParent(parent);
-            transform.localPosition = Vector3.up * (property.distanceToHead + 0.5f);
+            transform.localPosition = Vector3.up * (property.DistanceToHead + 0.5f);
 
             _transform.OnPositionChanged.Subscribe(pos => {
                 _transform.Raw?.LookAt(pos - (-Camera.main.transform.forward), Camera.main.transform.up);
@@ -43,14 +43,14 @@ namespace Hedwig.RTSCore.Controller
 
         void ITargetVisualizer.Initialize(IVisualizerTarget target)
         {
-            if(target.transform==null || target.charactor==null || target.visualProperty==null) {
+            if(target.Transform==null || target.Charactor==null || target.VisualProperty==null) {
                 return;
             }
-            target.charactor.Health.Subscribe(v => {
+            target.Charactor.Health.Subscribe(v => {
                 if(_textMesh!=null)
                     _textMesh.text = $"{v}";
             }).AddTo(this);
-            init(target.transform, target.visualProperty);
+            init(target.Transform, target.VisualProperty);
         }
     }
 }

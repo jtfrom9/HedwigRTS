@@ -183,7 +183,7 @@ namespace Hedwig.RTSCore.Test
                         var component = (pair.target as Component);
                         if (component != null)
                         {
-                            component.transform.position = pair.target.transform.Position.Z(v);
+                            component.transform.position = pair.target.Transform.Position.Z(v);
                         }
                     }
                 }

@@ -12,12 +12,12 @@ namespace Hedwig.RTSCore.Model
     {
         TrajectorySectionMap sectionMap;
         int index;
-        public float fromFactor { get; private set; }
-        public float toFactor { get; private set; }
 
+        public float FromFactor { get; private set; }
+        public float ToFactor { get; private set; }
         public bool IsFirst { get => index == 0; }
 
-        static public Vector3 makeBezierCurvePoint(Vector3 start, Vector3 end, Vector3 control, float t)
+        static Vector3 makeBezierCurvePoint(Vector3 start, Vector3 end, Vector3 control, float t)
         {
             Vector3 Q0 = Vector3.Lerp(start, control, t);
             Vector3 Q1 = Vector3.Lerp(control, end, t);
@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Model
             return Q2;
         }
 
-        static public Vector3 makePoint(Vector3 start, Vector3 end, float factor, List<Vector2> controlPoints)
+        static Vector3 makePoint(Vector3 start, Vector3 end, float factor, List<Vector2> controlPoints)
         {
             if (controlPoints.Count > 0)
             {
@@ -39,24 +39,24 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
-        Vector3 getPoint(float factor, TrajectorySectionMap sectionMap)
+        static Vector3 getPoint(float factor, TrajectorySectionMap sectionMap)
         {
-            return makePoint(sectionMap.from, sectionMap.to, factor, sectionMap.controlPoints);
+            return makePoint(sectionMap.From, sectionMap.To, factor, sectionMap.ControlPoints);
         }
 
         public Vector3 GetFromPoint()
         {
-            return getPoint(fromFactor, sectionMap);
+            return getPoint(FromFactor, sectionMap);
         }
 
         public Vector3 GetToPoint()
         {
-            return getPoint(toFactor, sectionMap);
+            return getPoint(ToFactor, sectionMap);
         }
 
         public float GetAccelatedSpeed()
         {
-            var factor = (float)index / (float)sectionMap.numLines;
+            var factor = (float)index / (float)sectionMap.NumLines;
             return sectionMap.GetAccelatedSpeed(factor);
         }
 
@@ -64,7 +64,7 @@ namespace Hedwig.RTSCore.Model
 
         public override string ToString()
         {
-            return $"TrajectoryLineMap([{index}] {fromFactor} - {toFactor} (section: {sectionMap}))";
+            return $"TrajectoryLineMap([{index}] {FromFactor} - {ToFactor} (section: {sectionMap}))";
         }
 
         public TrajectoryLineMap(
@@ -75,8 +75,8 @@ namespace Hedwig.RTSCore.Model
         {
             this.sectionMap = sectionMap;
             this.index = index;
-            this.fromFactor = fromFactor;
-            this.toFactor = totFactor;
+            this.FromFactor = fromFactor;
+            this.ToFactor = totFactor;
         }
     }
 
@@ -88,23 +88,24 @@ namespace Hedwig.RTSCore.Model
         List<TrajectoryLineMap> _lineMaps = new List<TrajectoryLineMap>();
         List<TrajectoryLineMap> _dynamicLineMaps = new List<TrajectoryLineMap>();
 
-        public Vector3 from { get; private set; }
-        public Vector3 to { get; private set; }
-        public Vector3 baseEnd { get; private set; }
-        public float minfactor { get; private set; }
-        public float maxfactor { get; private set; }
-        public List<Vector2> controlPoints { get => section.controlPoints; }
+        public Vector3 From { get; private set; }
+        public Vector3 To { get; private set; }
+        public Vector3 BaseEnd { get; private set; }
+        public float Minfactor { get; private set; }
+        public float Maxfactor { get; private set; }
+        public List<Vector2> ControlPoints { get => section.controlPoints; }
 
-        public Vector3 disrection { get => (this.to - this.from).normalized; }
-        public float distance { get => (this.to - this.from).magnitude; }
-        public float adjustMaxAngle { get => section.adjustMaxAngle; }
-        public int numLines { get => _lineMaps.Count; }
-        public float speed { get => parent.baseSpeed + additionalSpeed; }
-        public float additionalSpeed { get => parent.baseSpeed * section.speedFactor; }
+        public Vector3 Direction { get => (this.To - this.From).normalized; }
+        public float Distance { get => (this.To - this.From).magnitude; }
+
+        public float AdjustMaxAngle { get => section.adjustMaxAngle; }
+        public int NumLines { get => _lineMaps.Count; }
+        public float Speed { get => parent.baseSpeed + AdditionalSpeed; }
+        public float AdditionalSpeed { get => parent.baseSpeed * section.speedFactor; }
 
         float speedPower(float factor, int pow)
         {
-            return additionalSpeed * Mathf.Pow(factor, pow);
+            return AdditionalSpeed * Mathf.Pow(factor, pow);
         }
 
         public float GetAccelatedSpeed(float factor)
@@ -131,10 +132,9 @@ namespace Hedwig.RTSCore.Model
             return parent.baseSpeed + speedPower(factor, pow);
         }
 
-
         public bool IsCurve { get => section.IsCurve; }
         public bool IsFirst { get => index == 0; }
-        public bool IsLast { get => maxfactor == 1.0f; }
+        public bool IsLast { get => Maxfactor == 1.0f; }
         public bool IsHoming { get => section.type == TrajectorySectionType.Chase; }
 
         public void Clear()
@@ -145,7 +145,7 @@ namespace Hedwig.RTSCore.Model
         const float fixedTimestep = 0.02f;
 
         float getMinimumPointsPerFixedUpdate() {
-            return distance / (speed * fixedTimestep);
+            return Distance / (Speed * fixedTimestep);
         }
 
         void makeLines()
@@ -157,7 +157,7 @@ namespace Hedwig.RTSCore.Model
                 {
                     var fromFactor = (float)i / (float)(pointCount - 1);
                     var toFactor = (float)(i + 1) / (float)(pointCount - 1);
-                    if (i == pointCount - 1) { toFactor = maxfactor; }
+                    if (i == pointCount - 1) { toFactor = Maxfactor; }
                     _lineMaps.Add(new TrajectoryLineMap(
                         this,
                         i,
@@ -184,7 +184,7 @@ namespace Hedwig.RTSCore.Model
 
         public override string ToString()
         {
-            return $"Section({index},{section.type},{minfactor} - {maxfactor})";
+            return $"Section({index},{section.type},{Minfactor} - {Maxfactor})";
             //             return @$"TrajectoryMap([section:${index}]) type: {section.type}
             // factor: {minfactor} - {maxfactor}
             // points: {from} - {to} (baseEnd: {baseEnd})";
@@ -199,11 +199,11 @@ namespace Hedwig.RTSCore.Model
             this.parent = parent;
             this.index = index;
             this.section = section;
-            this.from = start;
-            this.baseEnd = baseEnd;
-            this.to = end;
-            this.minfactor = minfacator;
-            this.maxfactor = maxfactor;
+            this.From = start;
+            this.BaseEnd = baseEnd;
+            this.To = end;
+            this.Minfactor = minfacator;
+            this.Maxfactor = maxfactor;
             makeLines();
         }
     }

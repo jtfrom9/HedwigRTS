@@ -11,8 +11,8 @@ namespace Hedwig.RTSCore
 {
     public interface ITrajectoryLineMap
     {
-        float fromFactor { get; }
-        float toFactor { get; }
+        float FromFactor { get; }
+        float ToFactor { get; }
         bool IsFirst { get; }
 
         Vector3 GetFromPoint();
@@ -23,10 +23,10 @@ namespace Hedwig.RTSCore
 
     public interface ITrajectorySectionMap
     {
-        float adjustMaxAngle { get; }
-        int numLines { get; }
-        float speed { get; }
-        float additionalSpeed { get; }
+        float AdjustMaxAngle { get; }
+        int NumLines { get; }
+        float Speed { get; }
+        float AdditionalSpeed { get; }
 
         bool IsCurve { get; }
         bool IsHoming { get; }
@@ -65,6 +65,7 @@ namespace Hedwig.RTSCore
         IWeaponData? WeaponData { get; }
 
         Vector3[] MakePoints(Vector3 from, Vector3 to);
+
         bool HasMap { get; }
         ITrajectoryMap ToMap(Vector3 from, Vector3 to);
 
@@ -75,11 +76,6 @@ namespace Hedwig.RTSCore
     {
         IProjectile? Create(Vector3 start);
         IObservable<IProjectile> OnCreated { get; }
-    }
-
-    public enum ProjectileStatus
-    {
-        Init, Active, End
     }
 
     public enum ProjectileEndReason
@@ -106,25 +102,25 @@ namespace Hedwig.RTSCore
 
     public struct ProjectileEventArg
     {
-        public ProjectileEventType type;
-        public Collider? collider;
-        public RaycastHit? willHit;
-        public ProjectileEndReason? endReason;
-        public Ray? ray;
-        public float? maxDistance;
-        public Vector3? to;
-        public float? speed;
+        public ProjectileEventType Type;
+        public Collider? Collider;
+        public RaycastHit? WillHit;
+        public ProjectileEndReason? EndReason;
+        public Ray? Ray;
+        public float? MaxDistance;
+        public Vector3? To;
+        public float? Speed;
 
         public ProjectileEventArg(ProjectileEventType type)
         {
-            this.type = type;
-            this.collider = null;
-            this.willHit = null;
-            this.endReason = null;
-            this.ray = null;
-            this.maxDistance = null;
-            this.to = null;
-            this.speed = null;
+            this.Type = type;
+            this.Collider = null;
+            this.WillHit = null;
+            this.EndReason = null;
+            this.Ray = null;
+            this.MaxDistance = null;
+            this.To = null;
+            this.Speed = null;
         }
     }
 
@@ -132,7 +128,7 @@ namespace Hedwig.RTSCore
     {
         void Initialize(string name, Vector3 initial);
 
-        string name { get; }
+        string Name { get; }
         UniTask<bool> Move(Vector3 to, float speed);
         UniTask LastMove(float speed);
         IObservable<ProjectileEventArg> OnEvent { get; }
@@ -147,7 +143,7 @@ namespace Hedwig.RTSCore
 
     public interface IProjectile: IDisposable
     {
-        IProjectileController controller { get; }
+        IProjectileController Controller { get; }
         ProjectileEndReason EndReason { get; }
 
         IObservable<Unit> OnStarted { get; }
@@ -159,7 +155,7 @@ namespace Hedwig.RTSCore
 
     public interface ITrajectoryVisualizer
     {
-        bool visible { get; }
+        bool Visible { get; }
         void SetStartTarget(ITransform? target);
         void SetEndTarget(ITransform? target);
         void SetProjectile(IProjectileData? projectileObject);

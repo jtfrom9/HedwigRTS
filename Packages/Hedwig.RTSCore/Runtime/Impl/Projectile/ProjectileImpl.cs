@@ -69,18 +69,18 @@ namespace Hedwig.RTSCore.Impl
                 if (!line.IsFirst)
                 {
                     var angle = Vector3.Angle(dir, prevDir);
-                    if (section.adjustMaxAngle < angle)
+                    if (section.AdjustMaxAngle < angle)
                     {
                         var cross = Vector3.Cross(dir, prevDir);
                         var length = dir.magnitude;
-                        dir = Quaternion.AngleAxis(-section.adjustMaxAngle, cross) * prevDir;
+                        dir = Quaternion.AngleAxis(-section.AdjustMaxAngle, cross) * prevDir;
                         to = from + dir.normalized * length;
                     }
                 }
                 var exitLoop = await projectileController.Move(to, line.GetAccelatedSpeed());
                 if (exitLoop)
                     return true;
-                section.AddDynamicLine(index, line.fromFactor, line.toFactor);
+                section.AddDynamicLine(index, line.FromFactor, line.ToFactor);
                 from = to; // update next 'from' position
                 prevDir = dir;
             }
@@ -89,7 +89,7 @@ namespace Hedwig.RTSCore.Impl
 
         async UniTask mainLoop(IProjectileData projectileObject, ITransform target)
         {
-            var globalFromPoint = projectileController.transform.Position;
+            var globalFromPoint = projectileController.Transform.Position;
             var globalToPoint = target.Position + target.ShakeRandom(projectileObject.Shake);
 
             if (!projectileObject.HasMap) {
@@ -112,7 +112,7 @@ namespace Hedwig.RTSCore.Impl
                     var section = sections[0];
                     await projectileController.Move(
                         toSpearPoint(globalFromPoint, globalToPoint, projectileObject.Range),
-                        section.speed);
+                        section.Speed);
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Hedwig.RTSCore.Impl
         }
 
         #region IProjectile
-        IProjectileController IProjectile.controller { get => projectileController; }
+        IProjectileController IProjectile.Controller { get => projectileController; }
         ProjectileEndReason IProjectile.EndReason { get => endReason; }
 
         IObservable<Unit> IProjectile.OnStarted { get => onStarted; }
@@ -190,11 +190,11 @@ namespace Hedwig.RTSCore.Impl
 
         public override string ToString()
         {
-            return $"{projectileController.name}.Impl({endReason})";
+            return $"{projectileController.Name}.Impl({endReason})";
         }
 
         #region IHitObject
-        HitType IHitObject.type {
+        HitType IHitObject.Type {
             get
             {
                 switch (projectileData.Type)
@@ -206,25 +206,25 @@ namespace Hedwig.RTSCore.Impl
                 }
             }
         }
-        int IHitObject.attack { get => projectileData?.WeaponData?.Attack ?? 0; }
-        float IHitObject.power { get => projectileData?.WeaponData?.Power ?? 0; }
+        int IHitObject.Attack { get => projectileData?.WeaponData?.Attack ?? 0; }
+        float IHitObject.Power { get => projectileData?.WeaponData?.Power ?? 0; }
         float _speed;
-        float IHitObject.speed { get => _speed; }
-        Vector3 IHitObject.direction { get => projectileController.transform.Forward; }
-        Vector3 IHitObject.position { get => projectileController.transform.Position; }
+        float IHitObject.Speed { get => _speed; }
+        Vector3 IHitObject.Direction { get => projectileController.Transform.Forward; }
+        Vector3 IHitObject.Position { get => projectileController.Transform.Position; }
         #endregion
 
         void onHit(in ProjectileEventArg e)
         {
-            if (e.collider != null)
+            if (e.Collider != null)
             {
-                var hitHandler = e.collider.GetComponent<IHitHandler>();
+                var hitHandler = e.Collider.GetComponent<IHitHandler>();
                 if (hitHandler != null)
                 {
-                    if (e.endReason.HasValue && e.endReason.Value == ProjectileEndReason.CharactorHit)
+                    if (e.EndReason.HasValue && e.EndReason.Value == ProjectileEndReason.CharactorHit)
                     {
-                        var transform = projectileController.transform;
-                        var speed = e.speed!.Value;
+                        var transform = projectileController.Transform;
+                        var speed = e.Speed!.Value;
                         Debug.DrawLine(transform.Position,
                             transform.Position + transform.Forward * speed,
                             Color.red, 1f);
@@ -233,7 +233,7 @@ namespace Hedwig.RTSCore.Impl
                             transform.Position - transform.Forward * speed,
                             Color.green, 1f);
                     }
-                    _speed = e.speed!.Value;
+                    _speed = e.Speed!.Value;
                     hitHandler.OnHit(this);
                 }
             }
@@ -246,11 +246,11 @@ namespace Hedwig.RTSCore.Impl
 
             projectileController.OnEvent.Subscribe(e =>
             {
-                switch (e.type)
+                switch (e.Type)
                 {
                     case ProjectileEventType.Trigger:
-                        if (e.endReason.HasValue)
-                            this.endReason = e.endReason.Value;
+                        if (e.EndReason.HasValue)
+                            this.endReason = e.EndReason.Value;
                         onHit(e);
                         break;
                     case ProjectileEventType.Destroy:

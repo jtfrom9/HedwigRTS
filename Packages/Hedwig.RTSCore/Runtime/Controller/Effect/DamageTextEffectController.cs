@@ -55,7 +55,7 @@ namespace Hedwig.RTSCore.Controller
         {
             this.duration = param.duration;
             this.damage = damage;
-            transform.SetParent(parent.transform, false);
+            transform.SetParent(parent.Transform, false);
         }
         public UniTask Play() => _play();
         #endregion

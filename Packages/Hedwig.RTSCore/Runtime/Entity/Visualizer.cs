@@ -22,10 +22,10 @@ namespace Hedwig.RTSCore
     {
         void AddVisualizer(ITargetVisualizer targetVisualizer);
 
-        ITransform? transform { get; }
-        ISelectable? selectable { get; }
-        IVisualProperty? visualProperty { get; }
-        ICharactor? charactor { get; }
+        ITransform? Transform { get; }
+        ISelectable? Selectable { get; }
+        IVisualProperty? VisualProperty { get; }
+        ICharactor? Charactor { get; }
     }
 
     public interface ITargetVisualizer: IDisposable

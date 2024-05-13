@@ -10,10 +10,12 @@ using UniRx.Triggers;
 
 namespace Hedwig.RTSCore
 {
-    public interface ILauncherController
+    public interface ILauncherHandlerEvent
     {
-        ITransform mazzle { get; }
-        void Initialize(ILauncher launcher);
+        void OnShowTrajectory(bool v);
+        void OnBeforeFire();
+        void OnAfterFire();
+        void OnFired(IProjectile projectile);
     }
 
     public interface ILauncherHandler : IDisposable
@@ -24,23 +26,21 @@ namespace Hedwig.RTSCore
         void Error();
     }
 
-    public interface ILauncherHandlerEvent
+    public interface ILauncherController
     {
-        void OnShowTrajectory(bool v);
-        void OnBeforeFire();
-        void OnAfterFire();
-        void OnFired(IProjectile projectile);
+        ITransform Mazzle { get; }
+        void Initialize(ILauncher launcher);
     }
 
     public interface ILauncher : IDisposable
     {
         void Initialize();
 
-        IProjectileData? projectileObject { get; }
+        IProjectileData? ProjectileData { get; }
         void SetProjectile(IProjectileData? projectileObject, ProjectileOption? option = null);
         UniTask SetProjectileAsync(IProjectileData? projectileObject, ProjectileOption? option = null, CancellationToken cancellationToken=default);
 
-        ITransformProvider? target { get; }
+        ITransformProvider? Target { get; }
         void SetTarget(ITransformProvider? target);
 
         IReadOnlyReactiveProperty<bool> CanFire { get; }

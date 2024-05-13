@@ -187,9 +187,9 @@ Distance: {projectile.Range}
             var speed = 20f;
             this.UpdateAsObservable().Where(_ => cursor != null).Subscribe(_ =>
             {
-                var diff = cursor!.transform.Position - cameraTarget.position;
+                var diff = cursor!.Transform.Position - cameraTarget.position;
                 if(diff.magnitude < 0.1f) {
-                    cameraTarget.position = cursor!.transform.Position;
+                    cameraTarget.position = cursor!.Transform.Position;
                 }else
                 {
                     cameraTarget.position += diff.normalized * Time.deltaTime * speed;
