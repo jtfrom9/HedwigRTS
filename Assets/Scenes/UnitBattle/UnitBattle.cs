@@ -30,7 +30,7 @@ public class UnitBattle : LifetimeScope
         // builder.SetupVisualizer(globalVisualizersObject);
     }
 
-    void Start()
+    async void Start()
     {
         if (defaultEnemyObject == null)
         {
@@ -40,14 +40,18 @@ public class UnitBattle : LifetimeScope
         Debug.Log($"enemyManager = {enemyManager}");
         enemyManager.Initialize(defaultEnemyObject);
 
-        var e1 = enemyManager.Spawn(defaultEnemyObject, Vector3.up * 10);
-        var e2 = enemyManager.Spawn(defaultEnemyObject, new Vector3(-10, 3, -10));
+        var e1 = enemyManager.Spawn(defaultEnemyObject, new Vector3(9, 3, 17));
+        var e2 = enemyManager.Spawn(defaultEnemyObject, new Vector3(-15, 3, -6));
+
+        await UniTask.NextFrame();
+        Debug.Log(e1.Transform.Position);
+        Debug.Log(e2.Transform.Position);
 
         UniTask.Create(async () => {
             for (int i = 0; i < 20; i++) {
                 await UniTask.Delay(2000);
-                var x = Random.Range(-10, 10);
-                var z = Random.Range(-10, 10);
+                var x = -4 + Random.Range(-5, 5);
+                var z = 5 + Random.Range(-5, 5);
                 e1.SetDestination(new Vector3(x, 0, z));
             }
          }).Forget();

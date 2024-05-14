@@ -56,7 +56,9 @@ namespace Hedwig.RTSCore.Controller
         {
             if (position.HasValue)
             {
+                _agent!.enabled = false;
                 transform.position = position.Value;
+                _agent!.enabled = true;
             }
             this.initialPosition = transform.position;
             this.initialRotation = transform.rotation;
@@ -88,11 +90,11 @@ namespace Hedwig.RTSCore.Controller
         }
         #endregion
 
-        #region IMobileObject
+        #region ITransformProvider
         ITransform ITransformProvider.Transform { get => _transform; }
         #endregion
 
-        #region ICharactor
+        #region IVisualProperty
         float IVisualProperty.DistanceToGround
         {
             get {
