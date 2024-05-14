@@ -17,7 +17,8 @@ namespace Hedwig.RTSCore.Impl
 
         ReactiveProperty<int> health;
 
-        int calcDamage(IHitObject hitObject) {
+        int calcDamage(IHitObject hitObject)
+        {
             return hitObject.Attack;
         }
 
@@ -29,7 +30,7 @@ namespace Hedwig.RTSCore.Impl
         void applyDamage(int actualDamage)
         {
             this.health.Value -= actualDamage;
-            if(this.health.Value <0) this.health.Value = 0;
+            if (this.health.Value < 0) this.health.Value = 0;
             Debug.Log($"{this}: applyDamage: actualDamage={actualDamage}, health={health}");
         }
 
@@ -100,12 +101,14 @@ namespace Hedwig.RTSCore.Impl
         void IEnemy.ResetPos() => enemyController.ResetPos();
         #endregion
 
+        #region ITransformProvider
+        ITransform ITransformProvider.Transform { get => Controller.Transform; }
+        #endregion
+
         #region IVisualizerTarget
         void IVisualizerTarget.AddVisualizer(ITargetVisualizer targetVisualizer) => visualizers.Add(targetVisualizer);
-        ITransform? IVisualizerTarget.Transform { get => Controller.Transform; }
-        ISelectable? IVisualizerTarget.Selectable { get => this; }
-        IVisualProperty? IVisualizerTarget.VisualProperty { get => Controller.GetProperty(); }
-        ICharactor? IVisualizerTarget.Charactor { get => this; }
+        ISelectable IVisualizerTarget.Selectable { get => this; }
+        IVisualProperty IVisualizerTarget.VisualProperty { get => Controller.GetProperty(); }
         #endregion
 
         public override string ToString()

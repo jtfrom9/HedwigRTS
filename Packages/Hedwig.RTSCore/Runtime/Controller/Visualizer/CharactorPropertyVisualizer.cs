@@ -43,13 +43,14 @@ namespace Hedwig.RTSCore.Controller
 
         void ITargetVisualizer.Initialize(IVisualizerTarget target)
         {
-            if(target.Transform==null || target.Charactor==null || target.VisualProperty==null) {
-                return;
+            if (target is ICharactor charactor)
+            {
+                charactor.Health.Subscribe(v =>
+                {
+                    if (_textMesh != null)
+                        _textMesh.text = $"{v}";
+                }).AddTo(this);
             }
-            target.Charactor.Health.Subscribe(v => {
-                if(_textMesh!=null)
-                    _textMesh.text = $"{v}";
-            }).AddTo(this);
             init(target.Transform, target.VisualProperty);
         }
     }

@@ -40,7 +40,7 @@ namespace Hedwig.RTSCore
         void OnHit(IHitObject hitObject);
     }
 
-    public interface IEnemy : IDisposable, ICharactor, IVisualizerTarget
+    public interface IEnemy : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget
     {
         void SetDestination(Vector3 pos);
         void Stop();

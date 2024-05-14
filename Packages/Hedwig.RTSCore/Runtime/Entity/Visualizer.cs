@@ -18,14 +18,12 @@ namespace Hedwig.RTSCore
         IFreeCursorVisualizer CreateFreeCursor();
     }
 
-    public interface IVisualizerTarget
+    public interface IVisualizerTarget: ITransformProvider
     {
         void AddVisualizer(ITargetVisualizer targetVisualizer);
 
-        ITransform? Transform { get; }
-        ISelectable? Selectable { get; }
-        IVisualProperty? VisualProperty { get; }
-        ICharactor? Charactor { get; }
+        ISelectable Selectable { get; }
+        IVisualProperty VisualProperty { get; }
     }
 
     public interface ITargetVisualizer: IDisposable
