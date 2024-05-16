@@ -4,14 +4,19 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UnityEditor.PackageManager;
+using Cysharp.Threading.Tasks;
 
 namespace Hedwig.RTSCore.Impl
 {
     public class EnemyImpl : IEnemy, IEnemyControllerEvent, ISelectable
     {
+        IEnemyManager enemyManager;
+        string? _name;
         IEnemyData enemyData;
         IEnemyController enemyController;
         IEnemyEvent enemyEvent;
+        int actionState = 0;
         List<ITargetVisualizer> visualizers = new List<ITargetVisualizer>();
         ReactiveProperty<bool> _selected = new ReactiveProperty<bool>();
 
@@ -63,6 +68,46 @@ namespace Hedwig.RTSCore.Impl
             raiseEvent(null, damageEvent);
         }
 
+        UnitActionStateRunningStore state = new UnitActionStateRunningStore();
+        ISubject<UnitActionStateRunningStore> _onStateChanged = new Subject<UnitActionStateRunningStore>();
+
+        void doAction(int msecToNextTick)
+        {
+            if (enemyData.StateHolder.States.Count == 0)
+            {
+                Debug.LogError($"Invalid States Count", context: Controller.Context);
+                return;
+            }
+            if (state.currentState == null)
+            {
+                state.currentState = enemyData.StateHolder.States[0];
+            }
+            var currentState = state.currentState;
+            var next = state.currentState.Execute(this, state);
+            if (next >= 0)
+            {
+                if (next >= enemyData.StateHolder.States.Count)
+                {
+                    Debug.LogError($"[{Name}] Invalid State: next={next}", context: Controller.Context);
+                    state.currentState = null;
+                }
+                else
+                {
+                    state.currentState = enemyData.StateHolder.States[next];
+                    state.countTick = 0;
+                    state.elapsedMsec = 0;
+                    // Debug.Log($"[{Name}][State] {currentState.Name} -> {state.currentState.Name}");
+                    _onStateChanged.OnNext(state);
+                }
+            }
+            else
+            {
+                state.countTick++;
+                state.elapsedMsec += msecToNextTick;
+                // Debug.Log($"[{Name}][State] {currentState.Name}");
+            }
+        }
+
         #region IEnemyControllerEvent
         void IEnemyControllerEvent.OnHit(IHitObject hitObject)
         {
@@ -92,6 +137,8 @@ namespace Hedwig.RTSCore.Impl
         #endregion
 
         #region IEnemy
+        public string Name { get => _name ?? Controller.Name; }
+        public IEnemyManager Manager { get => enemyManager; }
         public void SetDestination(Vector3 pos) => enemyController.SetDestination(pos);
         public void Stop() => enemyController.Stop();
 
@@ -99,6 +146,11 @@ namespace Hedwig.RTSCore.Impl
 
         void IEnemy.Damaged(int damage) => damaged(damage);
         void IEnemy.ResetPos() => enemyController.ResetPos();
+        #endregion
+
+        #region IUnit
+        void IUnit.DoAction(int nextTick) => doAction(nextTick);
+        IObservable<UnitActionStateRunningStore> IUnit.OnStateChanged { get => _onStateChanged; }
         #endregion
 
         #region ITransformProvider
@@ -116,12 +168,15 @@ namespace Hedwig.RTSCore.Impl
             return $"{Controller.Name}.Impl({enemyData.Name})";
         }
 
-        public EnemyImpl(IEnemyData enemyData, IEnemyController enemyController, IEnemyEvent enemyEvent)
+        public EnemyImpl(IEnemyManager enemyManager, IEnemyData enemyData, IEnemyController enemyController, IEnemyEvent enemyEvent, string? name = null)
         {
+            this.enemyManager = enemyManager;
+            this._name = name;
             this.enemyData = enemyData;
             this.enemyController = enemyController;
             this.enemyEvent = enemyEvent;
             this.health = new ReactiveProperty<int>(enemyData.MaxHealth);
+            this.Controller.SeDebugUnit(this);
         }
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine;
 
 using UniRx;
 using Cysharp.Threading.Tasks;
+using PlasticGui.WorkspaceWindow;
 
 namespace Hedwig.RTSCore
 {
@@ -24,7 +25,7 @@ namespace Hedwig.RTSCore
 
     public interface IEnemyController: ITransformProvider
     {
-        void Initialize(string name, IEnemyControllerEvent controllerEvent, Vector3? position);
+        void Initialize(IEnemyControllerEvent controllerEvent, Vector3? position, string? name);
 
         string Name { get; }
         void SetDestination(Vector3 pos);
@@ -33,6 +34,10 @@ namespace Hedwig.RTSCore
 
         void ResetPos(); // to bedeelted
         void Knockback(Vector3 direction, float power);
+
+        GameObject Context{ get; }
+
+        void SeDebugUnit(IUnit unit);
     }
 
     public interface IEnemyControllerEvent
@@ -40,8 +45,18 @@ namespace Hedwig.RTSCore
         void OnHit(IHitObject hitObject);
     }
 
-    public interface IEnemy : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget
+    public interface IUnit
     {
+        void DoAction(int nextTick);
+        IObservable<UnitActionStateRunningStore> OnStateChanged { get; }
+    }
+
+    public interface IEnemy : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget, IUnit
+    {
+        string Name { get; }
+
+        IEnemyManager Manager { get; }
+
         void SetDestination(Vector3 pos);
         void Stop();
 
@@ -57,10 +72,28 @@ namespace Hedwig.RTSCore
         void OnDeath(IEnemy enemy);
     }
 
-
     public interface IEnemyControllerRepository
     {
         IEnemyController[] GetEnemyController();
+    }
+
+    public class UnitActionStateRunningStore
+    {
+        public IUnitActionState? currentState;
+        public int countTick;
+        public int elapsedMsec;
+        public ITransformProvider? target;
+    }
+
+    public interface IUnitActionState
+    {
+        string Name{ get; }
+        int Execute(IEnemy unit, UnitActionStateRunningStore state);
+    }
+
+    public interface IUnitActionStateHolder
+    {
+        IReadOnlyList<IUnitActionState> States{ get; }
     }
 
     public interface IEnemyData
@@ -69,17 +102,18 @@ namespace Hedwig.RTSCore
         int MaxHealth { get; }
         int Attack { get; }
         int Deffence { get; }
+        IUnitActionStateHolder StateHolder { get; }
     }
 
     public interface IEnemyFactory
     {
-        IEnemy? Create(IEnemyEvent enemyEvent, Vector3? position);
+        IEnemy? Create(IEnemyManager manager, IEnemyEvent enemyEvent, Vector3? position, string? name);
     }
 
     public interface IEnemyManager : IDisposable
     {
         IReadOnlyReactiveCollection<IEnemy> Enemies { get; }
-        IEnemy Spawn(IEnemyFactory enemyFactory, Vector3 position);
+        IEnemy Spawn(IEnemyFactory enemyFactory, Vector3 position, string? name = null);
 
         void Initialize(IEnemyData defaultEnemyObject);
     }
@@ -116,6 +150,17 @@ namespace Hedwig.RTSCore
             foreach(var enemy in manager.Enemies) {
                 enemy.Stop();
             }
+        }
+
+        public static IEnemy? ChoiceOne(this IEnemyManager manager, IEnemy self)
+        {
+            foreach(var enemy in manager.Enemies) {
+                if (enemy != self)
+                {
+                    return enemy;
+                }
+            }
+            return null;
         }
     }
 }

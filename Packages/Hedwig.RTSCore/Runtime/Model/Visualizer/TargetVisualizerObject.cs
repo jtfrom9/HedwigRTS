@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityEngine.Search;
 
-namespace Hedwig.RTSCore
+namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName ="Hedwig/Visualizer/TargetVisualizer", fileName ="TargetVisualizer")]
     public class TargetVisualizerObject : ScriptableObject

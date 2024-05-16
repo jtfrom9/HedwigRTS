@@ -57,8 +57,8 @@ namespace Hedwig.RTSCore.Impl
 
         IEnemy? addEnemyWithDefaultObject(IEnemyController enemyController, IEnemyData enemyObject)
         {
-            var enemy = new EnemyImpl(enemyObject, enemyController, this);
-            enemyController.Initialize("", enemy, null);
+            var enemy = new EnemyImpl(this, enemyObject, enemyController, this);
+            enemyController.Initialize(enemy, null, name: null);
             addEnemy(enemy);
             return enemy;
         }
@@ -66,9 +66,9 @@ namespace Hedwig.RTSCore.Impl
         #region IEnemyManager
         IReadOnlyReactiveCollection<IEnemy> IEnemyManager.Enemies { get => _enemies; }
 
-        IEnemy IEnemyManager.Spawn(IEnemyFactory enemyFactory, Vector3 position)
+        IEnemy IEnemyManager.Spawn(IEnemyFactory enemyFactory, Vector3 position, string? name)
         {
-            var enemy = enemyFactory.Create(this, position);
+            var enemy = enemyFactory.Create(this, this, position, name);
             if (enemy == null)
             {
                 throw new InvalidCastException("fail to spwawn");

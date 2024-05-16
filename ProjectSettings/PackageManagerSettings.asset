@@ -32,6 +32,7 @@ MonoBehaviour:
     m_Scopes:
     - com.cysharp.unitask
     - com.jtfrom9.input-observable
+    - com.mackysoft.serializereference-extensions
     - com.neuecc.unirx
     - com.openupm
     - garettbass.unity-extensions.inspect-in-line
@@ -52,6 +53,6 @@ MonoBehaviour:
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -822
-    m_OriginalInstanceId: -826
+    m_UserModificationsInstanceId: -842
+    m_OriginalInstanceId: -846
   m_LoadAssets: 0

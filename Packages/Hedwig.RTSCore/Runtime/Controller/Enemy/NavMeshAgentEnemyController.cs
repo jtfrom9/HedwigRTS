@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Cysharp.Threading.Tasks;
+using UnityEditorInternal;
+using UniRx;
 
 namespace Hedwig.RTSCore.Controller
 {
     public class NavMeshAgentEnemyController : ControllerBase, IEnemyController, IVisualProperty, IHitHandler
     {
-        string _name = "";
+        string _name;
         IEnemyControllerEvent? controllerEvent;
         ITransform _transform = new CachedTransform();
         NavMeshAgent? _agent;
@@ -25,6 +27,9 @@ namespace Hedwig.RTSCore.Controller
         float? _distanceToHead;
 
         CancellationTokenSource cts = new CancellationTokenSource();
+
+        [SerializeField]
+        string CurrentState;
 
         void Awake()
         {
@@ -161,21 +166,24 @@ namespace Hedwig.RTSCore.Controller
             return this;
         }
 
-        static int count = 0;
-        [RuntimeInitializeOnLoadMethod]
-        void _InitializeOnEnterPlayMode()
-        {
-            count = 0;
+        GameObject IEnemyController.Context { get => gameObject; }
+
+        void IEnemyController.SeDebugUnit(IUnit unit) {
+            unit.OnStateChanged.Subscribe(state => {
+                CurrentState = state.currentState!.Name;
+            }).AddTo(this);
         }
 
-        void IEnemyController.Initialize(string name, IEnemyControllerEvent controllerEvent, Vector3? position)
+        void IEnemyController.Initialize(IEnemyControllerEvent controllerEvent, Vector3? position, string? name)
         {
-            if (gameObject.name == "")
+            if (name != null)
             {
-                gameObject.name = $"{name}_{count}";
-                count++;
+                gameObject.name = name;
             }
-            _name = gameObject.name;
+            else
+            {
+                _name = gameObject.name;
+            }
             this.controllerEvent = controllerEvent;
             this.initialize(position);
         }

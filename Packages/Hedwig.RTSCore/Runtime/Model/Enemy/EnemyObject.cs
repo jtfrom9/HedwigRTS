@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 
+using UnityExtensions;
 using Hedwig.RTSCore.Impl;
+using System.Linq;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -24,12 +26,16 @@ namespace Hedwig.RTSCore.Model
         [SerializeField]
         int _Deffence;
 
+        [SerializeField, InspectInline]
+        UnitActionObject _unitAction;
+
         public string Name { get => name; }
         public int MaxHealth { get => _MaxHealth; }
         public int Attack { get => _Attack; }
         public int Deffence { get => _Deffence; }
+        public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
-        IEnemy? IEnemyFactory.Create(IEnemyEvent enemyEvent, Vector3? position)
+        IEnemy? IEnemyFactory.Create(IEnemyManager manager, IEnemyEvent enemyEvent, Vector3? position, string? name)
         {
             if (prefab == null) return null;
             var go = Instantiate(prefab);
@@ -39,8 +45,8 @@ namespace Hedwig.RTSCore.Model
                 Destroy(go);
                 return null;
             }
-            var enemy = new EnemyImpl(this, enemyController, enemyEvent);
-            enemyController.Initialize(this.name, enemy, position);
+            var enemy = new EnemyImpl(manager, this, enemyController, enemyEvent, name);
+            enemyController.Initialize(enemy, position, name);
             return enemy;
         }
     }

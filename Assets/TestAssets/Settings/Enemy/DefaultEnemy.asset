@@ -16,3 +16,4 @@ MonoBehaviour:
   _MaxHealth: 100
   _Attack: 0
   _Deffence: 0
+  _unitAction: {fileID: 11400000, guid: c963f9ae3b456453cb7399e399786d34, type: 2}

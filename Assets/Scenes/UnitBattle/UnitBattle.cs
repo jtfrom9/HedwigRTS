@@ -5,63 +5,104 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using UnityExtensions;
+using UniRx;
 
 using Hedwig.RTSCore;
 using Hedwig.RTSCore.Model;
+using Hedwig.RTSCore.InputObservable;
+
 using Cysharp.Threading.Tasks;
 
 public class UnitBattle : LifetimeScope
 {
     // Inject
     [SerializeField, InspectInline] EnemyManagerObject? enemyManagerObject;
-    [SerializeField, InspectInline] EnemyObject? defaultEnemyObject;
-    // [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
+    [SerializeField, InspectInline] EnemyObject? playerObject;
+    [SerializeField, InspectInline] EnemyObject? enemyObject;
+    [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
+    [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
 
     // [SerializeField, InspectInline] List<ProjectileObject> projectiles = new List<ProjectileObject>();
     // [SerializeField] List<Vector3> spawnPoints = new List<Vector3>();
 
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     [Inject] IEnemyManager enemyManager;
-    #pragma warning restore CS8618
+    [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
+    [Inject] IMouseOperation mouseOperation;
+#pragma warning restore CS8618
 
     protected override void Configure(IContainerBuilder builder)
     {
         builder.SetupEnemyManager(enemyManagerObject);
-        // builder.SetupVisualizer(globalVisualizersObject);
+        builder.SetupVisualizer(globalVisualizersObject);
+        builder.Setup(inputObservableCusrorManager);
+    }
+
+    void setupMouse(IMouseOperation mouseOperation, IGlobalVisualizerFactory globalVisualizerFactory, IEnemy player)
+    {
+        IFreeCursorVisualizer? cursor = null;
+        Vector3 pos = default;
+        mouseOperation.OnMove.Subscribe(e =>
+        {
+            switch (e.type)
+            {
+                case MouseMoveEventType.Enter:
+                    Debug.Log("Enter");
+                    if (cursor == null)
+                    {
+                        cursor = globalVisualizerFactory.CreateFreeCursor();
+                        cursor.Move(e.position);
+                        pos = e.position;
+                    }
+                    break;
+                case MouseMoveEventType.Over:
+                    cursor?.Move(e.position);
+                    pos = e.position;
+                    break;
+                case MouseMoveEventType.Exit:
+                    Debug.Log("Exit");
+                    if (cursor != null)
+                    {
+                        cursor.Dispose();
+                        cursor = null;
+                    }
+                    break;
+            }
+        }).AddTo(this);
+
+        mouseOperation.OnLeftClick.Subscribe(e =>
+        {
+            player.SetDestination(pos);
+        }).AddTo(this);
     }
 
     async void Start()
     {
-        if (defaultEnemyObject == null)
+        if (playerObject == null || enemyObject == null || globalVisualizerFactory == null || mouseOperation == null)
         {
             Debug.LogError("Invalid");
             return;
         }
         Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.Initialize(defaultEnemyObject);
+        enemyManager.Initialize(enemyObject);
 
-        var e1 = enemyManager.Spawn(defaultEnemyObject, new Vector3(9, 3, 17));
-        var e2 = enemyManager.Spawn(defaultEnemyObject, new Vector3(-15, 3, -6));
+        var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
+        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy");
+
+        setupMouse(mouseOperation, globalVisualizerFactory, player);
 
         await UniTask.NextFrame();
-        Debug.Log(e1.Transform.Position);
-        Debug.Log(e2.Transform.Position);
-
-        UniTask.Create(async () => {
-            for (int i = 0; i < 20; i++) {
-                await UniTask.Delay(2000);
-                var x = -4 + Random.Range(-5, 5);
-                var z = 5 + Random.Range(-5, 5);
-                e1.SetDestination(new Vector3(x, 0, z));
-            }
-         }).Forget();
 
         UniTask.Create(async () =>
         {
-            while(true)
+            int tick = 100;
+            while (true)
             {
-                await UniTask.Delay(300);
-                e2.SetDestination(e1.Transform!.Position);
+                foreach (var enemy in enemyManager.Enemies)
+                {
+                    enemy.DoAction(tick);
+                }
+                await UniTask.Delay(tick);
             }
         }).Forget();
     }
