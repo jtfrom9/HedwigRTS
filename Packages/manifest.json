@@ -17,6 +17,7 @@
     "com.unity.visualscripting": "1.9.2",
     "garettbass.unity-extensions.inspect-in-line": "0.2.0",
     "jp.hadashikick.vcontainer": "1.11.0",
+    "jp.keijiro.metatex": "1.0.4",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -60,6 +61,13 @@
         "com.openupm",
         "garettbass.unity-extensions.inspect-in-line",
         "jp.hadashikick.vcontainer"
+      ]
+    },
+    {
+      "name": "Keijiro",
+      "url": "https://registry.npmjs.com",
+      "scopes": [
+        "jp.keijiro"
       ]
     }
   ]
