@@ -3,18 +3,21 @@
 using System;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Assertions;
 
 namespace Hedwig.RTSCore.Controller
 {
     public class QuadPointIndicator: MonoBehaviour, IPointIndicator
     {
-        [SerializeField] MeshRenderer renderer;
+        [SerializeField] MeshRenderer? _renderer;
 
         ITransform _transform = new CachedTransform();
         bool _disposed = false;
 
         void Awake()
         {
+            Assert.AreNotEqual(_renderer, null);
+
             _transform.Initialize(transform);
         }
 
@@ -42,7 +45,10 @@ namespace Hedwig.RTSCore.Controller
 
         void IPointIndicator.SetColor(Color color)
         {
-            renderer.material.color = color;
+            if (_renderer != null)
+            {
+                _renderer.material.color = color;
+            }
         }
 
         void IDisposable.Dispose()

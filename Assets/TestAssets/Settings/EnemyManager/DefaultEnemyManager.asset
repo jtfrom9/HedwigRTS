@@ -20,3 +20,4 @@ MonoBehaviour:
   targetVisualizers:
   - {fileID: 11400000, guid: 3f29026d7a89e4e20b2cc97e776f0270, type: 2}
   - {fileID: 11400000, guid: 3454dad39d66a48ebaba10a4cf86e2cd, type: 2}
+  - {fileID: 11400000, guid: 55ddfab5ce23b44699b8f4a97564be2d, type: 2}

@@ -68,8 +68,38 @@ namespace Hedwig.RTSCore.Impl
             raiseEvent(null, damageEvent);
         }
 
-        UnitActionStateRunningStore state = new UnitActionStateRunningStore();
-        ISubject<UnitActionStateRunningStore> _onStateChanged = new Subject<UnitActionStateRunningStore>();
+        public class UnitActionStateRunningStore : IUnitActionStateExecutorStatus
+        {
+            public IUnitActionStateExecutor? CurrentState { get; set; }
+            public int CountTick { get; set; }
+            public int ElapsedMsec { get; set; }
+
+            IUnit? _target = null;
+            Action<IUnit?> _onTargetChanged;
+
+            public IUnit? Target
+            {
+                get => _target;
+                set
+                {
+                    if (_target != value)
+                    {
+                        _onTargetChanged.Invoke(value);
+                    }
+                    _target = value;
+                }
+            }
+
+            public UnitActionStateRunningStore(Action<IUnit?> onTargetChanged)
+            {
+                _onTargetChanged = onTargetChanged;
+            }
+        }
+
+        ISubject<IUnitActionStateExecutor> _onStateChanged = new Subject<IUnitActionStateExecutor>();
+        ISubject<IUnit?> _onStateTargetChanged = new Subject<IUnit?>();
+
+        UnitActionStateRunningStore state;
 
         void doAction(int msecToNextTick)
         {
@@ -78,32 +108,32 @@ namespace Hedwig.RTSCore.Impl
                 Debug.LogError($"Invalid States Count", context: Controller.Context);
                 return;
             }
-            if (state.currentState == null)
+            if (state.CurrentState == null)
             {
-                state.currentState = enemyData.StateHolder.States[0];
+                state.CurrentState = enemyData.StateHolder.States[0];
             }
-            var currentState = state.currentState;
-            var next = state.currentState.Execute(this, state);
+            var currentState = state.CurrentState;
+            var next = state.CurrentState.Execute(this, state);
             if (next >= 0)
             {
                 if (next >= enemyData.StateHolder.States.Count)
                 {
                     Debug.LogError($"[{Name}] Invalid State: next={next}", context: Controller.Context);
-                    state.currentState = null;
+                    state.CurrentState = null;
                 }
                 else
                 {
-                    state.currentState = enemyData.StateHolder.States[next];
-                    state.countTick = 0;
-                    state.elapsedMsec = 0;
+                    state.CurrentState = enemyData.StateHolder.States[next];
+                    state.CountTick = 0;
+                    state.ElapsedMsec = 0;
                     // Debug.Log($"[{Name}][State] {currentState.Name} -> {state.currentState.Name}");
-                    _onStateChanged.OnNext(state);
+                    _onStateChanged.OnNext(state.CurrentState);
                 }
             }
             else
             {
-                state.countTick++;
-                state.elapsedMsec += msecToNextTick;
+                state.CountTick++;
+                state.ElapsedMsec += msecToNextTick;
                 // Debug.Log($"[{Name}][State] {currentState.Name}");
             }
         }
@@ -152,7 +182,8 @@ namespace Hedwig.RTSCore.Impl
 
         #region IUnit
         void IUnitActionRunner.DoAction(int nextTick) => doAction(nextTick);
-        IObservable<UnitActionStateRunningStore> IUnitActionRunner.OnStateChanged { get => _onStateChanged; }
+        IObservable<IUnitActionStateExecutor> IUnitActionRunner.OnStateChanged { get => _onStateChanged; }
+        IObservable<IUnit?> IUnitActionRunner.OnTargetChanged { get => _onStateTargetChanged; }
         #endregion
 
         #region ITransformProvider
@@ -179,6 +210,8 @@ namespace Hedwig.RTSCore.Impl
             this.enemyEvent = enemyEvent;
             this.health = new ReactiveProperty<int>(enemyData.MaxHealth);
             this.Controller.SeDebugUnit(this);
+
+            this.state = new UnitActionStateRunningStore(onTargetChanged: (target) => _onStateTargetChanged.OnNext(target));
         }
     }
 }

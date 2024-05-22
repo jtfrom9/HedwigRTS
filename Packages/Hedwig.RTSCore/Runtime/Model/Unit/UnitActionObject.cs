@@ -14,22 +14,22 @@ namespace Hedwig.RTSCore.Model
     public class UnitActionObject : ScriptableObject, IUnitActionStateHolder
     {
         [SerializeReference, SubclassSelector]
-        List<IUnitActionState> states;
+        List<IUnitActionStateExecutor> states;
 
-        IReadOnlyList<IUnitActionState> IUnitActionStateHolder.States { get => states; }
+        IReadOnlyList<IUnitActionStateExecutor> IUnitActionStateHolder.States { get => states; }
     }
 
     [Serializable]
-    public class IdleState : IUnitActionState
+    public class IdleState : IUnitActionStateExecutor
     {
         [SerializeField] int msec;
         [SerializeField] int nextIndex;
 
         public string Name { get => "Idle"; }
 
-        public int Execute(IUnit unit, UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
         {
-            if (state.elapsedMsec > msec)
+            if (state.ElapsedMsec > msec)
             {
                 return nextIndex;
             }
@@ -41,7 +41,7 @@ namespace Hedwig.RTSCore.Model
     }
 
     [Serializable]
-    public class ApproachState : IUnitActionState
+    public class ApproachState : IUnitActionStateExecutor
     {
         [SerializeField] float distance;
         [SerializeField] int notFoundIndex;
@@ -49,14 +49,15 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => "Approach"; }
 
-        public int Execute(IUnit unit, UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
         {
-            if (state.target != null)
+            if (state.Target != null)
             {
-                var dist = Vector3.Distance(state.target.Transform.Position, unit.Transform.Position);
+                var dist = Vector3.Distance(state.Target.Transform.Position, unit.Transform.Position);
                 if (dist <= distance)
                 {
-                    state.target = null;
+                    unit.Stop();
+                    state.Target = null;
                     return onReachedNextIndex;
                 }
             }
@@ -65,14 +66,14 @@ namespace Hedwig.RTSCore.Model
             {
                 return notFoundIndex;
             }
-            state.target = target;
+            state.Target = target;
             unit.SetDestination(target.Transform.Position);
             return -1;
         }
     }
 
     [Serializable]
-    public class RandomMoveAction : IUnitActionState
+    public class RandomMoveAction : IUnitActionStateExecutor
     {
         [SerializeField] Vector2 Min = Vector2.zero;
         [SerializeField] Vector2 Max = Vector2.one;
@@ -81,9 +82,9 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => "Random"; }
 
-        public int Execute(IUnit unit, RTSCore.UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
         {
-            if (state.elapsedMsec > msec)
+            if (state.ElapsedMsec > msec)
             {
                 return nextIndex;
             }

@@ -30,6 +30,8 @@ namespace Hedwig.RTSCore.Controller
 
         [SerializeField]
         string CurrentState;
+        [SerializeField]
+        string Target;
 
         void Awake()
         {
@@ -170,7 +172,7 @@ namespace Hedwig.RTSCore.Controller
 
         void IUnitController.SeDebugUnit(IUnitActionRunner unit) {
             unit.OnStateChanged.Subscribe(state => {
-                CurrentState = state.currentState!.Name;
+                CurrentState = state.Name;
             }).AddTo(this);
         }
 

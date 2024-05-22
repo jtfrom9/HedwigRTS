@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 namespace Hedwig.RTSCore
@@ -10,29 +11,30 @@ namespace Hedwig.RTSCore
     //
     // UniAction
     //
-    public class UnitActionStateRunningStore
+    public interface IUnitActionStateExecutorStatus
     {
-        public IUnitActionState? currentState;
-        public int countTick;
-        public int elapsedMsec;
-        public ITransformProvider? target;
+        IUnitActionStateExecutor? CurrentState { get; }
+        int CountTick { get; }
+        int ElapsedMsec { get; }
+        IUnit? Target { get; set; }
     }
 
-    public interface IUnitActionState
+    public interface IUnitActionStateExecutor
     {
         string Name { get; }
-        int Execute(IUnit unit, UnitActionStateRunningStore state);
+        int Execute(IUnit unit, IUnitActionStateExecutorStatus state);
     }
 
     public interface IUnitActionStateHolder
     {
-        IReadOnlyList<IUnitActionState> States { get; }
+        IReadOnlyList<IUnitActionStateExecutor> States { get; }
     }
 
     public interface IUnitActionRunner
     {
         void DoAction(int nextTick);
-        IObservable<UnitActionStateRunningStore> OnStateChanged { get; }
+        IObservable<IUnitActionStateExecutor> OnStateChanged { get; }
+        IObservable<IUnit?> OnTargetChanged { get; }
     }
     #endregion
 
