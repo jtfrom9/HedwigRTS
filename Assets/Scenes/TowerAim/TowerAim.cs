@@ -134,7 +134,7 @@ Distance: {projectile.Range}
 
     void setupMouse(IMouseOperation mouseOperation, ILauncher launcher, IGlobalVisualizerFactory globalVisualizerFactory)
     {
-        IFreeCursorVisualizer? cursor = null;
+        IPointIndicator? cursor = null;
         mouseOperation.OnMove.Subscribe(e =>
         {
             switch (e.type)
@@ -142,7 +142,7 @@ Distance: {projectile.Range}
                 case MouseMoveEventType.Enter:
                     if (cursor == null)
                     {
-                        cursor = globalVisualizerFactory.CreateFreeCursor();
+                        cursor = globalVisualizerFactory.CreatePointIndicator();
                         cursor.Move(e.position);
                         launcher.SetTarget(cursor);
                     }

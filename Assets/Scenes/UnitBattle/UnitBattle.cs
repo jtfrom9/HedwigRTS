@@ -40,7 +40,8 @@ public class UnitBattle : LifetimeScope
 
     void setupMouse(IMouseOperation mouseOperation, IGlobalVisualizerFactory globalVisualizerFactory, IEnemy player)
     {
-        IFreeCursorVisualizer? cursor = null;
+        IPointIndicator? cursor = null;
+        IPointIndicator? destination = null;
         Vector3 pos = default;
         mouseOperation.OnMove.Subscribe(e =>
         {
@@ -50,7 +51,8 @@ public class UnitBattle : LifetimeScope
                     Debug.Log("Enter");
                     if (cursor == null)
                     {
-                        cursor = globalVisualizerFactory.CreateFreeCursor();
+                        cursor = globalVisualizerFactory.CreatePointIndicator();
+                        cursor.SetColor(Color.cyan);
                         cursor.Move(e.position);
                         pos = e.position;
                     }
@@ -73,6 +75,12 @@ public class UnitBattle : LifetimeScope
         mouseOperation.OnLeftClick.Subscribe(e =>
         {
             player.SetDestination(pos);
+            if (destination == null)
+            {
+                destination = globalVisualizerFactory.CreatePointIndicator();
+                destination.SetColor(Color.red);
+            }
+            destination.Move(pos);
         }).AddTo(this);
     }
 

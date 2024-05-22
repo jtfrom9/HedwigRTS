@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4045479415056493935}
   - component: {fileID: 4045479415056493934}
   m_Layer: 0
-  m_Name: FreeCursor
+  m_Name: QuadPointIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6889bce9a2ce44412aa193b0f7b2118a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderer: {fileID: 4045479415242229047}
 --- !u!1 &4045479415242229050
 GameObject:
   m_ObjectHideFlags: 0

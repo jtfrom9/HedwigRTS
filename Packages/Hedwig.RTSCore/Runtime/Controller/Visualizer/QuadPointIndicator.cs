@@ -6,8 +6,10 @@ using DG.Tweening;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class CircleVisualizer : MonoBehaviour, IFreeCursorVisualizer
+    public class QuadPointIndicator: MonoBehaviour, IPointIndicator
     {
+        [SerializeField] MeshRenderer renderer;
+
         ITransform _transform = new CachedTransform();
         bool _disposed = false;
 
@@ -28,14 +30,19 @@ namespace Hedwig.RTSCore.Controller
         ITransform ITransformProvider.Transform { get => _transform; }
 
         [ContextMenu("Init")]
-        void IFreeCursorVisualizer.Initialize()
+        void IPointIndicator.Initialize()
         {
             transform.DOScale(Vector3.one * 1.5f, 1).SetLoops(-1, LoopType.Yoyo);
         }
 
-        void IFreeCursorVisualizer.Move(Vector3 pos)
+        void IPointIndicator.Move(Vector3 pos)
         {
             transform.position = pos;
+        }
+
+        void IPointIndicator.SetColor(Color color)
+        {
+            renderer.material.color = color;
         }
 
         void IDisposable.Dispose()

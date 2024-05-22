@@ -7,15 +7,16 @@ using Cysharp.Threading.Tasks;
 
 namespace Hedwig.RTSCore
 {
-    public interface IFreeCursorVisualizer : ITransformProvider
+    public interface IPointIndicator : ITransformProvider
     {
         void Initialize();
         void Move(Vector3 pos);
+        void SetColor(Color color);
     }
 
     public interface IGlobalVisualizerFactory
     {
-        IFreeCursorVisualizer CreateFreeCursor();
+        IPointIndicator CreatePointIndicator();
     }
 
     public interface IVisualizerTarget: ITransformProvider

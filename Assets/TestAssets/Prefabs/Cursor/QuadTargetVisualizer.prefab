@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 7115850250245562105}
   - component: {fileID: 6712026441703237070}
   m_Layer: 0
-  m_Name: CursorQuad
+  m_Name: QuadTargetVisualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

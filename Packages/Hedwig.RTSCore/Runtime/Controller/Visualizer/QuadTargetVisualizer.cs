@@ -7,7 +7,7 @@ using UniRx;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class QuadCursorController : MonoBehaviour, ITargetVisualizer
+    public class QuadTargetVisualizer : MonoBehaviour, ITargetVisualizer
     {
         ITransform _transform = new CachedTransform();
         bool _disposed = false;

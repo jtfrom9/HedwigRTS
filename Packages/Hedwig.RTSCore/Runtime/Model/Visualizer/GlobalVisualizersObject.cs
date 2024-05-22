@@ -13,13 +13,13 @@ namespace Hedwig.RTSCore.Model
         [SerializeField, SearchContext("t:prefab visualizer")]
         GameObject? freeCursorPrefab;
 
-        IFreeCursorVisualizer IGlobalVisualizerFactory.CreateFreeCursor()
+        IPointIndicator IGlobalVisualizerFactory.CreatePointIndicator()
         {
             if (freeCursorPrefab == null)
             {
                 throw new InvalidConditionException("no freeCursorPrefab");
             }
-            var cursor = Instantiate(freeCursorPrefab).GetComponent<IFreeCursorVisualizer>();
+            var cursor = Instantiate(freeCursorPrefab).GetComponent<IPointIndicator>();
             if (cursor == null)
             {
                 throw new InvalidConditionException("no IFreeCursorVisualizer");
