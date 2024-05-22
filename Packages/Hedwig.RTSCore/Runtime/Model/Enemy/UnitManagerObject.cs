@@ -12,7 +12,7 @@ using Hedwig.RTSCore.Impl;
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Enemy/Manager", fileName = "EnemyManager")]
-    public class EnemyManagerObject : ScriptableObject, IEnemyAttackedEffectFactory, ITargetVisualizerFactory
+    public class UnitManagerObject : ScriptableObject, IEnemyAttackedEffectFactory, ITargetVisualizerFactory
     {
         #region IEnemyAttackedEffectFactory
         [SerializeField, InspectInline]
@@ -21,7 +21,7 @@ namespace Hedwig.RTSCore.Model
         [SerializeField, InspectInline]
         List<HitEffect> hitEffects = new List<HitEffect>();
 
-        IEnumerable<IEffect?> createEffects(IEnemy enemy, IHitObject? hitObject, DamageEvent e)
+        IEnumerable<IEffect?> createEffects(IUnit enemy, IHitObject? hitObject, DamageEvent e)
         {
             foreach (var damageEffect in damageEffects)
             {
@@ -35,7 +35,7 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
-        IEffect[] IEnemyAttackedEffectFactory.CreateAttackedEffects(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        IEffect[] IEnemyAttackedEffectFactory.CreateAttackedEffects(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
             => createEffects(enemy, hitObject, e)
                 .WhereNotNull()
                 .ToArray();
@@ -58,16 +58,16 @@ namespace Hedwig.RTSCore.Model
         #endregion
     }
 
-    public static class EnemyManagerObjectDIExtension
+    public static class UnitManagerObjectDIExtension
     {
-        public static void SetupEnemyManager(this IContainerBuilder builder, EnemyManagerObject? enemyManagerObject)
+        public static void SetupEnemyManager(this IContainerBuilder builder, UnitManagerObject? UnitManagerObject)
         {
-            if (enemyManagerObject == null)
+            if (UnitManagerObject == null)
             {
-                throw new ArgumentNullException("enemyManagerObject is null");
+                throw new ArgumentNullException("UnitManagerObject is null");
             }
-            builder.RegisterInstance<EnemyManagerObject>(enemyManagerObject).AsImplementedInterfaces();
-            builder.Register<IEnemyManager, EnemyManagerImpl>(Lifetime.Singleton);
+            builder.RegisterInstance<UnitManagerObject>(UnitManagerObject).AsImplementedInterfaces();
+            builder.Register<IUnitManager, UnitManagerImpl>(Lifetime.Singleton);
         }
     }
 }

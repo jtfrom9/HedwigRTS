@@ -52,7 +52,7 @@ namespace Hedwig.RTSCore
 
     public interface IEnemyAttackedEffectFactory
     {
-        IEffect[] CreateAttackedEffects(IEnemy enemy, IHitObject? hitObject, in DamageEvent e);
+        IEffect[] CreateAttackedEffects(IUnit enemy, IHitObject? hitObject, in DamageEvent e);
     }
 
     public interface IEnvironmentEffectFactory

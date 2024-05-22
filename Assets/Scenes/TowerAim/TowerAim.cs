@@ -25,8 +25,8 @@ public class TowerAim : LifetimeScope
     [SerializeField] TextMeshProUGUI? textMesh;
 
     // Inject
-    [SerializeField, InspectInline] EnemyManagerObject? enemyManagerObject;
-    [SerializeField, InspectInline] EnemyObject? defaultEnemyObject;
+    [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline] UnitObject? defaultUnitObject;
     [SerializeField, InspectInline] EnvironmentObject? environmentObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField, InspectInline] List<ProjectileObject> projectiles = new List<ProjectileObject>();
@@ -37,7 +37,7 @@ public class TowerAim : LifetimeScope
     [SerializeField] int spawnCondition = 10;
 
 #pragma warning disable CS8618
-    [Inject] IEnemyManager enemyManager;
+    [Inject] IUnitManager enemyManager;
     [Inject] IMouseOperation mouseOperation;
     [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
     [Inject] ILauncher launcher;
@@ -48,7 +48,7 @@ public class TowerAim : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(enemyManagerObject);
+        builder.SetupEnemyManager(UnitManagerObject);
         // builder.SetupEnvironment(environmentObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
@@ -57,8 +57,8 @@ public class TowerAim : LifetimeScope
 
     void Start()
     {
-        if (enemyManager == null || defaultEnemyObject==null) return;
-        enemyManager.Initialize(defaultEnemyObject);
+        if (enemyManager == null || defaultUnitObject==null) return;
+        enemyManager.Initialize(defaultUnitObject);
 
         launcher.Initialize();
 
@@ -69,7 +69,7 @@ public class TowerAim : LifetimeScope
         }else
         {
             var gameSenario = new GameSenario(enemyManager,
-                defaultEnemyObject,
+                defaultUnitObject,
                 spawnPoints.ToArray(),
                 Vector3.zero,
                 spawnCondition);

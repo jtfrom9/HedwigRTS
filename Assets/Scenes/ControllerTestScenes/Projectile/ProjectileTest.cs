@@ -24,10 +24,10 @@ namespace Hedwig.RTSCore.Test
     public class ProjectileTest : LifetimeScope
     {
         [SerializeField, InspectInline]
-        EnemyObject? defaultEnemyObject;
+        UnitObject? defaultUnitObject;
 
         [SerializeField, InspectInline]
-        EnemyManagerObject? enemyManagerObject;
+        UnitManagerObject? UnitManagerObject;
 
         [SerializeField, InspectInline]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -40,14 +40,14 @@ namespace Hedwig.RTSCore.Test
 
         List<IProjectile> liveProjectiles = new List<IProjectile>();
 
-        [Inject] IEnemyManager? enemyManager;
+        [Inject] IUnitManager? enemyManager;
         [Inject] ILauncher? launcher;
 
         IProjectileFactory? projectileFactory;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
             builder.SetupLauncher();
         }
@@ -55,9 +55,9 @@ namespace Hedwig.RTSCore.Test
         void Start()
         {
             if (enemyManager == null) return;
-            if(defaultEnemyObject==null) return;
+            if(defaultUnitObject==null) return;
 
-            enemyManager.Initialize(defaultEnemyObject);
+            enemyManager.Initialize(defaultUnitObject);
             if (launcher == null) return;
             launcher.Initialize();
             if (textMesh == null) return;
@@ -66,7 +66,7 @@ namespace Hedwig.RTSCore.Test
                 setupDebug(projectile);
             setupUI(textMesh, launcher);
 
-            var enemySelection = new ReactiveSelection<IEnemy>(enemyManager.Enemies);
+            var enemySelection = new ReactiveSelection<IUnit>(enemyManager.Enemies);
             enemySelection.OnPrevChanged.Subscribe(enemy => {
                 (enemy as ISelectable)?.Select(false);
             }).AddTo(this);
@@ -94,7 +94,7 @@ namespace Hedwig.RTSCore.Test
 
             this.UpdateAsObservable().Subscribe(_ =>
             {
-                var enemy = enemySelection.Current as IEnemy;
+                var enemy = enemySelection.Current as IUnit;
                 if (enemy == null) return;
                 _update(launcher, enemy, enemySelection, projectileSelection);
             }).AddTo(this);
@@ -116,7 +116,7 @@ namespace Hedwig.RTSCore.Test
             launcher?.Dispose();
         }
 
-        void _update(ILauncher launcher, IEnemy enemy, Selection<IEnemy> enemySelection, Selection<ProjectileObject> configSelection)
+        void _update(ILauncher launcher, IUnit enemy, Selection<IUnit> enemySelection, Selection<ProjectileObject> configSelection)
         {
             if(Input.GetKeyDown(KeyCode.RightArrow))
             {

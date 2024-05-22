@@ -9,8 +9,8 @@ namespace Hedwig.RTSCore.Usecase
 {
     public class GameSenario
     {
-        IEnemyManager enemyManager;
-        IEnemyFactory enemyFactory;
+        IUnitManager enemyManager;
+        IUnitFactory enemyFactory;
         Vector3[] spawnPoints;
         Vector3 target;
         int spawnCondition;
@@ -53,7 +53,7 @@ namespace Hedwig.RTSCore.Usecase
             disposable.Dispose();
         }
 
-        public GameSenario(IEnemyManager enemyManager, IEnemyFactory enemyFactory, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
+        public GameSenario(IUnitManager enemyManager, IUnitFactory enemyFactory, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
         {
             this.enemyManager = enemyManager;
             this.enemyFactory = enemyFactory;

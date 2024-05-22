@@ -9,13 +9,13 @@ using Cysharp.Threading.Tasks;
 
 namespace Hedwig.RTSCore.Impl
 {
-    public class EnemyImpl : IEnemy, IEnemyControllerEvent, ISelectable
+    public class UnitImpl : IUnit, IUnitControllerCallback, ISelectable, IUnitActionRunner
     {
-        IEnemyManager enemyManager;
+        IUnitManager enemyManager;
         string? _name;
-        IEnemyData enemyData;
-        IEnemyController enemyController;
-        IEnemyEvent enemyEvent;
+        IUnitData enemyData;
+        IUnitController enemyController;
+        IUnitCallback enemyEvent;
         int actionState = 0;
         List<ITargetVisualizer> visualizers = new List<ITargetVisualizer>();
         ReactiveProperty<bool> _selected = new ReactiveProperty<bool>();
@@ -109,7 +109,7 @@ namespace Hedwig.RTSCore.Impl
         }
 
         #region IEnemyControllerEvent
-        void IEnemyControllerEvent.OnHit(IHitObject hitObject)
+        void IUnitControllerCallback.OnHit(IHitObject hitObject)
         {
             doDamage(hitObject, out DamageEvent damageEvent);
             raiseEvent(hitObject, damageEvent);
@@ -138,19 +138,21 @@ namespace Hedwig.RTSCore.Impl
 
         #region IEnemy
         public string Name { get => _name ?? Controller.Name; }
-        public IEnemyManager Manager { get => enemyManager; }
+        public IUnitManager Manager { get => enemyManager; }
         public void SetDestination(Vector3 pos) => enemyController.SetDestination(pos);
         public void Stop() => enemyController.Stop();
 
-        public IEnemyController Controller { get => enemyController; }
+        public IUnitController Controller { get => enemyController; }
 
-        void IEnemy.Damaged(int damage) => damaged(damage);
-        void IEnemy.ResetPos() => enemyController.ResetPos();
+        void IUnit.Damaged(int damage) => damaged(damage);
+        void IUnit.ResetPos() => enemyController.ResetPos();
+
+        public IUnitActionRunner ActionRunner { get => this; }
         #endregion
 
         #region IUnit
-        void IUnit.DoAction(int nextTick) => doAction(nextTick);
-        IObservable<UnitActionStateRunningStore> IUnit.OnStateChanged { get => _onStateChanged; }
+        void IUnitActionRunner.DoAction(int nextTick) => doAction(nextTick);
+        IObservable<UnitActionStateRunningStore> IUnitActionRunner.OnStateChanged { get => _onStateChanged; }
         #endregion
 
         #region ITransformProvider
@@ -168,7 +170,7 @@ namespace Hedwig.RTSCore.Impl
             return $"{Controller.Name}.Impl({enemyData.Name})";
         }
 
-        public EnemyImpl(IEnemyManager enemyManager, IEnemyData enemyData, IEnemyController enemyController, IEnemyEvent enemyEvent, string? name = null)
+        public UnitImpl(IUnitManager enemyManager, IUnitData enemyData, IUnitController enemyController, IUnitCallback enemyEvent, string? name = null)
         {
             this.enemyManager = enemyManager;
             this._name = name;

@@ -8,15 +8,15 @@ using Cysharp.Threading.Tasks;
 
 namespace Hedwig.RTSCore.Impl
 {
-    public class EnemyManagerImpl: IEnemyManager, IEnemyEvent
+    public class UnitManagerImpl: IUnitManager, IUnitCallback
     {
-        ReactiveCollection<IEnemy> _enemies = new ReactiveCollection<IEnemy>();
+        ReactiveCollection<IUnit> _enemies = new ReactiveCollection<IUnit>();
         CompositeDisposable disposable = new CompositeDisposable();
 
         IEnemyAttackedEffectFactory attackedEffectFactory;
         ITargetVisualizerFactory targetVisualizersFactory;
 
-        void playHitTransformEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitTransformEffect(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
         {
             if (hitObject != null && e.ActualDamage > 0)
             {
@@ -24,7 +24,7 @@ namespace Hedwig.RTSCore.Impl
             }
         }
 
-        void playHitVisualEffect(IEnemy enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitVisualEffect(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
         {
             var effects = attackedEffectFactory.CreateAttackedEffects(enemy, hitObject, in e);
             foreach (var effect in effects)
@@ -33,20 +33,20 @@ namespace Hedwig.RTSCore.Impl
             }
         }
 
-        void onEnemyAttacked(IEnemy enemy, IHitObject? hitObject, in DamageEvent damageEvent)
+        void onEnemyAttacked(IUnit enemy, IHitObject? hitObject, in DamageEvent damageEvent)
         {
             playHitVisualEffect(enemy, hitObject, damageEvent);
             playHitTransformEffect(enemy, hitObject, damageEvent);
         }
 
-        async void onEnemyDeath(IEnemy enemy)
+        async void onEnemyDeath(IUnit enemy)
         {
             await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
             _enemies.Remove(enemy);
             enemy.Dispose();
         }
 
-        void addEnemy(IEnemy enemy)
+        void addEnemy(IUnit enemy)
         {
             var visualizers = targetVisualizersFactory.CreateTargetVisualizers(enemy);
             foreach(var visualizer in visualizers) {
@@ -55,18 +55,18 @@ namespace Hedwig.RTSCore.Impl
             _enemies.Add(enemy);
         }
 
-        IEnemy? addEnemyWithDefaultObject(IEnemyController enemyController, IEnemyData enemyObject)
+        IUnit? addEnemyWithDefaultObject(IUnitController enemyController, IUnitData UnitObject)
         {
-            var enemy = new EnemyImpl(this, enemyObject, enemyController, this);
+            var enemy = new UnitImpl(this, UnitObject, enemyController, this);
             enemyController.Initialize(enemy, null, name: null);
             addEnemy(enemy);
             return enemy;
         }
 
         #region IEnemyManager
-        IReadOnlyReactiveCollection<IEnemy> IEnemyManager.Enemies { get => _enemies; }
+        IReadOnlyReactiveCollection<IUnit> IUnitManager.Enemies { get => _enemies; }
 
-        IEnemy IEnemyManager.Spawn(IEnemyFactory enemyFactory, Vector3 position, string? name)
+        IUnit IUnitManager.Spawn(IUnitFactory enemyFactory, Vector3 position, string? name)
         {
             var enemy = enemyFactory.Create(this, this, position, name);
             if (enemy == null)
@@ -77,14 +77,14 @@ namespace Hedwig.RTSCore.Impl
             return enemy;
         }
 
-        void IEnemyManager.Initialize(IEnemyData defualtEnemyObject)
+        void IUnitManager.Initialize(IUnitData defualtUnitObject)
         {
             var enemyRepository = ControllerBase.Find<IEnemyControllerRepository>();
             if (enemyRepository != null)
             {
                 foreach (var enemyController in enemyRepository.GetEnemyController())
                 {
-                    addEnemyWithDefaultObject(enemyController, defualtEnemyObject);
+                    addEnemyWithDefaultObject(enemyController, defualtUnitObject);
                 }
             }
         }
@@ -99,15 +99,15 @@ namespace Hedwig.RTSCore.Impl
 
 
         #region IEnemyEvent
-        void IEnemyEvent.OnAttacked(IEnemy enemy, IHitObject? hitObject, in DamageEvent damageEvent)
+        void IUnitCallback.OnAttacked(IUnit enemy, IHitObject? hitObject, in DamageEvent damageEvent)
             => onEnemyAttacked(enemy, hitObject, damageEvent);
 
-        void IEnemyEvent.OnDeath(IEnemy enemy)
+        void IUnitCallback.OnDeath(IUnit enemy)
             => onEnemyDeath(enemy);
         #endregion
 
         // ctor
-        public EnemyManagerImpl(IEnemyAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
+        public UnitManagerImpl(IEnemyAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
         {
             this.attackedEffectFactory = attackedEffectFactory;
             this.targetVisualizersFactory = targetVisualizersFactory;

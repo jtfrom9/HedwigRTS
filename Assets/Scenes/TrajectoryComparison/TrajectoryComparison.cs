@@ -22,10 +22,10 @@ namespace Hedwig.RTSCore.Test
     public class TrajectoryComparison : LifetimeScope
     {
         [SerializeField]
-        EnemyObject? defaultEnemyObject;
+        UnitObject? defaultUnitObject;
 
         [SerializeField]
-        EnemyManagerObject? enemyManagerObject;
+        UnitManagerObject? UnitManagerObject;
 
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -52,7 +52,7 @@ namespace Hedwig.RTSCore.Test
         Button? triggerButton;
 
         [Inject] System.Func<(Vector3 pos, ProjectileObject config), ILauncher>? launcherFactory;
-        [Inject] IEnemyManager? enemyManager;
+        [Inject] IUnitManager? enemyManager;
 
         List<(ILauncher launcher, ITransformProvider target)> pairs = new List<(ILauncher launcher, ITransformProvider target)>();
 
@@ -61,7 +61,7 @@ namespace Hedwig.RTSCore.Test
             var root = GameObject.Find("Root");
             if (root == null) { throw new InvalidConditionException("no root"); }
 
-            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
 
             if (launcherPrefab == null) { Debug.LogError("launcherPrefab is null"); return; }
@@ -96,8 +96,8 @@ namespace Hedwig.RTSCore.Test
             setupUI();
 
             if (enemyManager == null) { Debug.LogError("no enemyManager"); return; }
-            if(defaultEnemyObject==null){ Debug.LogError("no deafultEnemy"); return; }
-            enemyManager.Initialize(defaultEnemyObject);
+            if(defaultUnitObject==null){ Debug.LogError("no deafultEnemy"); return; }
+            enemyManager.Initialize(defaultUnitObject);
         }
 
         (ILauncher, ITransformProvider) createInstance(int index, ProjectileObject config)

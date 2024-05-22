@@ -27,7 +27,7 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => "Idle"; }
 
-        public int Execute(IEnemy unit, UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, UnitActionStateRunningStore state)
         {
             if (state.elapsedMsec > msec)
             {
@@ -49,7 +49,7 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => "Approach"; }
 
-        public int Execute(IEnemy unit, UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, UnitActionStateRunningStore state)
         {
             if (state.target != null)
             {
@@ -81,7 +81,7 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => "Random"; }
 
-        public int Execute(IEnemy unit, RTSCore.UnitActionStateRunningStore state)
+        public int Execute(IUnit unit, RTSCore.UnitActionStateRunningStore state)
         {
             if (state.elapsedMsec > msec)
             {

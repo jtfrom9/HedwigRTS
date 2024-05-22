@@ -6,10 +6,10 @@ namespace Hedwig.RTSCore.Controller
 {
     public class ChildEnemiesRepository : ControllerBase, IEnemyControllerRepository
     {
-        IEnemyController[] IEnemyControllerRepository.GetEnemyController()
+        IUnitController[] IEnemyControllerRepository.GetEnemyController()
         {
-            var list = new List<IEnemyController>();
-            foreach(var enemyController in transform.GetControllersInChildren<IEnemyController>()) {
+            var list = new List<IUnitController>();
+            foreach(var enemyController in transform.GetControllersInChildren<IUnitController>()) {
                 list.Add(enemyController);
             }
             return list.ToArray();

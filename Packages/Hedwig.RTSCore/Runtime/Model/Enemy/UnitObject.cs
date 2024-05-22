@@ -12,7 +12,7 @@ using System.Linq;
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Enemy/Enemy", fileName = "Enemy")]
-    public class EnemyObject : ScriptableObject, IEnemyData, IEnemyFactory
+    public class UnitObject : ScriptableObject, IUnitData, IUnitFactory
     {
         [SerializeField, SearchContext("t:prefab Enemy")]
         GameObject? prefab;
@@ -35,17 +35,17 @@ namespace Hedwig.RTSCore.Model
         public int Deffence { get => _Deffence; }
         public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
-        IEnemy? IEnemyFactory.Create(IEnemyManager manager, IEnemyEvent enemyEvent, Vector3? position, string? name)
+        IUnit? IUnitFactory.Create(IUnitManager manager, IUnitCallback enemyEvent, Vector3? position, string? name)
         {
             if (prefab == null) return null;
             var go = Instantiate(prefab);
-            var enemyController = go.GetComponent<IEnemyController>();
+            var enemyController = go.GetComponent<IUnitController>();
             if (enemyController == null)
             {
                 Destroy(go);
                 return null;
             }
-            var enemy = new EnemyImpl(manager, this, enemyController, enemyEvent, name);
+            var enemy = new UnitImpl(manager, this, enemyController, enemyEvent, name);
             enemyController.Initialize(enemy, position, name);
             return enemy;
         }

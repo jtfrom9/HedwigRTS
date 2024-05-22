@@ -18,10 +18,10 @@ using Hedwig.RTSCore.Model;
 public class EnemyTest : LifetimeScope
 {
     [SerializeField]
-    EnemyObject? defaultEnemyObject;
+    UnitObject? defaultUnitObject;
 
     [SerializeField]
-    EnemyManagerObject? enemyManagerObject;
+    UnitManagerObject? UnitManagerObject;
 
     [SerializeField]
     GlobalVisualizersObject? globalVisualizersObject;
@@ -30,20 +30,20 @@ public class EnemyTest : LifetimeScope
     Text? text;
 
     [Inject]
-    IEnemyManager? enemyManager;
+    IUnitManager? enemyManager;
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(enemyManagerObject);
+        builder.SetupEnemyManager(UnitManagerObject);
         builder.SetupVisualizer(globalVisualizersObject);
     }
 
     void Start()
     {
-        if(enemyManager==null || defaultEnemyObject==null) return;
+        if(enemyManager==null || defaultUnitObject==null) return;
         if(text==null) return;
 
-        enemyManager.Initialize(defaultEnemyObject);
+        enemyManager.Initialize(defaultUnitObject);
 
         RnadomMoveEnemy(enemyManager).Forget();
         RandomAttach(enemyManager).Forget();
@@ -72,7 +72,7 @@ public class EnemyTest : LifetimeScope
         }).AddTo(this);
     }
 
-    async UniTaskVoid RnadomMoveEnemy(IEnemyManager enemyManager)
+    async UniTaskVoid RnadomMoveEnemy(IUnitManager enemyManager)
     {
         while (enemyManager.Enemies.Count > 0)
         {
@@ -86,7 +86,7 @@ public class EnemyTest : LifetimeScope
         }
     }
 
-    async UniTaskVoid RandomAttach(IEnemyManager enemyManager)
+    async UniTaskVoid RandomAttach(IUnitManager enemyManager)
     {
         while (enemyManager.Enemies.Count > 0)
         {

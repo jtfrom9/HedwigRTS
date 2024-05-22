@@ -12,10 +12,10 @@ using UniRx;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class NavMeshAgentEnemyController : ControllerBase, IEnemyController, IVisualProperty, IHitHandler
+    public class NavMeshAgentEnemyController : ControllerBase, IUnitController, IVisualProperty, IHitHandler
     {
         string _name;
-        IEnemyControllerEvent? controllerEvent;
+        IUnitControllerCallback? controllerEvent;
         ITransform _transform = new CachedTransform();
         NavMeshAgent? _agent;
         Rigidbody? _rigidbody;
@@ -126,23 +126,23 @@ namespace Hedwig.RTSCore.Controller
         #endregion
 
         #region IEnemyController
-        string IEnemyController.Name { get => _name; }
-        void IEnemyController.SetDestination(Vector3 pos)
+        string IUnitController.Name { get => _name; }
+        void IUnitController.SetDestination(Vector3 pos)
         {
             _agent!.isStopped = false;
             _agent?.SetDestination(pos);
         }
-        void IEnemyController.Stop()
+        void IUnitController.Stop()
         {
             _agent!.isStopped = true;
             _agent?.SetDestination(_transform.Position);
         }
-        void IEnemyController.ResetPos()
+        void IUnitController.ResetPos()
         {
             transform.SetPositionAndRotation(initialPosition, initialRotation);
             transform.localScale = initialScale;
         }
-        void IEnemyController.Knockback(Vector3 direction, float power)
+        void IUnitController.Knockback(Vector3 direction, float power)
         {
             if (cts.IsCancellationRequested)
                 return;
@@ -161,20 +161,20 @@ namespace Hedwig.RTSCore.Controller
             }
         }
 
-        IVisualProperty IEnemyController.GetProperty()
+        IVisualProperty IUnitController.GetProperty()
         {
             return this;
         }
 
-        GameObject IEnemyController.Context { get => gameObject; }
+        GameObject IUnitController.Context { get => gameObject; }
 
-        void IEnemyController.SeDebugUnit(IUnit unit) {
+        void IUnitController.SeDebugUnit(IUnitActionRunner unit) {
             unit.OnStateChanged.Subscribe(state => {
                 CurrentState = state.currentState!.Name;
             }).AddTo(this);
         }
 
-        void IEnemyController.Initialize(IEnemyControllerEvent controllerEvent, Vector3? position, string? name)
+        void IUnitController.Initialize(IUnitControllerCallback controllerEvent, Vector3? position, string? name)
         {
             if (name != null)
             {

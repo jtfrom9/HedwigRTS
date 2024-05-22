@@ -22,10 +22,10 @@ namespace Hedwig.RTSCore.Test
     public class CursorTest : LifetimeScope
     {
         [SerializeField]
-        EnemyObject? defaultEnemyObject;
+        UnitObject? defaultUnitObject;
 
         [SerializeField]
-        EnemyManagerObject? enemyManagerObject;
+        UnitManagerObject? UnitManagerObject;
 
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -42,27 +42,27 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         GameObject? bulletPrefab;
 
-        [Inject] IEnemyManager? enemyManager;
+        [Inject] IUnitManager? enemyManager;
 
         [SerializeField]
         Vector3 tower = new Vector3(10, 20, -10);
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
         }
 
         void Start()
         {
-            if (enemyManager == null || defaultEnemyObject==null)
+            if (enemyManager == null || defaultUnitObject==null)
             {
                 Debug.LogError($"enemyManager: {enemyManager}");
                 return;
             }
-            enemyManager.Initialize(defaultEnemyObject);
+            enemyManager.Initialize(defaultUnitObject);
 
-            var selection = new ReactiveSelection<IEnemy>(enemyManager.Enemies);
+            var selection = new ReactiveSelection<IUnit>(enemyManager.Enemies);
             selection.OnPrevChanged.Subscribe(e => { (e as ISelectable)?.Select(false); }).AddTo(this);
             selection.OnCurrentChanged.Subscribe(e => { (e as ISelectable)?.Select(true); }).AddTo(this);
 
@@ -81,7 +81,7 @@ namespace Hedwig.RTSCore.Test
 
         void trackCam(ISelectable? selectable)
         {
-            var enemy = selectable as IEnemy;
+            var enemy = selectable as IUnit;
             if (enemy == null) return;
 
             if (towerView)
@@ -111,19 +111,19 @@ namespace Hedwig.RTSCore.Test
         bool birdView { get => dropdown!.options[dropdown.value].text == "Bird"; }
         bool towerView { get => dropdown!.options[dropdown.value].text == "Tower"; }
 
-        void selectNext(Selection<IEnemy> selection, IEnemyManager enemyManager)
+        void selectNext(Selection<IUnit> selection, IUnitManager enemyManager)
         {
             selection.Next();
             if(tracking) trackCam(selection.Current as ISelectable);
         }
 
-        void selectPrev(Selection<IEnemy> selection, IEnemyManager enemyManager)
+        void selectPrev(Selection<IUnit> selection, IUnitManager enemyManager)
         {
             selection.Prev();
             if (tracking) trackCam(selection.Current as ISelectable);
         }
 
-        void setupUI(Selection<IEnemy> selection, IEnemyManager enemyManager)
+        void setupUI(Selection<IUnit> selection, IUnitManager enemyManager)
         {
             bool go = false;
             var tmp = goButton!.GetComponentInChildren<TextMeshProUGUI>();
@@ -173,11 +173,11 @@ namespace Hedwig.RTSCore.Test
             }).AddTo(this);
         }
 
-        void shot(Selection<IEnemy> selection)
+        void shot(Selection<IUnit> selection)
         {
             if (!towerView) return;
             if (bulletPrefab == null) return;
-            var e = selection.Current as IEnemy;
+            var e = selection.Current as IUnit;
             if (e == null) return;
 
             var go = Instantiate(bulletPrefab);
@@ -199,15 +199,15 @@ namespace Hedwig.RTSCore.Test
             }, 3, PathType.CatmullRom).SetEase(Ease.InQuart);
         }
 
-        void aim(Selection<IEnemy> selection)
+        void aim(Selection<IUnit> selection)
         {
             if (!towerView) return;
-            var e = selection.Current as IEnemy;
+            var e = selection.Current as IUnit;
             if (e == null) return;
             Debug.DrawLine(tower, e.Controller.Transform.Position, Color.red, 100);
         }
 
-        void update(Selection<IEnemy> selection, IEnemyManager enemyManager)
+        void update(Selection<IUnit> selection, IUnitManager enemyManager)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {

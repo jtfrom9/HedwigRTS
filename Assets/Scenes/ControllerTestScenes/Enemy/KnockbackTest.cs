@@ -19,10 +19,10 @@ namespace Hedwig.RTSCore.Test
     public class KnockbackTest : LifetimeScope
     {
         [SerializeField]
-        EnemyObject? defaultEnemyObject;
+        UnitObject? defaultUnitObject;
 
         [SerializeField]
-        EnemyManagerObject? enemyManagerObject;
+        UnitManagerObject? UnitManagerObject;
 
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -33,12 +33,12 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         TextMeshProUGUI? textMesh;
 
-        [Inject] IEnemyManager? enemyManager;
+        [Inject] IUnitManager? enemyManager;
         [Inject] ILauncher? launcher;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(enemyManagerObject);
+            builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
             builder.SetupLauncher();
         }
@@ -46,15 +46,15 @@ namespace Hedwig.RTSCore.Test
         void Start()
         {
             Assert.IsNotNull(enemyManager);
-            Assert.IsNotNull(defaultEnemyObject);
+            Assert.IsNotNull(defaultUnitObject);
             Assert.IsNotNull(launcher);
             Assert.IsNotNull(textMesh);
-            _start(enemyManager!, launcher!, defaultEnemyObject!);
+            _start(enemyManager!, launcher!, defaultUnitObject!);
         }
 
-        void _start(IEnemyManager enemyManager, ILauncher launcher, EnemyObject defaultEnemyObject)
+        void _start(IUnitManager enemyManager, ILauncher launcher, UnitObject defaultUnitObject)
         {
-            enemyManager.Initialize(defaultEnemyObject);
+            enemyManager.Initialize(defaultUnitObject);
             launcher.Initialize();
 
             var configSelection = new Selection<ProjectileObject>(projectileObjects);
@@ -72,7 +72,7 @@ namespace Hedwig.RTSCore.Test
             setupKey(configSelection, launcher, enemy);
         }
 
-        void setupKey(Selection<ProjectileObject> configSelection, ILauncher launcher, IEnemy enemy)
+        void setupKey(Selection<ProjectileObject> configSelection, ILauncher launcher, IUnit enemy)
         {
             this.UpdateAsObservable().Subscribe(_ =>
             {

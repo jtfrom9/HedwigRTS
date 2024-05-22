@@ -16,9 +16,9 @@ using Cysharp.Threading.Tasks;
 public class UnitBattle : LifetimeScope
 {
     // Inject
-    [SerializeField, InspectInline] EnemyManagerObject? enemyManagerObject;
-    [SerializeField, InspectInline] EnemyObject? playerObject;
-    [SerializeField, InspectInline] EnemyObject? enemyObject;
+    [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline] UnitObject? playerObject;
+    [SerializeField, InspectInline] UnitObject? UnitObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
 
@@ -26,19 +26,19 @@ public class UnitBattle : LifetimeScope
     // [SerializeField] List<Vector3> spawnPoints = new List<Vector3>();
 
 #pragma warning disable CS8618
-    [Inject] IEnemyManager enemyManager;
+    [Inject] IUnitManager enemyManager;
     [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
     [Inject] IMouseOperation mouseOperation;
 #pragma warning restore CS8618
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(enemyManagerObject);
+        builder.SetupEnemyManager(UnitManagerObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
     }
 
-    void setupMouse(IMouseOperation mouseOperation, IGlobalVisualizerFactory globalVisualizerFactory, IEnemy player)
+    void setupMouse(IMouseOperation mouseOperation, IGlobalVisualizerFactory globalVisualizerFactory, IUnit player)
     {
         IPointIndicator? cursor = null;
         IPointIndicator? destination = null;
@@ -86,16 +86,16 @@ public class UnitBattle : LifetimeScope
 
     async void Start()
     {
-        if (playerObject == null || enemyObject == null || globalVisualizerFactory == null || mouseOperation == null)
+        if (playerObject == null || UnitObject == null || globalVisualizerFactory == null || mouseOperation == null)
         {
             Debug.LogError("Invalid");
             return;
         }
         Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.Initialize(enemyObject);
+        enemyManager.Initialize(UnitObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
-        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy");
+        var enemy = enemyManager.Spawn(UnitObject, new Vector3(-10f, 3, -10f), "Enemy");
 
         setupMouse(mouseOperation, globalVisualizerFactory, player);
 
@@ -108,7 +108,7 @@ public class UnitBattle : LifetimeScope
             {
                 foreach (var enemy in enemyManager.Enemies)
                 {
-                    enemy.DoAction(tick);
+                    enemy.ActionRunner.DoAction(tick);
                 }
                 await UniTask.Delay(tick);
             }
