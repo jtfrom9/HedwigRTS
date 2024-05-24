@@ -13,13 +13,13 @@ namespace Hedwig.RTSCore
 {
     public interface IUnitManager : IDisposable
     {
-        IReadOnlyReactiveCollection<IUnit> Enemies { get; }
-        IUnit Spawn(IUnitFactory enemyFactory, Vector3 position, string? name = null);
+        IReadOnlyReactiveCollection<IUnit> Units { get; }
+        IUnit Spawn(IUnitFactory unitFactory, Vector3 position, string? name = null);
 
         void Initialize(IUnitData defaultUnitObject);
     }
 
-    public static class EnemyManagerExtension
+    public static class UnitManagerExtension
     {
         public static UniTask RandomWalk(this IUnitManager manager, float min, float max, int msec, CancellationToken token)
         {
@@ -27,12 +27,12 @@ namespace Hedwig.RTSCore
             {
                 while (!token.IsCancellationRequested)
                 {
-                    foreach (var enemy in manager.Enemies)
+                    foreach (var unit in manager.Units)
                     {
                         var x = UnityEngine.Random.Range(min, max);
                         var z = UnityEngine.Random.Range(min, max);
                         var pos = new Vector3(x, 0, z);
-                        enemy.SetDestination(pos);
+                        unit.SetDestination(pos);
                     }
                     try
                     {
@@ -48,17 +48,17 @@ namespace Hedwig.RTSCore
 
         public static void StopAll(this IUnitManager manager)
         {
-            foreach(var enemy in manager.Enemies) {
-                enemy.Stop();
+            foreach(var unit in manager.Units) {
+                unit.Stop();
             }
         }
 
         public static IUnit? ChoiceOne(this IUnitManager manager, IUnit self)
         {
-            foreach(var enemy in manager.Enemies) {
-                if (enemy != self)
+            foreach(var unit in manager.Units) {
+                if (unit != self)
                 {
-                    return enemy;
+                    return unit;
                 }
             }
             return null;

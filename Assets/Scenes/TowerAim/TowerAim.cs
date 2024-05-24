@@ -48,7 +48,7 @@ public class TowerAim : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(UnitManagerObject);
+        builder.SetupUnitManager(UnitManagerObject);
         // builder.SetupEnvironment(environmentObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);

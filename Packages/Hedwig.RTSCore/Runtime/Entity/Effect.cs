@@ -50,9 +50,9 @@ namespace Hedwig.RTSCore
         void Initialize(ITransformProvider parent, Vector3 position, Vector3 direction);
     }
 
-    public interface IEnemyAttackedEffectFactory
+    public interface IUnitAttackedEffectFactory
     {
-        IEffect[] CreateAttackedEffects(IUnit enemy, IHitObject? hitObject, in DamageEvent e);
+        IEffect[] CreateAttackedEffects(IUnit unit, IHitObject? hitObject, in DamageEvent e);
     }
 
     public interface IEnvironmentEffectFactory

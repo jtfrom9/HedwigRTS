@@ -64,9 +64,9 @@ namespace Hedwig.RTSCore
         void SeDebugUnit(IUnitActionRunner unit);
     }
 
-    public interface IEnemyControllerRepository
+    public interface IUnitControllerRepository
     {
-        IUnitController[] GetEnemyController();
+        IUnitController[] GetUnitControllers();
     }
     #endregion
 
@@ -88,8 +88,8 @@ namespace Hedwig.RTSCore
 
     public interface IUnitCallback
     {
-        void OnAttacked(IUnit enemy, IHitObject? hitObject, in DamageEvent damageEvent);
-        void OnDeath(IUnit enemy);
+        void OnAttacked(IUnit unit, IHitObject? hitObject, in DamageEvent damageEvent);
+        void OnDeath(IUnit unit);
     }
 
     public interface IUnit : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget
@@ -123,7 +123,7 @@ namespace Hedwig.RTSCore
 
     public interface IUnitFactory
     {
-        IUnit? Create(IUnitManager manager, IUnitCallback enemyEvent, Vector3? position, string? name);
+        IUnit? Create(IUnitManager manager, IUnitCallback callback, Vector3? position, string? name);
     }
     #endregion
 }

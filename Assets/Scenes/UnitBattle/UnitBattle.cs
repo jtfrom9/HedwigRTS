@@ -33,7 +33,7 @@ public class UnitBattle : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(UnitManagerObject);
+        builder.SetupUnitManager(UnitManagerObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
     }
@@ -106,7 +106,7 @@ public class UnitBattle : LifetimeScope
             int tick = 100;
             while (true)
             {
-                foreach (var enemy in enemyManager.Enemies)
+                foreach (var enemy in enemyManager.Units)
                 {
                     enemy.ActionRunner.DoAction(tick);
                 }

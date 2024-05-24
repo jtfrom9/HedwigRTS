@@ -37,7 +37,7 @@ namespace Hedwig.RTSCore.Test
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(UnitManagerObject);
+            builder.SetupUnitManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
         }
 
@@ -62,7 +62,7 @@ namespace Hedwig.RTSCore.Test
             }).AddTo(this);
             configSelection.Select(0);
 
-            var enemy = enemyManager.Enemies[0];
+            var enemy = enemyManager.Units[0];
             enemy.SetDestination(Vector3.zero);
             launcher.SetTarget(enemy.Controller);
 

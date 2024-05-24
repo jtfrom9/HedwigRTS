@@ -46,7 +46,7 @@ namespace Hedwig.RTSCore.Test
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(UnitManagerObject);
+            builder.SetupUnitManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
         }
 
@@ -63,7 +63,7 @@ namespace Hedwig.RTSCore.Test
                 setupDebug(projectile);
             setupUI(textMesh, launcher);
 
-            var enemySelection = new ReactiveSelection<IUnit>(enemyManager.Enemies);
+            var enemySelection = new ReactiveSelection<IUnit>(enemyManager.Units);
             enemySelection.OnPrevChanged.Subscribe(enemy => {
                 (enemy as ISelectable)?.Select(false);
             }).AddTo(this);

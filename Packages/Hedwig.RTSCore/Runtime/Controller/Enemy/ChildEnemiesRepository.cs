@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class ChildEnemiesRepository : ControllerBase, IEnemyControllerRepository
+    public class ChildEnemiesRepository : ControllerBase, IUnitControllerRepository
     {
-        IUnitController[] IEnemyControllerRepository.GetEnemyController()
+        IUnitController[] IUnitControllerRepository.GetUnitControllers()
         {
             var list = new List<IUnitController>();
-            foreach(var enemyController in transform.GetControllersInChildren<IUnitController>()) {
-                list.Add(enemyController);
+            foreach(var unitController in transform.GetControllersInChildren<IUnitController>()) {
+                list.Add(unitController);
             }
             return list.ToArray();
         }

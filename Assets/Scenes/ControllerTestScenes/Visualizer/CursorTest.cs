@@ -49,7 +49,7 @@ namespace Hedwig.RTSCore.Test
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupEnemyManager(UnitManagerObject);
+            builder.SetupUnitManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
         }
 
@@ -62,7 +62,7 @@ namespace Hedwig.RTSCore.Test
             }
             enemyManager.Initialize(defaultUnitObject);
 
-            var selection = new ReactiveSelection<IUnit>(enemyManager.Enemies);
+            var selection = new ReactiveSelection<IUnit>(enemyManager.Units);
             selection.OnPrevChanged.Subscribe(e => { (e as ISelectable)?.Select(false); }).AddTo(this);
             selection.OnCurrentChanged.Subscribe(e => { (e as ISelectable)?.Select(true); }).AddTo(this);
 
@@ -145,7 +145,7 @@ namespace Hedwig.RTSCore.Test
 
             resetButton?.OnClickAsObservable().Subscribe(_ =>
             {
-                foreach (var enemy in enemyManager.Enemies)
+                foreach (var enemy in enemyManager.Units)
                 {
                     enemy.ResetPos();
                 }

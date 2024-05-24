@@ -34,7 +34,7 @@ public class EnemyTest : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupEnemyManager(UnitManagerObject);
+        builder.SetupUnitManager(UnitManagerObject);
         builder.SetupVisualizer(globalVisualizersObject);
     }
 
@@ -55,13 +55,13 @@ public class EnemyTest : LifetimeScope
 
         this.UpdateAsObservable().Subscribe(_ =>
         {
-            text.text = $"# of enemy: {enemyManager.Enemies.Count}";
-            foreach (var e in enemyManager.Enemies)
+            text.text = $"# of enemy: {enemyManager.Units.Count}";
+            foreach (var e in enemyManager.Units)
             {
                 text.text += $"\n {e}: {e.Health}";
             }
 
-            if (enemyManager.Enemies.Count == 0)
+            if (enemyManager.Units.Count == 0)
             {
 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
@@ -74,9 +74,9 @@ public class EnemyTest : LifetimeScope
 
     async UniTaskVoid RnadomMoveEnemy(IUnitManager enemyManager)
     {
-        while (enemyManager.Enemies.Count > 0)
+        while (enemyManager.Units.Count > 0)
         {
-            foreach (var enemy in enemyManager.Enemies)
+            foreach (var enemy in enemyManager.Units)
             {
                 var x = Random.Range(-30f, 30f);
                 var z = Random.Range(-30f, 30f);
@@ -88,10 +88,10 @@ public class EnemyTest : LifetimeScope
 
     async UniTaskVoid RandomAttach(IUnitManager enemyManager)
     {
-        while (enemyManager.Enemies.Count > 0)
+        while (enemyManager.Units.Count > 0)
         {
             await UniTask.Delay(1000);
-            foreach (var enemy in enemyManager.Enemies)
+            foreach (var enemy in enemyManager.Units)
             {
                 enemy.Damaged(Random.Range(1, 10));
             }

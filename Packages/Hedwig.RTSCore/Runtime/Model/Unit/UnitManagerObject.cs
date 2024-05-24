@@ -11,8 +11,8 @@ using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Model
 {
-    [CreateAssetMenu(menuName = "Hedwig/Enemy/Manager", fileName = "EnemyManager")]
-    public class UnitManagerObject : ScriptableObject, IEnemyAttackedEffectFactory, ITargetVisualizerFactory
+    [CreateAssetMenu(menuName = "Hedwig/Unit/UnitManager", fileName = "UnitManager")]
+    public class UnitManagerObject : ScriptableObject, IUnitAttackedEffectFactory, ITargetVisualizerFactory
     {
         #region IEnemyAttackedEffectFactory
         [SerializeField, InspectInline]
@@ -21,22 +21,22 @@ namespace Hedwig.RTSCore.Model
         [SerializeField, InspectInline]
         List<HitEffect> hitEffects = new List<HitEffect>();
 
-        IEnumerable<IEffect?> createEffects(IUnit enemy, IHitObject? hitObject, DamageEvent e)
+        IEnumerable<IEffect?> createEffects(IUnit unit, IHitObject? hitObject, DamageEvent e)
         {
             foreach (var damageEffect in damageEffects)
             {
-                yield return damageEffect.Create(enemy.Controller, e.ActualDamage);
+                yield return damageEffect.Create(unit.Controller, e.ActualDamage);
             }
             foreach (var hitEffect in hitEffects)
             {
-                yield return hitEffect.Create(enemy.Controller,
-                    hitObject?.Position ?? enemy.Controller.Transform.Position,
+                yield return hitEffect.Create(unit.Controller,
+                    hitObject?.Position ?? unit.Controller.Transform.Position,
                     Vector3.zero);
             }
         }
 
-        IEffect[] IEnemyAttackedEffectFactory.CreateAttackedEffects(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
-            => createEffects(enemy, hitObject, e)
+        IEffect[] IUnitAttackedEffectFactory.CreateAttackedEffects(IUnit unit, IHitObject? hitObject, in DamageEvent e)
+            => createEffects(unit, hitObject, e)
                 .WhereNotNull()
                 .ToArray();
         #endregion
@@ -60,13 +60,13 @@ namespace Hedwig.RTSCore.Model
 
     public static class UnitManagerObjectDIExtension
     {
-        public static void SetupEnemyManager(this IContainerBuilder builder, UnitManagerObject? UnitManagerObject)
+        public static void SetupUnitManager(this IContainerBuilder builder, UnitManagerObject? unitManagerObject)
         {
-            if (UnitManagerObject == null)
+            if (unitManagerObject == null)
             {
                 throw new ArgumentNullException("UnitManagerObject is null");
             }
-            builder.RegisterInstance<UnitManagerObject>(UnitManagerObject).AsImplementedInterfaces();
+            builder.RegisterInstance<UnitManagerObject>(unitManagerObject).AsImplementedInterfaces();
             builder.Register<IUnitManager, UnitManagerImpl>(Lifetime.Singleton);
         }
     }

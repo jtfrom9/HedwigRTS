@@ -9,22 +9,22 @@ namespace Hedwig.RTSCore.Usecase
 {
     public class GameSenario
     {
-        IUnitManager enemyManager;
-        IUnitFactory enemyFactory;
+        IUnitManager unitManager;
+        IUnitFactory unitFactory;
         Vector3[] spawnPoints;
         Vector3 target;
         int spawnCondition;
 
         void randomSpawn()
         {
-            var count = spawnCondition - enemyManager.Enemies.Count;
+            var count = spawnCondition - unitManager.Units.Count;
             if(count <= 0)
                 return;
             Debug.Log($"randomSpawn: count={count}");
             for (var i = 0; i < count; i++)
             {
                 var point = spawnPoints[Random.Range((int)0, (int)spawnPoints.Length - 1)];
-                enemyManager.Spawn(enemyFactory, point);
+                unitManager.Spawn(unitFactory, point);
             }
         }
 
@@ -33,7 +33,7 @@ namespace Hedwig.RTSCore.Usecase
             var disposable = new CompositeDisposable();
 
             randomSpawn();
-            enemyManager.Enemies.ObserveRemove().Subscribe(_ =>
+            unitManager.Units.ObserveRemove().Subscribe(_ =>
             {
                 randomSpawn();
             }).AddTo(disposable);
@@ -41,11 +41,11 @@ namespace Hedwig.RTSCore.Usecase
             await UniTask.Create(async () => {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    foreach (var enemy in enemyManager.Enemies)
+                    foreach (var unit in unitManager.Units)
                     {
                         var x = Random.Range(-5, 5);
                         var z = Random.Range(-5, 5);
-                        enemy.SetDestination(target + new Vector3(x, 0, z));
+                        unit.SetDestination(target + new Vector3(x, 0, z));
                     }
                     await UniTask.Delay(3000, cancellationToken: cancellationToken);
                 }
@@ -53,10 +53,10 @@ namespace Hedwig.RTSCore.Usecase
             disposable.Dispose();
         }
 
-        public GameSenario(IUnitManager enemyManager, IUnitFactory enemyFactory, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
+        public GameSenario(IUnitManager unitManager, IUnitFactory unitFactory, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
         {
-            this.enemyManager = enemyManager;
-            this.enemyFactory = enemyFactory;
+            this.unitManager = unitManager;
+            this.unitFactory = unitFactory;
             this.spawnPoints = spawnPoints;
             this.target = target;
             this.spawnCondition = spawnCondition;

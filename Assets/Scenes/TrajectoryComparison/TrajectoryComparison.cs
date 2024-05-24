@@ -61,7 +61,7 @@ namespace Hedwig.RTSCore.Test
             var root = GameObject.Find("Root");
             if (root == null) { throw new InvalidConditionException("no root"); }
 
-            builder.SetupEnemyManager(UnitManagerObject);
+            builder.SetupUnitManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
 
             if (launcherPrefab == null) { Debug.LogError("launcherPrefab is null"); return; }

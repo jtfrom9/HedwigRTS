@@ -10,81 +10,81 @@ namespace Hedwig.RTSCore.Impl
 {
     public class UnitManagerImpl: IUnitManager, IUnitCallback
     {
-        ReactiveCollection<IUnit> _enemies = new ReactiveCollection<IUnit>();
-        CompositeDisposable disposable = new CompositeDisposable();
+        readonly ReactiveCollection<IUnit> _units = new();
+        readonly CompositeDisposable _disposable = new();
 
-        IEnemyAttackedEffectFactory attackedEffectFactory;
-        ITargetVisualizerFactory targetVisualizersFactory;
+        readonly IUnitAttackedEffectFactory _attackedEffectFactory;
+        readonly ITargetVisualizerFactory _targetVisualizersFactory;
 
-        void playHitTransformEffect(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitTransformEffect(IUnit unit, IHitObject? hitObject, in DamageEvent e)
         {
             if (hitObject != null && e.ActualDamage > 0)
             {
-                enemy.Controller.Knockback(hitObject.Direction, hitObject.Power);
+                unit.Controller.Knockback(hitObject.Direction, hitObject.Power);
             }
         }
 
-        void playHitVisualEffect(IUnit enemy, IHitObject? hitObject, in DamageEvent e)
+        void playHitVisualEffect(IUnit unit, IHitObject? hitObject, in DamageEvent e)
         {
-            var effects = attackedEffectFactory.CreateAttackedEffects(enemy, hitObject, in e);
+            var effects = _attackedEffectFactory.CreateAttackedEffects(unit, hitObject, in e);
             foreach (var effect in effects)
             {
                 effect?.PlayAndDispose().Forget();
             }
         }
 
-        void onEnemyAttacked(IUnit enemy, IHitObject? hitObject, in DamageEvent damageEvent)
+        void onUnitAttacked(IUnit unit, IHitObject? hitObject, in DamageEvent damageEvent)
         {
-            playHitVisualEffect(enemy, hitObject, damageEvent);
-            playHitTransformEffect(enemy, hitObject, damageEvent);
+            playHitVisualEffect(unit, hitObject, damageEvent);
+            playHitTransformEffect(unit, hitObject, damageEvent);
         }
 
-        async void onEnemyDeath(IUnit enemy)
+        async void onUnitDeath(IUnit unit)
         {
             await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
-            _enemies.Remove(enemy);
-            enemy.Dispose();
+            _units.Remove(unit);
+            unit.Dispose();
         }
 
-        void addEnemy(IUnit enemy)
+        void addUnit(IUnit unit)
         {
-            var visualizers = targetVisualizersFactory.CreateTargetVisualizers(enemy);
+            var visualizers = _targetVisualizersFactory.CreateTargetVisualizers(unit);
             foreach(var visualizer in visualizers) {
-                enemy.AddVisualizer(visualizer);
+                unit.AddVisualizer(visualizer);
             }
-            _enemies.Add(enemy);
+            _units.Add(unit);
         }
 
-        IUnit? addEnemyWithDefaultObject(IUnitController enemyController, IUnitData UnitObject)
+        IUnit? addUnitWithDefaultObject(IUnitController unitController, IUnitData unitObject)
         {
-            var enemy = new UnitImpl(this, UnitObject, enemyController, this);
-            enemyController.Initialize(enemy, null, name: null);
-            addEnemy(enemy);
-            return enemy;
+            var unit = new UnitImpl(this, unitObject, unitController, this);
+            unitController.Initialize(unit, null, name: null);
+            addUnit(unit);
+            return unit;
         }
 
-        #region IEnemyManager
-        IReadOnlyReactiveCollection<IUnit> IUnitManager.Enemies { get => _enemies; }
+        #region IUnitManager
+        IReadOnlyReactiveCollection<IUnit> IUnitManager.Units { get => _units; }
 
-        IUnit IUnitManager.Spawn(IUnitFactory enemyFactory, Vector3 position, string? name)
+        IUnit IUnitManager.Spawn(IUnitFactory unitFactory, Vector3 position, string? name)
         {
-            var enemy = enemyFactory.Create(this, this, position, name);
-            if (enemy == null)
+            var unit = unitFactory.Create(this, this, position, name);
+            if (unit == null)
             {
                 throw new InvalidCastException("fail to spwawn");
             }
-            addEnemy(enemy);
-            return enemy;
+            addUnit(unit);
+            return unit;
         }
 
-        void IUnitManager.Initialize(IUnitData defualtUnitObject)
+        void IUnitManager.Initialize(IUnitData unitData)
         {
-            var enemyRepository = ControllerBase.Find<IEnemyControllerRepository>();
-            if (enemyRepository != null)
+            var unitControllerRepository = ControllerBase.Find<IUnitControllerRepository>();
+            if (unitControllerRepository != null)
             {
-                foreach (var enemyController in enemyRepository.GetEnemyController())
+                foreach (var unitController in unitControllerRepository.GetUnitControllers())
                 {
-                    addEnemyWithDefaultObject(enemyController, defualtUnitObject);
+                    addUnitWithDefaultObject(unitController, unitData);
                 }
             }
         }
@@ -93,24 +93,24 @@ namespace Hedwig.RTSCore.Impl
         #region IDisposable
         void IDisposable.Dispose()
         {
-            this.disposable.Dispose();
+            this._disposable.Dispose();
         }
         #endregion
 
 
-        #region IEnemyEvent
-        void IUnitCallback.OnAttacked(IUnit enemy, IHitObject? hitObject, in DamageEvent damageEvent)
-            => onEnemyAttacked(enemy, hitObject, damageEvent);
+        #region IUnitCallback
+        void IUnitCallback.OnAttacked(IUnit unit, IHitObject? hitObject, in DamageEvent damageEvent)
+            => onUnitAttacked(unit, hitObject, damageEvent);
 
-        void IUnitCallback.OnDeath(IUnit enemy)
-            => onEnemyDeath(enemy);
+        void IUnitCallback.OnDeath(IUnit unit)
+            => onUnitDeath(unit);
         #endregion
 
         // ctor
-        public UnitManagerImpl(IEnemyAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
+        public UnitManagerImpl(IUnitAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
         {
-            this.attackedEffectFactory = attackedEffectFactory;
-            this.targetVisualizersFactory = targetVisualizersFactory;
+            this._attackedEffectFactory = attackedEffectFactory;
+            this._targetVisualizersFactory = targetVisualizersFactory;
         }
     }
 }
