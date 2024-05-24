@@ -34,28 +34,25 @@ namespace Hedwig.RTSCore.Test
         TextMeshProUGUI? textMesh;
 
         [Inject] IUnitManager? enemyManager;
-        [Inject] ILauncher? launcher;
 
         protected override void Configure(IContainerBuilder builder)
         {
             builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
-            builder.SetupLauncher();
         }
 
         void Start()
         {
             Assert.IsNotNull(enemyManager);
             Assert.IsNotNull(defaultUnitObject);
-            Assert.IsNotNull(launcher);
             Assert.IsNotNull(textMesh);
-            _start(enemyManager!, launcher!, defaultUnitObject!);
+            var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>());
+            _start(enemyManager!, launcher, defaultUnitObject!);
         }
 
         void _start(IUnitManager enemyManager, ILauncher launcher, UnitObject defaultUnitObject)
         {
             enemyManager.Initialize(defaultUnitObject);
-            launcher.Initialize();
 
             var configSelection = new Selection<ProjectileObject>(projectileObjects);
             configSelection.OnCurrentChanged.Subscribe(projectileObject =>

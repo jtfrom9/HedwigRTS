@@ -34,8 +34,6 @@ namespace Hedwig.RTSCore
 
     public interface ILauncher : IDisposable
     {
-        void Initialize();
-
         IProjectileData? ProjectileData { get; }
         void SetProjectile(IProjectileData? projectileObject, ProjectileOption? option = null);
         UniTask SetProjectileAsync(IProjectileData? projectileObject, ProjectileOption? option = null, CancellationToken cancellationToken=default);

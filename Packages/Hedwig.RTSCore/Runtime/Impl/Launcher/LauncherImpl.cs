@@ -16,7 +16,6 @@ namespace Hedwig.RTSCore.Impl
         ITransformProvider? _target;
         CompositeDisposable disposable = new CompositeDisposable();
 
-        bool initialized = false;
         bool recasting = false;
         bool triggerReq = false;
         bool triggered = false;
@@ -42,7 +41,6 @@ namespace Hedwig.RTSCore.Impl
                 trajectoryVisualizer.SetStartTarget(launcherController.Mazzle);
             }
             launcherController.Initialize(this);
-            initialized = true;
         }
 
         void setCanFire()
@@ -97,10 +95,6 @@ namespace Hedwig.RTSCore.Impl
 
         void setProjectile(IProjectileData? projectileData, ProjectileOption? option)
         {
-            if (!initialized)
-            {
-                throw new InvalidConditionException("LauncherManager is not Initalized");
-            }
             if (recasting) {
                 throw new InvalidConditionException("LauncherManager is Recasting");
             }
@@ -109,10 +103,6 @@ namespace Hedwig.RTSCore.Impl
 
         async UniTask setProjectileAsync(IProjectileData? projectileData, ProjectileOption? option, CancellationToken cancellationToken)
         {
-            if (!initialized)
-            {
-                throw new InvalidConditionException("LauncherManager is not Initalized");
-            }
             if (recasting)
             {
                 try
@@ -127,10 +117,6 @@ namespace Hedwig.RTSCore.Impl
 
         void setTarget(ITransformProvider? target)
         {
-            if (!initialized)
-            {
-                throw new InvalidConditionException("LauncherManager is not Initalized");
-            }
             _target = target;
             trajectoryVisualizer?.SetEndTarget(target?.Transform);
             setCanFire();
@@ -145,8 +131,6 @@ namespace Hedwig.RTSCore.Impl
 
         void fire()
         {
-            if (!initialized)
-                throw new InvalidConditionException("LauncherManager is not Initalized");
             if (_target == null)
                 return;
             if (launcherHandler == null)
@@ -185,8 +169,6 @@ namespace Hedwig.RTSCore.Impl
 
         void triggerOn()
         {
-            if (!initialized)
-                throw new InvalidConditionException("LauncherManager is not Initalized");
             if (_target == null)
                 return;
             if (launcherHandler == null)
@@ -203,8 +185,6 @@ namespace Hedwig.RTSCore.Impl
 
         void triggerOff()
         {
-            if (!initialized)
-                throw new InvalidConditionException("LauncherManager is not Initalized");
             if (launcherHandler == null)
                 return;
             if(!triggerReq)
@@ -238,7 +218,6 @@ namespace Hedwig.RTSCore.Impl
         }
 
         #region ILauncher
-        void ILauncher.Initialize() => initialize();
         IProjectileData? ILauncher.ProjectileData { get => _projectileData; }
         void ILauncher.SetProjectile(IProjectileData? projectileObject, ProjectileOption? option) => setProjectile(projectileObject, option);
         UniTask ILauncher.SetProjectileAsync(IProjectileData? projectileObject, ProjectileOption? option, CancellationToken cancellationToken) 
@@ -280,6 +259,7 @@ namespace Hedwig.RTSCore.Impl
         {
             this.launcherController = launcherController;
             this.trajectoryVisualizer = ControllerBase.Find<ITrajectoryVisualizer>();
+            this.initialize();
         }
     }
 }

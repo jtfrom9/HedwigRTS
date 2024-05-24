@@ -113,7 +113,6 @@ namespace Hedwig.RTSCore.Test
             if (cube == null) throw new InvalidConditionException("fail to instantiate target");
             var target = cube.GetComponent<ITransformProvider>();
             var launcher = launcherFactory.Invoke((pos, config));
-            launcher.Initialize();
             launcher.SetProjectile(config, new ProjectileOption() { destroyAtEnd = false });
             launcher.SetTarget(target);
 

@@ -18,6 +18,7 @@ using Hedwig.RTSCore;
 using Hedwig.RTSCore.InputObservable;
 using Hedwig.RTSCore.Usecase;
 using Hedwig.RTSCore.Model;
+using Hedwig.RTSCore.Impl;
 
 public class TowerAim : LifetimeScope
 {
@@ -40,7 +41,6 @@ public class TowerAim : LifetimeScope
     [Inject] IUnitManager enemyManager;
     [Inject] IMouseOperation mouseOperation;
     [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
-    [Inject] ILauncher launcher;
     // [Inject] IEnvironment environment;
 #pragma warning restore CS8618
 
@@ -52,7 +52,6 @@ public class TowerAim : LifetimeScope
         // builder.SetupEnvironment(environmentObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
-        builder.SetupLauncher();
     }
 
     void Start()
@@ -60,7 +59,7 @@ public class TowerAim : LifetimeScope
         if (enemyManager == null || defaultUnitObject==null) return;
         enemyManager.Initialize(defaultUnitObject);
 
-        launcher.Initialize();
+        var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>()) as ILauncher;
 
         var token = this.GetCancellationTokenOnDestroy();
         if (randomWalk)

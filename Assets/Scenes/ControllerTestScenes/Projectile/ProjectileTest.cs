@@ -41,7 +41,6 @@ namespace Hedwig.RTSCore.Test
         List<IProjectile> liveProjectiles = new List<IProjectile>();
 
         [Inject] IUnitManager? enemyManager;
-        [Inject] ILauncher? launcher;
 
         IProjectileFactory? projectileFactory;
 
@@ -49,7 +48,6 @@ namespace Hedwig.RTSCore.Test
         {
             builder.SetupEnemyManager(UnitManagerObject);
             builder.SetupVisualizer(globalVisualizersObject);
-            builder.SetupLauncher();
         }
 
         void Start()
@@ -58,8 +56,7 @@ namespace Hedwig.RTSCore.Test
             if(defaultUnitObject==null) return;
 
             enemyManager.Initialize(defaultUnitObject);
-            if (launcher == null) return;
-            launcher.Initialize();
+            var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>()) as ILauncher;
             if (textMesh == null) return;
 
             foreach(var projectile in projectileObjects)
@@ -111,9 +108,10 @@ namespace Hedwig.RTSCore.Test
             }).AddTo(this);
         }
 
-        void OnApplicationQuit() {
+        void OnApplicationQuit()
+        {
             Debug.Log($"Quit: frame:{Time.frameCount}");
-            launcher?.Dispose();
+            // launcher?.Dispose();
         }
 
         void _update(ILauncher launcher, IUnit enemy, Selection<IUnit> enemySelection, Selection<ProjectileObject> configSelection)
