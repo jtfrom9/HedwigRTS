@@ -107,6 +107,8 @@ namespace Hedwig.RTSCore
         void ResetPos();
 
         IUnitActionRunner ActionRunner { get; }
+
+        ILauncher? Launcher { get; }
     }
     #endregion
 

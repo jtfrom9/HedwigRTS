@@ -57,7 +57,7 @@ namespace Hedwig.RTSCore.Model
                 if (dist <= distance)
                 {
                     unit.Stop();
-                    state.Target = null;
+                    // state.Target = null;
                     return onReachedNextIndex;
                 }
             }
@@ -92,6 +92,34 @@ namespace Hedwig.RTSCore.Model
             var z = UnityEngine.Random.Range(Max.x, Max.y);
             unit.SetDestination(new Vector3(x, 0, z));
             return -1;
+        }
+    }
+
+    [Serializable]
+    public class AttackAction : IUnitActionStateExecutor
+    {
+        [SerializeField] ProjectileObject? projectile;
+        [SerializeField] int nextIndex;
+
+        public string Name { get => "Attack"; }
+
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
+        {
+            var launcher = unit.Launcher;
+            Debug.Log($"launcher = {launcher}, target = {state.Target}");
+            if (launcher != null && state.Target != null)
+            {
+                launcher.SetProjectile(projectile);
+                launcher.SetTarget(state.Target);
+
+                if (launcher.CanFire.Value)
+                {
+                    Debug.Log($"Fire: {state.Target.Transform.Position}");
+                    launcher.Fire();
+                    state.Target = null;
+                }
+            }
+            return nextIndex;
         }
     }
 }

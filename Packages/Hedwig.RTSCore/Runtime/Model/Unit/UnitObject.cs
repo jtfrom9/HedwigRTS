@@ -45,7 +45,10 @@ namespace Hedwig.RTSCore.Model
                 Destroy(go);
                 return null;
             }
-            var unit = new UnitImpl(unitManager, this, unitController, unitCallback, name);
+            var launcherController = go.GetComponentInChildren<ILauncherController>();
+            var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
+                name: name,
+                launcherController: launcherController);
             unitController.Initialize(unit, position, name);
             return unit;
         }

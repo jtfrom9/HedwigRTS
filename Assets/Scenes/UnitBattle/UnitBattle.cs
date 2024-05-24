@@ -18,7 +18,7 @@ public class UnitBattle : LifetimeScope
     // Inject
     [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
     [SerializeField, InspectInline] UnitObject? playerObject;
-    [SerializeField, InspectInline] UnitObject? UnitObject;
+    [SerializeField, InspectInline] UnitObject? emenyObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
 
@@ -86,16 +86,16 @@ public class UnitBattle : LifetimeScope
 
     async void Start()
     {
-        if (playerObject == null || UnitObject == null || globalVisualizerFactory == null || mouseOperation == null)
+        if (playerObject == null || emenyObject == null || globalVisualizerFactory == null || mouseOperation == null)
         {
             Debug.LogError("Invalid");
             return;
         }
         Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.Initialize(UnitObject);
+        enemyManager.Initialize(emenyObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
-        var enemy = enemyManager.Spawn(UnitObject, new Vector3(-10f, 3, -10f), "Enemy");
+        var enemy = enemyManager.Spawn(emenyObject, new Vector3(-10f, 3, -10f), "Enemy");
 
         setupMouse(mouseOperation, globalVisualizerFactory, player);
 

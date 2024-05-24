@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: d150551e374cf42f693275a871ffde03, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 90cac21ec157d4b6c92efebc82a73ed2, type: 2}
 --- !u!1 &55411459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1689,7 +1689,7 @@ MonoBehaviour:
   - {fileID: 1543154964}
   UnitManagerObject: {fileID: 11400000, guid: c5f90ba20c9a246d0a125bd56e1a4b84, type: 2}
   playerObject: {fileID: 11400000, guid: c76123baf11d04b0587f18be1464b185, type: 2}
-  UnitObject: {fileID: 11400000, guid: b35217afaef584842b03ff3843c9968b, type: 2}
+  emenyObject: {fileID: 11400000, guid: b563a118843e648e0a16fe2ba16ee28d, type: 2}
   globalVisualizersObject: {fileID: 11400000, guid: 726823c6a48144c5ba35c46af50a08b4, type: 2}
   inputObservableCusrorManager: {fileID: 1543154967}
 --- !u!4 &1543154966

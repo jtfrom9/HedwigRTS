@@ -14,6 +14,7 @@ namespace Hedwig.RTSCore.Impl
         readonly IUnitData _unitData;
         readonly IUnitController _unitController;
         readonly IUnitCallback _callback;
+        readonly ILauncher? _launcher;
         readonly List<ITargetVisualizer> _visualizers = new List<ITargetVisualizer>();
         readonly ReactiveProperty<bool> _selected = new ReactiveProperty<bool>();
         readonly ReactiveProperty<int> _health;
@@ -169,10 +170,11 @@ namespace Hedwig.RTSCore.Impl
         void IUnit.Damaged(int damage) => damaged(damage);
         void IUnit.ResetPos() => _unitController.ResetPos();
 
-        public IUnitActionRunner ActionRunner { get => this; }
+        IUnitActionRunner IUnit.ActionRunner { get => this; }
+        ILauncher? IUnit.Launcher { get => _launcher; }
         #endregion
 
-        #region IUnit
+        #region IUnitActionRunner
         void IUnitActionRunner.DoAction(int nextTick) => doAction(nextTick);
         IObservable<IUnitActionStateExecutor> IUnitActionRunner.OnStateChanged { get => _onStateChanged; }
         IObservable<IUnit?> IUnitActionRunner.OnTargetChanged { get => _onStateTargetChanged; }
@@ -193,15 +195,21 @@ namespace Hedwig.RTSCore.Impl
             return $"{Controller.Name}.Impl({_unitData.Name})";
         }
 
-        public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController, IUnitCallback callback, string? name = null)
+        public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController, IUnitCallback callback,
+            string? name = null,
+            ILauncherController? launcherController = null)
         {
             this._unitManager = unitManager;
             this._name = name;
             this._unitData = unitData;
             this._unitController = unitController;
+            this._unitController.SeDebugUnit(this);
             this._callback = callback;
+            if (launcherController != null)
+            {
+                this._launcher = new LauncherImpl(launcherController);
+            }
             this._health = new ReactiveProperty<int>(unitData.MaxHealth);
-            this.Controller.SeDebugUnit(this);
             this._state = new UnitActionStateRunningStore(onTargetChanged: (target) => _onStateTargetChanged.OnNext(target));
         }
     }
