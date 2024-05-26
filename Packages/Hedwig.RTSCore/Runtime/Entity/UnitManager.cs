@@ -16,11 +16,23 @@ namespace Hedwig.RTSCore
         IReadOnlyReactiveCollection<IUnit> Units { get; }
         IUnit Spawn(IUnitFactory unitFactory, Vector3 position, string? name = null);
 
-        void Initialize(IUnitData defaultUnitObject);
+        void Register(IUnitController unitController, IUnitData defaultUnitObject);
     }
 
     public static class UnitManagerExtension
     {
+        public static void AutoRegisterUnitsInScene(this IUnitManager manager, IUnitData unitData)
+        {
+            var unitControllerReposiotry = ControllerBase.Find<IUnitControllerRepository>();
+            if (unitControllerReposiotry != null)
+            {
+                foreach (var controller in unitControllerReposiotry.GetUnitControllers())
+                {
+                    manager.Register(controller, unitData);
+                }
+            }
+        }
+
         public static UniTask RandomWalk(this IUnitManager manager, float min, float max, int msec, CancellationToken token)
         {
             return UniTask.Create(async () =>

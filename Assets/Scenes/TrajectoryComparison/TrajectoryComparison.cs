@@ -97,7 +97,7 @@ namespace Hedwig.RTSCore.Test
 
             if (enemyManager == null) { Debug.LogError("no enemyManager"); return; }
             if(defaultUnitObject==null){ Debug.LogError("no deafultEnemy"); return; }
-            enemyManager.Initialize(defaultUnitObject);
+            enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
         }
 
         (ILauncher, ITransformProvider) createInstance(int index, ProjectileObject config)

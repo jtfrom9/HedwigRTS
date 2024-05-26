@@ -77,16 +77,9 @@ namespace Hedwig.RTSCore.Impl
             return unit;
         }
 
-        void IUnitManager.Initialize(IUnitData unitData)
+        void IUnitManager.Register(IUnitController unitController, IUnitData unitData)
         {
-            var unitControllerRepository = ControllerBase.Find<IUnitControllerRepository>();
-            if (unitControllerRepository != null)
-            {
-                foreach (var unitController in unitControllerRepository.GetUnitControllers())
-                {
-                    addUnitWithDefaultObject(unitController, unitData);
-                }
-            }
+            addUnitWithDefaultObject(unitController, unitData);
         }
         #endregion
 

@@ -52,7 +52,7 @@ namespace Hedwig.RTSCore.Test
 
         void _start(IUnitManager enemyManager, ILauncher launcher, UnitObject defaultUnitObject)
         {
-            enemyManager.Initialize(defaultUnitObject);
+            enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
 
             var configSelection = new Selection<ProjectileObject>(projectileObjects);
             configSelection.OnCurrentChanged.Subscribe(projectileObject =>

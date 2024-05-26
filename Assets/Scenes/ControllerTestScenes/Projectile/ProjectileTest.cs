@@ -55,7 +55,7 @@ namespace Hedwig.RTSCore.Test
             if (enemyManager == null) return;
             if(defaultUnitObject==null) return;
 
-            enemyManager.Initialize(defaultUnitObject);
+            enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
             var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>()) as ILauncher;
             if (textMesh == null) return;
 

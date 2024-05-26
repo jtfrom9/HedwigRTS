@@ -43,7 +43,7 @@ public class EnemyTest : LifetimeScope
         if(enemyManager==null || defaultUnitObject==null) return;
         if(text==null) return;
 
-        enemyManager.Initialize(defaultUnitObject);
+        enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
 
         RnadomMoveEnemy(enemyManager).Forget();
         RandomAttach(enemyManager).Forget();

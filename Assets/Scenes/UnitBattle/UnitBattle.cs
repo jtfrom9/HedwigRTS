@@ -92,7 +92,7 @@ public class UnitBattle : LifetimeScope
             return;
         }
         Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.Initialize(emenyObject);
+        enemyManager.AutoRegisterUnitsInScene(emenyObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
         var enemy = enemyManager.Spawn(emenyObject, new Vector3(-10f, 3, -10f), "Enemy");

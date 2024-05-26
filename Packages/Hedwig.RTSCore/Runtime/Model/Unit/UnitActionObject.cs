@@ -57,7 +57,6 @@ namespace Hedwig.RTSCore.Model
                 if (dist <= distance)
                 {
                     unit.Stop();
-                    // state.Target = null;
                     return onReachedNextIndex;
                 }
             }

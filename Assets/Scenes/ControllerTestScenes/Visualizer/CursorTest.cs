@@ -60,7 +60,7 @@ namespace Hedwig.RTSCore.Test
                 Debug.LogError($"enemyManager: {enemyManager}");
                 return;
             }
-            enemyManager.Initialize(defaultUnitObject);
+            enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
 
             var selection = new ReactiveSelection<IUnit>(enemyManager.Units);
             selection.OnPrevChanged.Subscribe(e => { (e as ISelectable)?.Select(false); }).AddTo(this);
