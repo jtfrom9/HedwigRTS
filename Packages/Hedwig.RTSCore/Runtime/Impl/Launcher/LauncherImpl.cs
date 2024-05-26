@@ -12,35 +12,31 @@ namespace Hedwig.RTSCore.Impl
 {
     public class LauncherImpl : ILauncher, ILauncherHandlerEvent
     {
-        IProjectileData? _projectileData;
-        ITransformProvider? _target;
-        CompositeDisposable disposable = new CompositeDisposable();
+        readonly CompositeDisposable _disposable = new();
+        readonly ReactiveProperty<bool> canFire = new();
+        readonly Subject<IProjectileData?> onProjectileChanged = new();
+        readonly Subject<ITransformProvider?> onTargetChanged = new();
+        readonly Subject<float> onRecastTimeUpdated = new();
+        readonly Subject<IProjectile> onFired = new();
+
+        readonly ILauncherController _launcherController;
+        readonly ITrajectoryVisualizer? _trajectoryVisualizer;
 
         bool recasting = false;
         bool triggerReq = false;
         bool triggered = false;
 
-        ReactiveProperty<bool> canFire = new ReactiveProperty<bool>();
-        Subject<IProjectileData?> onProjectileChanged = new Subject<IProjectileData?>();
-        Subject<ITransformProvider?> onTargetChanged = new Subject<ITransformProvider?>();
-        Subject<float> onRecastTimeUpdated = new Subject<float>();
-        Subject<IProjectile> onFired = new Subject<IProjectile>();
-
-        // injected
-        ILauncherController launcherController;
-
-        // find
-        ITrajectoryVisualizer? trajectoryVisualizer;
-
-        ILauncherHandler? launcherHandler;
+        ILauncherHandler? _launcherHandler;
+        IProjectileData? _projectileData;
+        ITransformProvider? _target;
 
         void initialize()
         {
-            if (trajectoryVisualizer != null)
+            if (_trajectoryVisualizer != null)
             {
-                trajectoryVisualizer.SetStartTarget(launcherController.Mazzle);
+                _trajectoryVisualizer.SetStartTarget(_launcherController.Mazzle);
             }
-            launcherController.Initialize(this);
+            _launcherController.Initialize(this);
         }
 
         void setCanFire()
@@ -67,24 +63,24 @@ namespace Hedwig.RTSCore.Impl
         void setProjectileCore(IProjectileData? projectileData, ProjectileOption? option)
         {
             this._projectileData = projectileData;
-            this.trajectoryVisualizer?.SetProjectile(projectileData);
+            this._trajectoryVisualizer?.SetProjectile(projectileData);
 
             // reset laouncher handler
-            this.launcherHandler?.Dispose();
-            this.launcherHandler = null;
+            this._launcherHandler?.Dispose();
+            this._launcherHandler = null;
 
             if (projectileData != null)
             {
                 switch (projectileData.Type)
                 {
                     case ProjectileType.Fire:
-                        this.launcherHandler = new ShotLauncherHandler(this, projectileData, option);
+                        this._launcherHandler = new ShotLauncherHandler(this, projectileData, option);
                         break;
                     case ProjectileType.Burst:
-                        this.launcherHandler = new BurstLauncherHandler(this, projectileData);
+                        this._launcherHandler = new BurstLauncherHandler(this, projectileData);
                         break;
                     case ProjectileType.Grenade:
-                        this.launcherHandler = new GrenadeLauncherHandler(this, projectileData);
+                        this._launcherHandler = new GrenadeLauncherHandler(this, projectileData);
                         break;
                 }
             }
@@ -118,7 +114,7 @@ namespace Hedwig.RTSCore.Impl
         void setTarget(ITransformProvider? target)
         {
             _target = target;
-            trajectoryVisualizer?.SetEndTarget(target?.Transform);
+            _trajectoryVisualizer?.SetEndTarget(target?.Transform);
             setCanFire();
             if(_target!=null) {
                 handleTriggerOn();
@@ -131,27 +127,26 @@ namespace Hedwig.RTSCore.Impl
 
         void fire()
         {
-            if (_target == null)
-                return;
-            if (launcherHandler == null)
-                return;
-            if (_projectileData == null)
-                return;
             if (!canFire.Value)
+            {
                 return;
-            launcherHandler.Fire(launcherController.Mazzle, _target.Transform);
+            }
+            if (_launcherHandler == null || _target == null)
+            {
+                throw new InvalidConditionException("fail to fire");
+            }
+            _launcherHandler.Fire(_launcherController.Mazzle, _target.Transform);
         }
 
         void handleTriggerOn()
         {
-            // Debug.Log($"handleTrigerOn. {_target}, req:{triggerReq}");
-            if (_target == null)
-                return;
-            if (launcherHandler == null)
-                return;
             if (triggerReq && canFire.Value)
             {
-                launcherHandler.TriggerOn(launcherController.Mazzle, _target.Transform);
+                if (_launcherHandler == null || _target == null)
+                {
+                    throw new InvalidConditionException("fail to fire");
+                }
+                _launcherHandler.TriggerOn(_launcherController.Mazzle, _target.Transform);
                 triggered = true;
             }
         }
@@ -159,40 +154,48 @@ namespace Hedwig.RTSCore.Impl
         void handleError()
         {
             // Debug.Log($"handleError. error:{!canFire.Value}");
-            if (launcherHandler == null)
-                return;
-            if (!canFire.Value) 
+            if (!canFire.Value)
             {
-                launcherHandler.Error();
+                if (_launcherHandler == null)
+                {
+                    throw new InvalidConditionException("fail to fire");
+                }
+                _launcherHandler.Error();
             }
         }
 
         void triggerOn()
         {
-            if (_target == null)
+            if (triggerReq)
+            {
                 return;
-            if (launcherHandler == null)
-                return;
-            if(triggerReq)
-                return;
+            }
             triggerReq = true;
             if(!canFire.Value) {
                 return;
             }
-            launcherHandler.TriggerOn(launcherController.Mazzle, _target.Transform);
+            if (_launcherHandler == null || _target == null)
+            {
+                throw new InvalidConditionException("fail to fire");
+            }
+            _launcherHandler.TriggerOn(_launcherController.Mazzle, _target.Transform);
             triggered = true;
         }
 
         void triggerOff()
         {
-            if (launcherHandler == null)
+            if (!triggerReq)
+            {
                 return;
-            if(!triggerReq)
-                return;
+            }
             triggerReq = false;
             if (triggered)
             {
-                launcherHandler.TriggerOff();
+                if (_launcherHandler == null)
+                {
+                    throw new InvalidConditionException("fail to fire");
+                }
+                _launcherHandler.TriggerOff();
                 triggered = false;
             }
         }
@@ -237,7 +240,7 @@ namespace Hedwig.RTSCore.Impl
         #endregion
 
         #region ILauncherManager
-        void ILauncherHandlerEvent.OnShowTrajectory(bool v) => trajectoryVisualizer?.Show(v);
+        void ILauncherHandlerEvent.OnShowTrajectory(bool v) => _trajectoryVisualizer?.Show(v);
         void ILauncherHandlerEvent.OnBeforeFire() => onBeforeLaunched();
         void ILauncherHandlerEvent.OnAfterFire() => onAfterFire();
         void ILauncherHandlerEvent.OnFired(IProjectile projectile) => onFired.OnNext(projectile);
@@ -249,16 +252,16 @@ namespace Hedwig.RTSCore.Impl
             onProjectileChanged.OnCompleted();
             onTargetChanged.OnCompleted();
             onRecastTimeUpdated.OnCompleted();
-            launcherHandler?.Dispose();
+            _launcherHandler?.Dispose();
             canFire.Dispose();
-            disposable.Dispose();
+            _disposable.Dispose();
         }
         #endregion
 
         public LauncherImpl(ILauncherController launcherController)
         {
-            this.launcherController = launcherController;
-            this.trajectoryVisualizer = ControllerBase.Find<ITrajectoryVisualizer>();
+            this._launcherController = launcherController;
+            this._trajectoryVisualizer = ControllerBase.Find<ITrajectoryVisualizer>();
             this.initialize();
         }
     }
