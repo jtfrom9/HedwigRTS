@@ -86,6 +86,13 @@ public class TimeControl : MonoBehaviour
         var list = DOTween.TweensByTarget(cube);
 
         await UniTask.Delay(500);
+        mr.material.color = Color.black;
+        foreach (var tw in list)
+        {
+            tw.timeScale = 0;
+        }
+
+        await UniTask.Delay(500);
         mr.material.color = Color.red;
         // t.Pause().Forget();
         foreach (var tw in list)

@@ -19,12 +19,13 @@ namespace Hedwig.RTSCore.Controller
 
         readonly ITransform _transform = new CachedTransform();
         string _name;
-        bool _disposed = false;
 
+        bool _disposed = false;
         bool _willHit = false;
         bool _hit = false;
-        RaycastHit? willCastHit = null;
+        RaycastHit? _raycastHit = null;
         float _lastSpeed = 0f;
+        bool _timePaused = false;
 
         Subject<ProjectileEventArg> onEvent = new Subject<ProjectileEventArg>();
 
@@ -59,7 +60,7 @@ namespace Hedwig.RTSCore.Controller
                 onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.Trigger)
                 {
                     Collider = collider,
-                    WillHit = willCastHit,
+                    WillHit = _raycastHit,
                     EndReason = endReason,
                     Speed = _lastSpeed
                 });
@@ -115,7 +116,7 @@ namespace Hedwig.RTSCore.Controller
             var distance = speed * Time.deltaTime;
             if (Physics.Raycast(ray, out hit, distance))
             {
-                this.willCastHit = hit;
+                this._raycastHit = hit;
                 hitHandler(ray, distance, hit);
             }
         }
@@ -165,15 +166,15 @@ namespace Hedwig.RTSCore.Controller
             //
             // last one step move to the object will hit
             //
-            if (willCastHit.HasValue && !_hit)
+            if (_raycastHit.HasValue && !_hit)
             {
                 onEvent.OnNext(new ProjectileEventArg(ProjectileEventType.BeforeLastMove)
                 {
-                    WillHit = willCastHit
+                    WillHit = _raycastHit
                 });
 
                 // move to will hit point
-                await _transform.Raw.DOMove(willCastHit.Value.point, speed)
+                await _transform.Raw.DOMove(_raycastHit.Value.point, speed)
                     .SetSpeedBased(true)
                     .SetEase(Ease.Linear)
                     .SetUpdate(UpdateType.Fixed);
@@ -186,7 +187,29 @@ namespace Hedwig.RTSCore.Controller
         }
 
         void pause(bool paused)
-        {}
+        {
+            void setTweenTimescale(float v)
+            {
+                var tweens = DOTween.TweensByTarget(_transform.Raw);
+                if (tweens != null)
+                {
+                    foreach (var tween in tweens)
+                    {
+                        tween.timeScale = v;
+                    }
+                }
+            }
+            if (paused)
+            {
+                setTweenTimescale(0);
+                _timePaused = true;
+            }
+            else
+            {
+                setTweenTimescale(1f);
+                _timePaused = false;
+            }
+        }
 
         void dispose()
         {
@@ -225,7 +248,7 @@ namespace Hedwig.RTSCore.Controller
             }
             _name = gameObject.name;
             transform.position = initial;
-            timeManager?.Paused.Subscribe(v => pause(v)).AddTo(this);
+            timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
 

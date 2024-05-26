@@ -739,6 +739,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy.Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 2489900876656539108, guid: 8e92bdc89cc064600a03877e9a4b006d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2489900876656539134, guid: 8e92bdc89cc064600a03877e9a4b006d, type: 3}
       propertyPath: m_RootOrder
       value: 5

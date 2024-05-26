@@ -12,16 +12,16 @@ namespace Hedwig.RTSCore.Impl
 {
     public class ProjectileImpl : IProjectile, IHitObject
     {
-        IProjectileController projectileController;
-        IProjectileData projectileData;
+        readonly IProjectileController projectileController;
+        readonly IProjectileData projectileData;
         ProjectileOption option = new ProjectileOption();
         ITrajectoryMap? map = null;
 
         ProjectileEndReason endReason = ProjectileEndReason.Expired;
-        CompositeDisposable disposables = new CompositeDisposable();
-        Subject<Unit> onStarted = new Subject<Unit>();
-        Subject<Unit> onEnded = new Subject<Unit>();
-        Subject<Unit> onDestroy = new Subject<Unit>();
+        readonly CompositeDisposable disposables = new CompositeDisposable();
+        readonly Subject<Unit> onStarted = new Subject<Unit>();
+        readonly Subject<Unit> onEnded = new Subject<Unit>();
+        readonly Subject<Unit> onDestroy = new Subject<Unit>();
 
         Vector3 toSpearPoint(Vector3 from, Vector3 to, float range) {
             return from + ((to - from).normalized * range);

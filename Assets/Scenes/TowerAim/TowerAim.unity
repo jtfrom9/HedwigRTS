@@ -6856,6 +6856,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 1780342146}
+  - {fileID: 617963210}
   textMesh: {fileID: 1323354209}
   UnitManagerObject: {fileID: 11400000, guid: c5f90ba20c9a246d0a125bd56e1a4b84, type: 2}
   defaultUnitObject: {fileID: 11400000, guid: b35217afaef584842b03ff3843c9968b, type: 2}

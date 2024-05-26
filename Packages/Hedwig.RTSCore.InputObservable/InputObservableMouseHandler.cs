@@ -5,6 +5,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using InputObservable;
+using VContainer;
 
 namespace Hedwig.RTSCore.InputObservable
 {
@@ -22,13 +23,18 @@ namespace Hedwig.RTSCore.InputObservable
         Subject<bool> onRightTrigger = new Subject<bool>();
         Subject<MouseMoveEvent> onMove = new Subject<MouseMoveEvent>();
 
+        [Inject]
+        readonly ITimeManager timeManager;
+
+        bool TimePaused { get => timeManager.Paused.Value; }
+
         void Start()
         {
-            if(_camera==null) {
+            if (_camera == null)
+            {
                 Debug.LogError("no camera");
                 return;
             }
-    
             var context = this.DefaultInputContext();
             setupButton(context.GetObservable(0), context.GetObservable(1));
             setupMove(_camera);
@@ -37,38 +43,51 @@ namespace Hedwig.RTSCore.InputObservable
         void setupButton(IInputObservable lmb, IInputObservable rmb)
         {
             // lmb: left mouse button
-            lmb.OnBegin.Subscribe(_ =>
-            {
-                onLeftClick.OnNext(Unit.Default);
-            }).AddTo(this);
-            lmb.OnBegin.First().TakeUntil(lmb.OnEnd).Repeat().Subscribe(_ =>
-            {
-                onLeftTrigger.OnNext(true);
-            }).AddTo(this);
-            lmb.OnEnd.Subscribe(_ =>
-            {
-                onLeftTrigger.OnNext(false);
-            }).AddTo(this);
+            lmb.OnBegin
+                .Where(_ => !TimePaused)
+                .Subscribe(_ =>
+                {
+                    onLeftClick.OnNext(Unit.Default);
+                }).AddTo(this);
+
+            lmb.OnBegin.First().TakeUntil(lmb.OnEnd).Repeat()
+                .Where(_ => !TimePaused)
+                .Subscribe(_ =>
+                {
+                    onLeftTrigger.OnNext(true);
+                }).AddTo(this);
+            lmb.OnEnd
+                .Where(_ => !TimePaused)
+                .Subscribe(_ =>
+                {
+                    onLeftTrigger.OnNext(false);
+                }).AddTo(this);
 
             // rmb: right mouse button
-            rmb.OnBegin.Subscribe(_ =>
-            {
-                onRightClick.OnNext(Unit.Default);
-            }).AddTo(this);
-            rmb.OnBegin.First().TakeUntil(lmb.OnEnd).Repeat().Subscribe(_ =>
-            {
-                onRightTrigger.OnNext(true);
-            }).AddTo(this);
-            rmb.OnEnd.Subscribe(_ => {
-                onRightTrigger.OnNext(false);
-            }).AddTo(this);
+            rmb.OnBegin
+                .Where(_ => !TimePaused)
+                .Subscribe(_ =>
+                {
+                    onRightClick.OnNext(Unit.Default);
+                }).AddTo(this);
+            rmb.OnBegin.First().TakeUntil(lmb.OnEnd).Repeat()
+                .Where(_ => !TimePaused)
+                .Subscribe(_ =>
+                {
+                    onRightTrigger.OnNext(true);
+                }).AddTo(this);
+            rmb.OnEnd
+                .Where(_ => !TimePaused)
+                .Subscribe(_ => {
+                    onRightTrigger.OnNext(false);
+                }).AddTo(this);
         }
 
         void setupMove(Camera camera)
         {
             var enter = false;
             var lastPos = Vector3.zero;
-            this.UpdateAsObservable().Subscribe(_ =>
+            this.UpdateAsObservable().Where(_ => !timeManager.Paused.Value).Subscribe(_ =>
             {
                 var pos = Input.mousePosition;
                 var ray = camera.ScreenPointToRay(pos);

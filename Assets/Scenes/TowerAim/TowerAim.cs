@@ -73,7 +73,7 @@ public class TowerAim : LifetimeScope
         if (enemyManager == null || defaultUnitObject==null) return;
         enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
 
-        var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>()) as ILauncher;
+        var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>(), timeManager) as ILauncher;
 
         var token = this.GetCancellationTokenOnDestroy();
         if (randomWalk)
