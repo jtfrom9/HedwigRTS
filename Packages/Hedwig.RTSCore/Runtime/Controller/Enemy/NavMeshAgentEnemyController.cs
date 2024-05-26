@@ -14,11 +14,16 @@ namespace Hedwig.RTSCore.Controller
 {
     public class NavMeshAgentEnemyController : ControllerBase, IUnitController, IVisualProperty, IHitHandler
     {
+        readonly ITransform _transform = new CachedTransform();
+        readonly CancellationTokenSource cts = new CancellationTokenSource();
+
         string _name;
-        IUnitControllerCallback? controllerEvent;
-        ITransform _transform = new CachedTransform();
+        IUnitControllerCallback? _callback;
         NavMeshAgent? _agent;
         Rigidbody? _rigidbody;
+
+        bool _timePaused = false;
+        Vector3 _velocityBackup = default;
 
         Vector3 initialPosition;
         Quaternion initialRotation;
@@ -26,18 +31,18 @@ namespace Hedwig.RTSCore.Controller
         float? _distanceToGround;
         float? _distanceToHead;
 
-        CancellationTokenSource cts = new CancellationTokenSource();
-
         [SerializeField]
         string CurrentState;
         [SerializeField]
         string Target;
 
+        const int defaultSpeed = 3;
+
         void Awake()
         {
             _transform.Initialize(transform);
             _agent = GetComponent<NavMeshAgent>();
-            _agent.speed = 3;
+            _agent.speed = defaultSpeed;
 
             _rigidbody = GetComponent<Rigidbody>();
 
@@ -72,6 +77,24 @@ namespace Hedwig.RTSCore.Controller
             this.initialScale = transform.localScale;
         }
 
+        void pause(bool pause)
+        {
+            if (_agent == null) return;
+            if (pause)
+            {
+                _timePaused = true;
+                _agent.isStopped = true;
+                _velocityBackup = _agent.velocity;
+                _agent.velocity = Vector3.zero;
+            }
+            else
+            {
+                _timePaused = false;
+                _agent.isStopped = false;
+                _agent.velocity = _velocityBackup;
+            }
+        }
+
         // void OnTriggerStay(Collider other)
         // {
         //     if (other.gameObject.CompareTag(Collision.ProjectileTag))
@@ -93,7 +116,7 @@ namespace Hedwig.RTSCore.Controller
         #region
         void IHitHandler.OnHit(IHitObject hitObject)
         {
-            controllerEvent?.OnHit(hitObject);
+            _callback?.OnHit(hitObject);
         }
         #endregion
 
@@ -131,21 +154,25 @@ namespace Hedwig.RTSCore.Controller
         string IUnitController.Name { get => _name; }
         void IUnitController.SetDestination(Vector3 pos)
         {
+            if (_timePaused) return;
             _agent!.isStopped = false;
             _agent?.SetDestination(pos);
         }
         void IUnitController.Stop()
         {
+            if (_timePaused) return;
             _agent!.isStopped = true;
             _agent?.SetDestination(_transform.Position);
         }
         void IUnitController.ResetPos()
         {
+            if (_timePaused) return;
             transform.SetPositionAndRotation(initialPosition, initialRotation);
             transform.localScale = initialScale;
         }
         void IUnitController.Knockback(Vector3 direction, float power)
         {
+            if (_timePaused) return;
             if (cts.IsCancellationRequested)
                 return;
             Debug.Log($"{_name}: AddShock: ${direction}, ${power}");
@@ -174,20 +201,21 @@ namespace Hedwig.RTSCore.Controller
             unit.OnStateChanged.Subscribe(state => {
                 CurrentState = state.Name;
             }).AddTo(this);
+            unit.OnTargetChanged.Subscribe(unit => {
+                Target = unit?.Name ?? "";
+            }).AddTo(this);
         }
 
-        void IUnitController.Initialize(IUnitControllerCallback controllerEvent, Vector3? position, string? name)
+        void IUnitController.Initialize(IUnitControllerCallback callback, Vector3? position, string? name, ITimeManager? timeManager)
         {
             if (name != null)
             {
                 gameObject.name = name;
             }
-            else
-            {
-                _name = gameObject.name;
-            }
-            this.controllerEvent = controllerEvent;
+            _name = gameObject.name;
+            this._callback = callback;
             this.initialize(position);
+            timeManager?.Paused.Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
     }

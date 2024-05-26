@@ -10,17 +10,18 @@ using UniRx;
 
 namespace Hedwig.RTSCore.Impl
 {
-    public class LauncherImpl : ILauncher, ILauncherHandlerEvent
+    public class LauncherImpl : ILauncher, ILauncherHandlerCallback
     {
+        readonly ILauncherController _launcherController;
+        readonly ITimeManager? _timeManager;
+        readonly ITrajectoryVisualizer? _trajectoryVisualizer;
+
         readonly CompositeDisposable _disposable = new();
         readonly ReactiveProperty<bool> canFire = new();
         readonly Subject<IProjectileData?> onProjectileChanged = new();
         readonly Subject<ITransformProvider?> onTargetChanged = new();
         readonly Subject<float> onRecastTimeUpdated = new();
         readonly Subject<IProjectile> onFired = new();
-
-        readonly ILauncherController _launcherController;
-        readonly ITrajectoryVisualizer? _trajectoryVisualizer;
 
         bool recasting = false;
         bool triggerReq = false;
@@ -43,6 +44,7 @@ namespace Hedwig.RTSCore.Impl
         {
             var v = _projectileData != null &&
                 _target != null &&
+                _launcherHandler !=null &&
                 !recasting;
             canFire.Value = v;
         }
@@ -58,6 +60,18 @@ namespace Hedwig.RTSCore.Impl
             await UniTask.Delay(step);
             var elapsed = index * step;
             onRecastTimeUpdated.OnNext((float)elapsed / (float)recast);
+        }
+
+        IProjectile createProjectile(Vector3 position, string? name)
+        {
+            if (_projectileData is IProjectileFactory factory)
+            {
+                return factory.Create(position, name, _timeManager);
+            }
+            else
+            {
+                throw new InvalidCastException("Failed to createProjectile");
+            }
         }
 
         void setProjectileCore(IProjectileData? projectileData, ProjectileOption? option)
@@ -239,11 +253,12 @@ namespace Hedwig.RTSCore.Impl
         IObservable<IProjectile> ILauncher.OnFired { get => onFired; }
         #endregion
 
-        #region ILauncherManager
-        void ILauncherHandlerEvent.OnShowTrajectory(bool v) => _trajectoryVisualizer?.Show(v);
-        void ILauncherHandlerEvent.OnBeforeFire() => onBeforeLaunched();
-        void ILauncherHandlerEvent.OnAfterFire() => onAfterFire();
-        void ILauncherHandlerEvent.OnFired(IProjectile projectile) => onFired.OnNext(projectile);
+        #region ILauncherHandlerCallback
+        void ILauncherHandlerCallback.OnShowTrajectory(bool v) => _trajectoryVisualizer?.Show(v);
+        void ILauncherHandlerCallback.OnBeforeFire() => onBeforeLaunched();
+        void ILauncherHandlerCallback.OnAfterFire() => onAfterFire();
+        void ILauncherHandlerCallback.OnFired(IProjectile projectile) => onFired.OnNext(projectile);
+        IProjectile ILauncherHandlerCallback.CreateProjectile(Vector3 position, string? name) => createProjectile(position, name);
         #endregion
 
         #region IDisposable
@@ -258,9 +273,10 @@ namespace Hedwig.RTSCore.Impl
         }
         #endregion
 
-        public LauncherImpl(ILauncherController launcherController)
+        public LauncherImpl(ILauncherController launcherController, ITimeManager? timeManager = null)
         {
             this._launcherController = launcherController;
+            this._timeManager = timeManager;
             this._trajectoryVisualizer = ControllerBase.Find<ITrajectoryVisualizer>();
             this.initialize();
         }

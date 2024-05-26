@@ -12,35 +12,31 @@ namespace Hedwig.RTSCore.Impl
 {
     public class ShotLauncherHandler: ILauncherHandler
     {
-        ILauncherHandlerEvent handlerEvent;
-        IProjectileData projectileData;
-        ProjectileOption? option;
+        readonly ILauncherHandlerCallback _handlerEvent;
+        readonly IProjectileData _projectileData;
+        readonly ProjectileOption? _option;
 
         public void Fire(ITransform start, ITransform target)
         {
             UniTask.Create(async () =>
             {
-                handlerEvent.OnBeforeFire();
-                for (var i = 0; i < projectileData.SuccessionCount; i++)
+                _handlerEvent.OnBeforeFire();
+                for (var i = 0; i < _projectileData.SuccessionCount; i++)
                 {
                     var cts = new CancellationTokenSource();
-                    var projectile = projectileData.Factory.Create(start.Position);
-                    if(projectile==null) {
-                        Debug.LogError($"fiail to create {projectileData.Name}");
-                        break;
-                    }
+                    var projectile = _handlerEvent.CreateProjectile(start.Position, name: null);
                     var disposable = projectile.OnDestroy.Subscribe(_ =>
                     {
                         cts.Cancel();
                     });
-                    projectile.Start(target, in option);
-                    handlerEvent.OnFired(projectile);
+                    projectile.Start(target, in _option);
+                    _handlerEvent.OnFired(projectile);
 
-                    if (projectileData.SuccessionCount > 1)
+                    if (_projectileData.SuccessionCount > 1)
                     {
                         try
                         {
-                            await UniTask.Delay(projectileData.SuccessionInterval, cancellationToken: cts.Token);
+                            await UniTask.Delay(_projectileData.SuccessionInterval, cancellationToken: cts.Token);
                         }catch(OperationCanceledException) {
                             break;
                         }finally {
@@ -49,25 +45,25 @@ namespace Hedwig.RTSCore.Impl
                         }
                     }
                 }
-                handlerEvent.OnAfterFire();
+                _handlerEvent.OnAfterFire();
             }).Forget();
         }
 
         public void TriggerOn(ITransform start, ITransform target)
         {
-            Debug.Log($"StartFire: {projectileData.Chargable}");
-            if (projectileData.Chargable)
+            Debug.Log($"StartFire: {_projectileData.Chargable}");
+            if (_projectileData.Chargable)
             {
-                handlerEvent.OnShowTrajectory(true);
+                _handlerEvent.OnShowTrajectory(true);
             }
         }
 
         public void TriggerOff()
         {
             Debug.Log("EndFire");
-            if (projectileData.Chargable)
+            if (_projectileData.Chargable)
             {
-                handlerEvent.OnShowTrajectory(false);
+                _handlerEvent.OnShowTrajectory(false);
             }
         }
 
@@ -80,13 +76,13 @@ namespace Hedwig.RTSCore.Impl
         }
 
         public ShotLauncherHandler(
-            ILauncherHandlerEvent  handlerEvent,
+            ILauncherHandlerCallback handlerEvent,
             IProjectileData projectileData,
             ProjectileOption? option)
         {
-            this.handlerEvent = handlerEvent;
-            this.projectileData = projectileData;
-            this.option = option;
+            this._handlerEvent = handlerEvent;
+            this._projectileData = projectileData;
+            this._option = option;
         }
     }
 }

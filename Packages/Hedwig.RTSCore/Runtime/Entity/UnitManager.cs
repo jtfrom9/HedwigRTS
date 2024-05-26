@@ -17,6 +17,8 @@ namespace Hedwig.RTSCore
         IUnit Spawn(IUnitFactory unitFactory, Vector3 position, string? name = null);
 
         void Register(IUnitController unitController, IUnitData defaultUnitObject);
+
+        ITimeManager TimeManager { get; }
     }
 
     public static class UnitManagerExtension

@@ -207,7 +207,7 @@ namespace Hedwig.RTSCore.Impl
             this._callback = callback;
             if (launcherController != null)
             {
-                this._launcher = new LauncherImpl(launcherController);
+                this._launcher = new LauncherImpl(launcherController, unitManager.TimeManager);
             }
             this._health = new ReactiveProperty<int>(unitData.MaxHealth);
             this._state = new UnitActionStateRunningStore(onTargetChanged: (target) => _onStateTargetChanged.OnNext(target));

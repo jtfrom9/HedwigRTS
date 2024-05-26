@@ -104,18 +104,19 @@ namespace Hedwig.RTSCore.Model
         #region IProjectileFactory
         public IObservable<IProjectile> OnCreated { get => onCreated; }
 
-        public IProjectile? Create(Vector3 start)
+        public IProjectile Create(Vector3 start, string? name, ITimeManager? timeManager)
         {
-            if (prefab == null) return null;
-            IProjectile? projectile = null;
-
             var projectileController = createController();
-            if (projectileController != null)
+            if (projectileController == null)
             {
-                projectileController.Initialize(this.name, start);
-                projectile = new ProjectileImpl(projectileController, this);
-                onCreated.OnNext(projectile);
+                throw new InvalidConditionException("No ProjectileController");
             }
+            projectileController.Initialize(
+                initial: start,
+                name: name ?? this.name,
+                timeManager);
+            var projectile = new ProjectileImpl(projectileController, this);
+            onCreated.OnNext(projectile);
             return projectile;
         }
         #endregion

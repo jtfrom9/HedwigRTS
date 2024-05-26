@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,8 @@ namespace Hedwig.RTSCore.Impl
 {
     public class GrenadeLauncherHandler : ILauncherHandler
     {
-        ILauncherHandlerEvent handlerEvent;
-        IProjectileData projectileData;
+        readonly ILauncherHandlerCallback _handlerEvent;
+        readonly IProjectileData _projectileData;
 
         ITransform? _start = null;
         ITransform? _target = null;
@@ -20,7 +21,7 @@ namespace Hedwig.RTSCore.Impl
 
         public void TriggerOn(ITransform start, ITransform target)
         {
-            handlerEvent.OnShowTrajectory(true);
+            _handlerEvent.OnShowTrajectory(true);
             _start = start;
             _target = target;
         }
@@ -30,17 +31,17 @@ namespace Hedwig.RTSCore.Impl
             if(_start==null || _target==null)
                 return;
 
-            handlerEvent.OnBeforeFire();
-            var projectile = projectileData.Factory.Create(_start.Position);
+            _handlerEvent.OnBeforeFire();
+            var projectile = _handlerEvent.CreateProjectile(_start.Position, name: null);
             if (projectile == null)
             {
-                Debug.LogError($"fiail to create {projectileData.Name}");
+                Debug.LogError($"fiail to create {_projectileData.Name}");
                 return;
             }
             projectile.Start(_target);
-            handlerEvent.OnFired(projectile);
-            handlerEvent.OnShowTrajectory(false);
-            handlerEvent.OnAfterFire();
+            _handlerEvent.OnFired(projectile);
+            _handlerEvent.OnShowTrajectory(false);
+            _handlerEvent.OnAfterFire();
         }
 
         public void Error()
@@ -52,11 +53,11 @@ namespace Hedwig.RTSCore.Impl
         }
 
         public GrenadeLauncherHandler(
-            ILauncherHandlerEvent handlerEvent,
+            ILauncherHandlerCallback handlerEvent,
             IProjectileData projectileData)
         {
-            this.handlerEvent = handlerEvent;
-            this.projectileData = projectileData;
+            this._handlerEvent = handlerEvent;
+            this._projectileData = projectileData;
         }
     }
 }

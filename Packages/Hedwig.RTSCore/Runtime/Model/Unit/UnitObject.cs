@@ -49,7 +49,11 @@ namespace Hedwig.RTSCore.Model
             var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
                 name: name,
                 launcherController: launcherController);
-            unitController.Initialize(unit, position, name);
+            unitController.Initialize(
+                callback: unit,
+                position,
+                name,
+                timeManager: unitManager.TimeManager);
             return unit;
         }
     }

@@ -17,8 +17,8 @@ namespace Hedwig.RTSCore.Controller
         [Min(1)]
         float castingEveryFrameSpeed = 50;
 
-        ITransform _transform = new CachedTransform();
-        string _name = "";
+        readonly ITransform _transform = new CachedTransform();
+        string _name;
         bool _disposed = false;
 
         bool _willHit = false;
@@ -185,6 +185,9 @@ namespace Hedwig.RTSCore.Controller
             }
         }
 
+        void pause(bool paused)
+        {}
+
         void dispose()
         {
             if (_disposed) return;
@@ -214,23 +217,15 @@ namespace Hedwig.RTSCore.Controller
         UniTask IProjectileController.LastMove(float speed) => lastMove(speed);
         IObservable<ProjectileEventArg> IProjectileController.OnEvent { get => onEvent; }
 
-        static int count = 0;
-
-        [RuntimeInitializeOnLoadMethod]
-        void _InitializeOnEnterPlayMode()
+        void IProjectileController.Initialize(Vector3 initial, string? name, ITimeManager? timeManager)
         {
-            count = 0;
-        }
-
-        void IProjectileController.Initialize(string name, Vector3 initial)
-        {
-            if (gameObject.name == "")
+            if (name != null)
             {
-                gameObject.name = $"{name}_{count}";
-                count++;
+                gameObject.name = name;
             }
-            this._name = gameObject.name;
+            _name = gameObject.name;
             transform.position = initial;
+            timeManager?.Paused.Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
 

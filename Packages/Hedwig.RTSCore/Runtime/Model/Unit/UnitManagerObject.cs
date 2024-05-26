@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExtensions;
+using UniRx;
 using VContainer;
 
 using Hedwig.RTSCore.Impl;
@@ -60,14 +61,25 @@ namespace Hedwig.RTSCore.Model
 
     public static class UnitManagerObjectDIExtension
     {
-        public static void SetupUnitManager(this IContainerBuilder builder, UnitManagerObject? unitManagerObject)
+        class DummyTimeManager: ITimeManager
+        {
+            public IReadOnlyReactiveProperty<bool> Paused { get; private set; }
+
+            public DummyTimeManager()
+            {
+                Paused = new ReactiveProperty<bool>(false);
+            }
+        }
+
+        public static void SetupUnitManager(this IContainerBuilder builder, UnitManagerObject? unitManagerObject, ITimeManager? timeManager = null)
         {
             if (unitManagerObject == null)
             {
                 throw new ArgumentNullException("UnitManagerObject is null");
             }
+            builder.RegisterInstance<ITimeManager>(timeManager ?? new DummyTimeManager());
             builder.RegisterInstance<UnitManagerObject>(unitManagerObject).AsImplementedInterfaces();
-            builder.Register<IUnitManager, UnitManagerImpl>(Lifetime.Singleton);
+            builder.Register<UnitManagerImpl>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

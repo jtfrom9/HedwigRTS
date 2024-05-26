@@ -15,6 +15,7 @@ namespace Hedwig.RTSCore.Impl
 
         readonly IUnitAttackedEffectFactory _attackedEffectFactory;
         readonly ITargetVisualizerFactory _targetVisualizersFactory;
+        readonly ITimeManager _timeManager;
 
         void playHitTransformEffect(IUnit unit, IHitObject? hitObject, in DamageEvent e)
         {
@@ -58,7 +59,9 @@ namespace Hedwig.RTSCore.Impl
         IUnit? addUnitWithDefaultObject(IUnitController unitController, IUnitData unitObject)
         {
             var unit = new UnitImpl(this, unitObject, unitController, this);
-            unitController.Initialize(unit, null, name: null);
+            unitController.Initialize(callback: unit,
+                null, name: null,
+                timeManager: _timeManager);
             addUnit(unit);
             return unit;
         }
@@ -81,6 +84,8 @@ namespace Hedwig.RTSCore.Impl
         {
             addUnitWithDefaultObject(unitController, unitData);
         }
+
+        ITimeManager IUnitManager.TimeManager { get => _timeManager; }
         #endregion
 
         #region IDisposable
@@ -100,10 +105,11 @@ namespace Hedwig.RTSCore.Impl
         #endregion
 
         // ctor
-        public UnitManagerImpl(IUnitAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
+        public UnitManagerImpl(IUnitAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory, ITimeManager timeManager)
         {
             this._attackedEffectFactory = attackedEffectFactory;
             this._targetVisualizersFactory = targetVisualizersFactory;
+            this._timeManager = timeManager;
         }
     }
 }

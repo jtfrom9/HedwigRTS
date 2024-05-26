@@ -5,13 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using System;
 
 namespace Hedwig.RTSCore.Impl
 {
     public class BurstLauncherHandler : ILauncherHandler
     {
-        ILauncherHandlerEvent handlerEvent;
-        IProjectileData projectileObject;
+        readonly ILauncherHandlerCallback handlerEvent;
+        readonly IProjectileData projectileObject;
 
         CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -26,12 +27,7 @@ namespace Hedwig.RTSCore.Impl
                 handlerEvent.OnBeforeFire();
                 while (true)
                 {
-                    var projectile = projectileObject.Factory.Create(start.Position);
-                    if (projectile == null)
-                    {
-                        Debug.LogError($"fail to create {projectileObject.Name}");
-                        break;
-                    }
+                    var projectile = handlerEvent.CreateProjectile(start.Position, name: null);
                     projectile.Start(target);
                     handlerEvent.OnFired(projectile);
                     try
@@ -65,7 +61,7 @@ namespace Hedwig.RTSCore.Impl
         }
 
         public BurstLauncherHandler(
-            ILauncherHandlerEvent handlerEvent,
+            ILauncherHandlerCallback handlerEvent,
             IProjectileData projectileObject)
         {
             this.handlerEvent = handlerEvent;

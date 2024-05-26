@@ -68,13 +68,11 @@ namespace Hedwig.RTSCore
 
         bool HasMap { get; }
         ITrajectoryMap ToMap(Vector3 from, Vector3 to);
-
-        IProjectileFactory Factory { get; }
     }
 
     public interface IProjectileFactory
     {
-        IProjectile? Create(Vector3 start);
+        IProjectile Create(Vector3 start, string? name, ITimeManager? timeManager);
         IObservable<IProjectile> OnCreated { get; }
     }
 
@@ -126,7 +124,7 @@ namespace Hedwig.RTSCore
 
     public interface IProjectileController : ITransformProvider
     {
-        void Initialize(string name, Vector3 initial);
+        void Initialize(Vector3 initial, string? name, ITimeManager? timeManager);
 
         string Name { get; }
         UniTask<bool> Move(Vector3 to, float speed);

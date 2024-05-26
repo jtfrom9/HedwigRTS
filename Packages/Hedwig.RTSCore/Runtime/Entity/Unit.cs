@@ -49,7 +49,7 @@ namespace Hedwig.RTSCore
 
     public interface IUnitController : ITransformProvider
     {
-        void Initialize(IUnitControllerCallback controllerEvent, Vector3? position, string? name);
+        void Initialize(IUnitControllerCallback callback, Vector3? position, string? name, ITimeManager? timeManager);
 
         string Name { get; }
         void SetDestination(Vector3 pos);

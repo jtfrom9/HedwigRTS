@@ -25,7 +25,6 @@ public class TowerAim : LifetimeScope
     // UI
     [SerializeField] TextMeshProUGUI? textMesh;
 
-    // Inject
     [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
     [SerializeField, InspectInline] UnitObject? defaultUnitObject;
     [SerializeField, InspectInline] EnvironmentObject? environmentObject;
@@ -37,6 +36,8 @@ public class TowerAim : LifetimeScope
     [SerializeField] bool randomWalk = true;
     [SerializeField] int spawnCondition = 10;
 
+    [SerializeField] GameObject? pausedBackground;
+
 #pragma warning disable CS8618
     [Inject] IUnitManager enemyManager;
     [Inject] IMouseOperation mouseOperation;
@@ -46,9 +47,22 @@ public class TowerAim : LifetimeScope
 
     CompositeDisposable disposables = new CompositeDisposable();
 
+    class TimeManager : ITimeManager
+    {
+        readonly ReactiveProperty<bool> _timePause = new(false);
+        IReadOnlyReactiveProperty<bool> ITimeManager.Paused { get => _timePause; }
+
+        public bool TogglePause()
+        {
+            _timePause.Value = !_timePause.Value;
+            return _timePause.Value;
+        }
+    }
+    readonly TimeManager timeManager = new();
+
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupUnitManager(UnitManagerObject);
+        builder.SetupUnitManager(UnitManagerObject, timeManager);
         // builder.SetupEnvironment(environmentObject);
         builder.SetupVisualizer(globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
@@ -90,6 +104,7 @@ public class TowerAim : LifetimeScope
         }).AddTo(this);
 
         setupMouse(mouseOperation, launcher, globalVisualizerFactory);
+        setupPause();
 
         projectileSelection.Select(projectileSelection.Index);
     }
@@ -195,5 +210,17 @@ Distance: {projectile.Range}
                 }
             }).AddTo(this);
         }
+    }
+
+    void setupPause()
+    {
+        this.UpdateAsObservable().Subscribe(_ =>
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                var paused = timeManager.TogglePause();
+                pausedBackground?.SetActive(paused);
+            }
+        }).AddTo(this);
     }
 }

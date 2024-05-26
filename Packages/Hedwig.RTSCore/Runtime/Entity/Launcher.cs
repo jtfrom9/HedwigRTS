@@ -10,12 +10,14 @@ using UniRx.Triggers;
 
 namespace Hedwig.RTSCore
 {
-    public interface ILauncherHandlerEvent
+    public interface ILauncherHandlerCallback
     {
         void OnShowTrajectory(bool v);
         void OnBeforeFire();
         void OnAfterFire();
         void OnFired(IProjectile projectile);
+
+        IProjectile CreateProjectile(Vector3 position, string? name);
     }
 
     public interface ILauncherHandler : IDisposable
