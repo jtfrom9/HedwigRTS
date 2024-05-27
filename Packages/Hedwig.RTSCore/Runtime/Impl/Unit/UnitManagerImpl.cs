@@ -56,16 +56,6 @@ namespace Hedwig.RTSCore.Impl
             _units.Add(unit);
         }
 
-        IUnit? addUnitWithDefaultObject(IUnitController unitController, IUnitData unitObject)
-        {
-            var unit = new UnitImpl(this, unitObject, unitController, this);
-            unitController.Initialize(callback: unit,
-                null, name: null,
-                timeManager: _timeManager);
-            addUnit(unit);
-            return unit;
-        }
-
         #region IUnitManager
         IReadOnlyReactiveCollection<IUnit> IUnitManager.Units { get => _units; }
 
@@ -80,9 +70,14 @@ namespace Hedwig.RTSCore.Impl
             return unit;
         }
 
-        void IUnitManager.Register(IUnitController unitController, IUnitData unitData)
+        void IUnitManager.Register(IUnitController unitController, IUnitFactory unitFactory)
         {
-            addUnitWithDefaultObject(unitController, unitData);
+            var unit = unitFactory.Create(this, this, unitController: unitController);
+            if (unit == null)
+            {
+                throw new InvalidCastException("fail to spwawn");
+            }
+            addUnit(unit);
         }
 
         ITimeManager IUnitManager.TimeManager { get => _timeManager; }

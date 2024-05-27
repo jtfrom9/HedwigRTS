@@ -8,6 +8,7 @@ using UnityEngine.Search;
 using UnityExtensions;
 using Hedwig.RTSCore.Impl;
 using System.Linq;
+using PlasticGui.Help.Conditions;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -35,17 +36,23 @@ namespace Hedwig.RTSCore.Model
         public int Deffence { get => _Deffence; }
         public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
-        IUnit? IUnitFactory.Create(IUnitManager unitManager, IUnitCallback unitCallback, Vector3? position, string? name)
+        IUnit? IUnitFactory.Create(IUnitManager unitManager, IUnitCallback unitCallback,
+            Vector3? position,
+            string? name,
+            IUnitController? unitController)
         {
-            if (prefab == null) return null;
-            var go = Instantiate(prefab);
-            var unitController = go.GetComponent<IUnitController>();
             if (unitController == null)
             {
-                Destroy(go);
-                return null;
+                if (prefab == null) return null;
+                var go = Instantiate(prefab);
+                unitController = go.GetComponent<IUnitController>();
+                if (unitController == null)
+                {
+                    Destroy(go);
+                    return null;
+                }
             }
-            var launcherController = go.GetComponentInChildren<ILauncherController>();
+            var launcherController = unitController.Context.GetComponentInChildren<ILauncherController>();
             var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
                 name: name,
                 launcherController: launcherController);

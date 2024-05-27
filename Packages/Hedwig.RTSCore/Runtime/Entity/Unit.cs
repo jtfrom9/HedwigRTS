@@ -125,7 +125,10 @@ namespace Hedwig.RTSCore
 
     public interface IUnitFactory
     {
-        IUnit? Create(IUnitManager manager, IUnitCallback callback, Vector3? position, string? name);
+        IUnit? Create(IUnitManager manager, IUnitCallback callback,
+            Vector3? position = null,
+            string? name = null,
+            IUnitController? unitController = null);
     }
     #endregion
 }
