@@ -10,6 +10,7 @@ using UniRx;
 using UniRx.Triggers;
 using VContainer;
 using VContainer.Unity;
+using UnityExtensions;
 
 using Hedwig.RTSCore.Model;
 using Hedwig.RTSCore.Impl;
@@ -27,7 +28,7 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
 
-        [SerializeField]
+        [SerializeField, InspectInline]
         List<ProjectileObject> projectileObjects = new List<ProjectileObject>();
 
         [SerializeField]

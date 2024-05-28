@@ -21,6 +21,7 @@ namespace Hedwig.RTSCore.Controller
         IUnitControllerCallback? _callback;
         NavMeshAgent? _agent;
         Rigidbody? _rigidbody;
+        Collider? _collider;
 
         bool _timePaused = false;
         Vector3 _velocityBackup = default;
@@ -45,6 +46,7 @@ namespace Hedwig.RTSCore.Controller
             _agent.speed = defaultSpeed;
 
             _rigidbody = GetComponent<Rigidbody>();
+            _collider = GetComponent<Collider>();
 
             var mr = GetComponent<MeshRenderer>();
             mr.material.color = UnityEngine.Random.ColorHSV();
@@ -176,16 +178,47 @@ namespace Hedwig.RTSCore.Controller
             if (cts.IsCancellationRequested)
                 return;
             Debug.Log($"{_name}: AddShock: ${direction}, ${power}");
-            if (_rigidbody != null && _agent!=null)
+            if (_rigidbody != null && _agent!=null && _collider != null)
             {
                 UniTask.Create(async () => {
-                    _agent.isStopped = true;
+                    // _agent.isStopped = true;
+                    _agent.enabled = false;
                     _rigidbody.isKinematic = false;
-                    _rigidbody.AddForce(direction * power, ForceMode.Impulse);
+                    _rigidbody.useGravity = true;
+                    _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+                    _collider.isTrigger = false;
+                    var vec = direction * power * 2;
+                    vec.y = 0;
+                    Debug.Log($"AddForce: {vec}");
+                    _rigidbody.AddForce(vec, ForceMode.Impulse);
 
-                    await UniTask.Delay(1000, cancellationToken: cts.Token);
+                    Debug.Log($"waiting move start..");
+                    while (_rigidbody.velocity.magnitude < 0.1f)
+                    {
+                        await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+                    }
+                    Debug.Log($"started move: {_rigidbody.velocity.magnitude}");
+
+                    // await UniTask.NextFrame(PlayerLoopTiming.FixedUpdate);
+                    // await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+
+                    while (_rigidbody.velocity.magnitude > 0.1f)
+                    {
+                        Debug.Log($"waiting to stop: {_rigidbody.velocity.magnitude}");
+                        await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+                        // await UniTask.NextFrame(PlayerLoopTiming.FixedUpdate);
+                        // await UniTask.NextFrame(cancellationToken: cts.Token);
+                    }
+                    Debug.Log("done");
+
+                    // await UniTask.Delay(1000);
+
+                    // await UniTask.Delay(1000, cancellationToken: cts.Token);
+                    _collider.isTrigger = true;
                     _rigidbody.isKinematic = true;
-                    _agent.isStopped = false;
+                    _rigidbody.useGravity = false;
+                    // _agent.isStopped = false;
+                    _agent.enabled = true;
                 }).Forget();
             }
         }
