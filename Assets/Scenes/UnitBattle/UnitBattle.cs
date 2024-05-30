@@ -12,13 +12,14 @@ using Hedwig.RTSCore.Model;
 using Hedwig.RTSCore.InputObservable;
 
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 
 public class UnitBattle : LifetimeScope
 {
     // Inject
-    [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline] UnitManagerObject? unitManagerObject;
     [SerializeField, InspectInline] UnitObject? playerObject;
-    [SerializeField, InspectInline] UnitObject? emenyObject;
+    [SerializeField, InspectInline] UnitObject? enemyObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
 
@@ -33,8 +34,11 @@ public class UnitBattle : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupUnitManager(UnitManagerObject);
-        builder.SetupVisualizer(globalVisualizersObject);
+        builder.Setup(timeManager: null,
+            launcherController: null,
+            units: new List<UnitObject>() { playerObject!, enemyObject! },
+            unitManager: unitManagerObject,
+            visualizers: globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
     }
 
@@ -86,16 +90,16 @@ public class UnitBattle : LifetimeScope
 
     async void Start()
     {
-        if (playerObject == null || emenyObject == null || globalVisualizerFactory == null || mouseOperation == null)
+        if (playerObject == null || enemyObject == null || globalVisualizerFactory == null || mouseOperation == null)
         {
             Debug.LogError("Invalid");
             return;
         }
         Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.AutoRegisterUnitsInScene(emenyObject);
+        enemyManager.AutoRegisterUnitsInScene(enemyObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
-        var enemy = enemyManager.Spawn(emenyObject, new Vector3(-10f, 3, -10f), "Enemy");
+        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy");
 
         setupMouse(mouseOperation, globalVisualizerFactory, player);
 

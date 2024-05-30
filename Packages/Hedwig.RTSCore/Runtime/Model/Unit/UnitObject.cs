@@ -1,19 +1,22 @@
 #nullable enable
 
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 
 using UnityExtensions;
+using VContainer;
+using VContainer.Unity;
+
 using Hedwig.RTSCore.Impl;
-using System.Linq;
-using PlasticGui.Help.Conditions;
 
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Unit/Unit", fileName = "Unit")]
-    public class UnitObject : ScriptableObject, IUnitData, IUnitFactory
+    public class UnitObject : ScriptableObject, IUnitData
     {
         [SerializeField, SearchContext("p:t:prefab Unit")]
         GameObject? prefab;
@@ -36,10 +39,11 @@ namespace Hedwig.RTSCore.Model
         public int Deffence { get => _Deffence; }
         public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
-        IUnit? IUnitFactory.Create(IUnitManager unitManager, IUnitCallback unitCallback,
+        IUnit? CreateUnit(IUnitManager unitManager, IUnitCallback unitCallback,
+            IUnitController unitController,
+            ILaunherFactory launcherFactory,
             Vector3? position,
-            string? name,
-            IUnitController? unitController)
+            string? name)
         {
             if (unitController == null)
             {
@@ -52,16 +56,67 @@ namespace Hedwig.RTSCore.Model
                     return null;
                 }
             }
-            var launcherController = unitController.Context.GetComponentInChildren<ILauncherController>();
             var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
                 name: name,
-                launcherController: launcherController);
+                launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null);
             unitController.Initialize(
                 callback: unit,
                 position,
-                name,
-                timeManager: unitManager.TimeManager);
+                name);
             return unit;
         }
+
+        public IUnit? CreateUnitWithResolver(
+            IObjectResolver resolver,
+            Vector3? position,
+            string? name,
+            IUnitController? unitController = null)
+        {
+            var manager = resolver.Resolve<IUnitManager>();
+            var unitCallback = resolver.Resolve<IUnitCallback>();
+            var launcherFactory = resolver.Resolve<ILaunherFactory>();
+            if (unitController == null)
+            {
+                if (prefab == null) return null;
+                var go = resolver.Instantiate(prefab);
+                unitController = go.GetComponent<IUnitController>();
+                if (unitController == null)
+                {
+                    Destroy(go);
+                    return null;
+                }
+            } else {
+                resolver.Inject(unitController);
+            }
+            return CreateUnit(manager, unitCallback, unitController, launcherFactory, position, name);
+        }
     }
+
+    public static class UnitObjectDIExtension
+    {
+        public static void RegisterUnits(this IContainerBuilder builder, IEnumerable<UnitObject> unitObjects)
+        {
+            var unitObjectDict = unitObjects.ToDictionary(uobj => uobj as IUnitData, uobj => uobj);
+
+            builder.Register<IUnitFacory>(resolver => (unitData, position, name, unitController) =>
+            {
+                if (unitObjectDict.TryGetValue(unitData, out var unitObject))
+                {
+                    return unitObject.CreateUnitWithResolver(resolver,
+                        position,
+                        name,
+                        unitController);
+                }
+                else
+                {
+                    return null;
+                }
+            }, Lifetime.Singleton);
+        }
+
+        public static void RegisterUnit(this IContainerBuilder builder, UnitObject unitObject)
+        {
+            builder.RegisterUnits(new List<UnitObject>() { unitObject });
+        }
+   }
 }

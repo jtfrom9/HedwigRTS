@@ -10,7 +10,7 @@ namespace Hedwig.RTSCore.Usecase
     public class GameSenario
     {
         IUnitManager unitManager;
-        IUnitFactory unitFactory;
+        IUnitData unitData;
         Vector3[] spawnPoints;
         Vector3 target;
         int spawnCondition;
@@ -24,7 +24,7 @@ namespace Hedwig.RTSCore.Usecase
             for (var i = 0; i < count; i++)
             {
                 var point = spawnPoints[Random.Range((int)0, (int)spawnPoints.Length - 1)];
-                unitManager.Spawn(unitFactory, point);
+                unitManager.Spawn(unitData, point);
             }
         }
 
@@ -53,10 +53,10 @@ namespace Hedwig.RTSCore.Usecase
             disposable.Dispose();
         }
 
-        public GameSenario(IUnitManager unitManager, IUnitFactory unitFactory, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
+        public GameSenario(IUnitManager unitManager, IUnitData unitData, Vector3[] spawnPoints, Vector3 target, int spawnCondition)
         {
             this.unitManager = unitManager;
-            this.unitFactory = unitFactory;
+            this.unitData = unitData;
             this.spawnPoints = spawnPoints;
             this.target = target;
             this.spawnCondition = spawnCondition;

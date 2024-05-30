@@ -33,11 +33,11 @@ namespace Hedwig.RTSCore.Impl
 
         void initialize()
         {
+            _launcherController.Initialize(this);
             if (_trajectoryVisualizer != null)
             {
                 _trajectoryVisualizer.SetStartTarget(_launcherController.Mazzle);
             }
-            _launcherController.Initialize(this);
         }
 
         void setCanFire()
@@ -273,7 +273,7 @@ namespace Hedwig.RTSCore.Impl
         }
         #endregion
 
-        public LauncherImpl(ILauncherController launcherController, ITimeManager? timeManager = null)
+        public LauncherImpl(ILauncherController launcherController, ITimeManager timeManager)
         {
             this._launcherController = launcherController;
             this._timeManager = timeManager;

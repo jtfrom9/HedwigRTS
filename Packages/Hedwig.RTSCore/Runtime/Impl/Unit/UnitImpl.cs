@@ -195,9 +195,10 @@ namespace Hedwig.RTSCore.Impl
             return $"{Controller.Name}.Impl({_unitData.Name})";
         }
 
-        public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController, IUnitCallback callback,
+        public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController,
+            IUnitCallback callback,
             string? name = null,
-            ILauncherController? launcherController = null)
+            ILauncher? launcher = null)
         {
             this._unitManager = unitManager;
             this._name = name;
@@ -205,10 +206,7 @@ namespace Hedwig.RTSCore.Impl
             this._unitController = unitController;
             this._unitController.SeDebugUnit(this);
             this._callback = callback;
-            if (launcherController != null)
-            {
-                this._launcher = new LauncherImpl(launcherController, unitManager.TimeManager);
-            }
+            this._launcher = launcher;
             this._health = new ReactiveProperty<int>(unitData.MaxHealth);
             this._state = new UnitActionStateRunningStore(onTargetChanged: (target) => _onStateTargetChanged.OnNext(target));
         }

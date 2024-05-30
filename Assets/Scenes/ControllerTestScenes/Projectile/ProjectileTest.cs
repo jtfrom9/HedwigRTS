@@ -27,7 +27,7 @@ namespace Hedwig.RTSCore.Test
         UnitObject? defaultUnitObject;
 
         [SerializeField, InspectInline]
-        UnitManagerObject? UnitManagerObject;
+        UnitManagerObject? unitManagerObject;
 
         [SerializeField, InspectInline]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -38,25 +38,29 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         TextMeshProUGUI? textMesh;
 
-        List<IProjectile> liveProjectiles = new List<IProjectile>();
+        readonly List<IProjectile> liveProjectiles = new List<IProjectile>();
 
-        [Inject] IUnitManager? enemyManager;
+        [Inject] readonly IUnitManager? enemyManager;
+        [Inject] readonly ILauncher? launcher;
 
         IProjectileFactory? projectileFactory;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupUnitManager(UnitManagerObject);
-            builder.SetupVisualizer(globalVisualizersObject);
+            builder.Setup(timeManager: null,
+                launcherController: ControllerBase.Find<ILauncherController>(),
+                unit: defaultUnitObject,
+                unitManager: unitManagerObject,
+                visualizers: globalVisualizersObject);
         }
 
         void Start()
         {
             if (enemyManager == null) return;
-            if(defaultUnitObject==null) return;
+            if (defaultUnitObject == null) return;
+            if (launcher == null) return;
 
             enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
-            var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>()) as ILauncher;
             if (textMesh == null) return;
 
             foreach(var projectile in projectileObjects)

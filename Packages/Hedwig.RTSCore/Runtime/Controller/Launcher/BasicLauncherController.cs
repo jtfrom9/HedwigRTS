@@ -17,15 +17,6 @@ namespace Hedwig.RTSCore.Controller
         ITransform _mazzleTranform = new CachedTransform();
         IDisposable? _disposable;
 
-        void Awake()
-        {
-            if (mazzle != null)
-            {
-                _mazzleTranform.Initialize(mazzle);
-                mazzleMeshRenderer = mazzle.GetComponent<MeshRenderer>();
-            }
-        }
-
         void OnDestroy()
         {
             this.clearHandler();
@@ -58,6 +49,12 @@ namespace Hedwig.RTSCore.Controller
 
          void ILauncherController.Initialize(ILauncher launcher)
         {
+            if (mazzle != null)
+            {
+                _mazzleTranform.Initialize(mazzle);
+                mazzleMeshRenderer = mazzle.GetComponent<MeshRenderer>();
+            }
+
             launcher.CanFire.Subscribe(v => {
                 if(mazzleMeshRenderer!=null) {
                     mazzleMeshRenderer.material.color = (!v) ? Color.red : Color.white;

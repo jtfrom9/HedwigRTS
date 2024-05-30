@@ -21,7 +21,7 @@ public class EnemyTest : LifetimeScope
     UnitObject? defaultUnitObject;
 
     [SerializeField]
-    UnitManagerObject? UnitManagerObject;
+    UnitManagerObject? unitManagerObject;
 
     [SerializeField]
     GlobalVisualizersObject? globalVisualizersObject;
@@ -34,8 +34,11 @@ public class EnemyTest : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupUnitManager(UnitManagerObject);
-        builder.SetupVisualizer(globalVisualizersObject);
+        builder.Setup(timeManager: null,
+            launcherController: null,
+            unit: defaultUnitObject,
+            unitManager: unitManagerObject,
+            visualizers: globalVisualizersObject);
     }
 
     void Start()

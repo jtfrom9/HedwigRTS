@@ -13,9 +13,9 @@ namespace Hedwig.RTSCore.Impl
         readonly ReactiveCollection<IUnit> _units = new();
         readonly CompositeDisposable _disposable = new();
 
+        readonly IUnitFacory _unitFactory;
         readonly IUnitAttackedEffectFactory _attackedEffectFactory;
         readonly ITargetVisualizerFactory _targetVisualizersFactory;
-        readonly ITimeManager _timeManager;
 
         void playHitTransformEffect(IUnit unit, IHitObject? hitObject, in DamageEvent e)
         {
@@ -59,9 +59,9 @@ namespace Hedwig.RTSCore.Impl
         #region IUnitManager
         IReadOnlyReactiveCollection<IUnit> IUnitManager.Units { get => _units; }
 
-        IUnit IUnitManager.Spawn(IUnitFactory unitFactory, Vector3 position, string? name)
+        IUnit IUnitManager.Spawn(IUnitData unitData, Vector3 position, string? name)
         {
-            var unit = unitFactory.Create(this, this, position, name);
+            var unit = _unitFactory.Invoke(unitData, position, name, null);
             if (unit == null)
             {
                 throw new InvalidCastException("fail to spwawn");
@@ -70,17 +70,15 @@ namespace Hedwig.RTSCore.Impl
             return unit;
         }
 
-        void IUnitManager.Register(IUnitController unitController, IUnitFactory unitFactory)
+        void IUnitManager.Register(IUnitController unitController, IUnitData unitData)
         {
-            var unit = unitFactory.Create(this, this, unitController: unitController);
+            var unit = _unitFactory.Invoke(unitData, position: null, name: null, unitController);
             if (unit == null)
             {
                 throw new InvalidCastException("fail to spwawn");
             }
             addUnit(unit);
         }
-
-        ITimeManager IUnitManager.TimeManager { get => _timeManager; }
         #endregion
 
         #region IDisposable
@@ -100,11 +98,11 @@ namespace Hedwig.RTSCore.Impl
         #endregion
 
         // ctor
-        public UnitManagerImpl(IUnitAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory, ITimeManager timeManager)
+        public UnitManagerImpl(IUnitFacory unitFacory,IUnitAttackedEffectFactory attackedEffectFactory, ITargetVisualizerFactory targetVisualizersFactory)
         {
+            this._unitFactory = unitFacory;
             this._attackedEffectFactory = attackedEffectFactory;
             this._targetVisualizersFactory = targetVisualizersFactory;
-            this._timeManager = timeManager;
         }
     }
 }

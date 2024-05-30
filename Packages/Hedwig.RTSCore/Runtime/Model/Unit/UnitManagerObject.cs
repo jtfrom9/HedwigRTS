@@ -61,23 +61,12 @@ namespace Hedwig.RTSCore.Model
 
     public static class UnitManagerObjectDIExtension
     {
-        class DummyTimeManager: ITimeManager
-        {
-            public IReadOnlyReactiveProperty<bool> Paused { get; private set; }
-
-            public DummyTimeManager()
-            {
-                Paused = new ReactiveProperty<bool>(false);
-            }
-        }
-
-        public static void SetupUnitManager(this IContainerBuilder builder, UnitManagerObject? unitManagerObject, ITimeManager? timeManager = null)
+        public static void RegisterUnitManager(this IContainerBuilder builder, UnitManagerObject? unitManagerObject)
         {
             if (unitManagerObject == null)
             {
                 throw new ArgumentNullException("UnitManagerObject is null");
             }
-            builder.RegisterInstance<ITimeManager>(timeManager ?? new DummyTimeManager());
             builder.RegisterInstance<UnitManagerObject>(unitManagerObject).AsImplementedInterfaces();
             builder.Register<UnitManagerImpl>(Lifetime.Singleton).AsImplementedInterfaces();
         }

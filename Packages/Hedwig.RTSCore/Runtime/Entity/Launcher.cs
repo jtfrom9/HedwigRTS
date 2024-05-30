@@ -53,4 +53,6 @@ namespace Hedwig.RTSCore
         IObservable<float> OnRecastTimeUpdated { get; }
         IObservable<IProjectile> OnFired { get; }
     }
+
+    public delegate ILauncher? ILaunherFactory(ILauncherController launcherController);
 }

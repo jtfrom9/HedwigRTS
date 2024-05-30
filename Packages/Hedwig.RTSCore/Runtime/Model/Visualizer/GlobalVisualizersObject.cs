@@ -31,7 +31,7 @@ namespace Hedwig.RTSCore.Model
 
     public static class GlobalVisualizersObjectDIExtension
     {
-        public static void SetupVisualizer(this IContainerBuilder builder, GlobalVisualizersObject? globalVisualizersObject)
+        public static void RegisterVisualizer(this IContainerBuilder builder, GlobalVisualizersObject? globalVisualizersObject)
         {
             if (globalVisualizersObject == null)
             {

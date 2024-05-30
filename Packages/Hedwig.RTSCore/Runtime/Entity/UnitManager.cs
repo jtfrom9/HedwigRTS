@@ -14,23 +14,21 @@ namespace Hedwig.RTSCore
     public interface IUnitManager : IDisposable
     {
         IReadOnlyReactiveCollection<IUnit> Units { get; }
-        IUnit Spawn(IUnitFactory unitFactory, Vector3 position, string? name = null);
+        IUnit Spawn(IUnitData unitData, Vector3 position, string? name = null);
 
-        void Register(IUnitController unitController, IUnitFactory factory);
-
-        ITimeManager TimeManager { get; }
+        void Register(IUnitController unitController, IUnitData data);
     }
 
     public static class UnitManagerExtension
     {
-        public static void AutoRegisterUnitsInScene(this IUnitManager manager, IUnitFactory factory)
+        public static void AutoRegisterUnitsInScene(this IUnitManager manager, IUnitData data)
         {
             var unitControllerReposiotry = ControllerBase.Find<IUnitControllerRepository>();
             if (unitControllerReposiotry != null)
             {
                 foreach (var controller in unitControllerReposiotry.GetUnitControllers())
                 {
-                    manager.Register(controller, factory);
+                    manager.Register(controller, data);
                 }
             }
         }

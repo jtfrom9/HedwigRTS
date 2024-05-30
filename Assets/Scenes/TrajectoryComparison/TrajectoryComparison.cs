@@ -25,7 +25,7 @@ namespace Hedwig.RTSCore.Test
         UnitObject? defaultUnitObject;
 
         [SerializeField]
-        UnitManagerObject? UnitManagerObject;
+        UnitManagerObject? unitManagerObject;
 
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -61,8 +61,11 @@ namespace Hedwig.RTSCore.Test
             var root = GameObject.Find("Root");
             if (root == null) { throw new InvalidConditionException("no root"); }
 
-            builder.SetupUnitManager(UnitManagerObject);
-            builder.SetupVisualizer(globalVisualizersObject);
+            builder.Setup(timeManager: null,
+                launcherController: null,
+                unit: defaultUnitObject,
+                unitManager: unitManagerObject,
+                visualizers: globalVisualizersObject);
 
             if (launcherPrefab == null) { Debug.LogError("launcherPrefab is null"); return; }
             builder.RegisterFactory<(Vector3 pos, ProjectileObject config), ILauncher>((resolver) =>
@@ -72,7 +75,7 @@ namespace Hedwig.RTSCore.Test
                     var go = Instantiate(launcherPrefab, x.pos, Quaternion.identity, root.transform);
                     var launcherController = go.GetComponent<ILauncherController>();
                     addConfigInfo(go, x.config);
-                    return new LauncherImpl(launcherController);
+                    return new LauncherImpl(launcherController, timeManager: resolver.Resolve<ITimeManager>());
                 };
             }, Lifetime.Transient);
         }

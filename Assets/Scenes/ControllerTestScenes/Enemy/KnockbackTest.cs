@@ -23,7 +23,7 @@ namespace Hedwig.RTSCore.Test
         UnitObject? defaultUnitObject;
 
         [SerializeField]
-        UnitManagerObject? UnitManagerObject;
+        UnitManagerObject? unitManagerObject;
 
         [SerializeField]
         GlobalVisualizersObject? globalVisualizersObject;
@@ -34,12 +34,16 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         TextMeshProUGUI? textMesh;
 
-        [Inject] IUnitManager? enemyManager;
+        [Inject] readonly IUnitManager? enemyManager;
+        [Inject] readonly ILauncher? launcher;
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.SetupUnitManager(UnitManagerObject);
-            builder.SetupVisualizer(globalVisualizersObject);
+            builder.Setup(timeManager: null,
+                launcherController: ControllerBase.Find<ILauncherController>(),
+                unit: defaultUnitObject,
+                unitManager: unitManagerObject,
+                visualizers: globalVisualizersObject);
         }
 
         void Start()
@@ -47,8 +51,7 @@ namespace Hedwig.RTSCore.Test
             Assert.IsNotNull(enemyManager);
             Assert.IsNotNull(defaultUnitObject);
             Assert.IsNotNull(textMesh);
-            var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>());
-            _start(enemyManager!, launcher, defaultUnitObject!);
+            _start(enemyManager!, launcher!, defaultUnitObject!);
         }
 
         void _start(IUnitManager enemyManager, ILauncher launcher, UnitObject defaultUnitObject)

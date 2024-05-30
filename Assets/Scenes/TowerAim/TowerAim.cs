@@ -25,7 +25,7 @@ public class TowerAim : LifetimeScope
     // UI
     [SerializeField] TextMeshProUGUI? textMesh;
 
-    [SerializeField, InspectInline] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline] UnitManagerObject? unitManagerObject;
     [SerializeField, InspectInline] UnitObject? defaultUnitObject;
     [SerializeField, InspectInline] EnvironmentObject? environmentObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
@@ -43,6 +43,7 @@ public class TowerAim : LifetimeScope
     [Inject] IMouseOperation mouseOperation;
     [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
     // [Inject] IEnvironment environment;
+    [Inject] ILauncher launcher;
 #pragma warning restore CS8618
 
     CompositeDisposable disposables = new CompositeDisposable();
@@ -62,9 +63,11 @@ public class TowerAim : LifetimeScope
 
     protected override void Configure(IContainerBuilder builder)
     {
-        builder.SetupUnitManager(UnitManagerObject, timeManager);
-        // builder.SetupEnvironment(environmentObject);
-        builder.SetupVisualizer(globalVisualizersObject);
+        builder.Setup(timeManager: timeManager,
+            launcherController: ControllerBase.Find<ILauncherController>(),
+            unit: defaultUnitObject,
+            unitManager: unitManagerObject,
+            visualizers: globalVisualizersObject);
         builder.Setup(inputObservableCusrorManager);
     }
 
@@ -73,7 +76,7 @@ public class TowerAim : LifetimeScope
         if (enemyManager == null || defaultUnitObject==null) return;
         enemyManager.AutoRegisterUnitsInScene(defaultUnitObject);
 
-        var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>(), timeManager) as ILauncher;
+        // var launcher = new LauncherImpl(ControllerBase.Find<ILauncherController>(), timeManager) as ILauncher;
 
         var token = this.GetCancellationTokenOnDestroy();
         if (randomWalk)

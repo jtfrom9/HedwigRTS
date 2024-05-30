@@ -6,9 +6,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+
 using Cysharp.Threading.Tasks;
-using UnityEditorInternal;
 using UniRx;
+using VContainer;
 
 namespace Hedwig.RTSCore.Controller
 {
@@ -39,6 +40,11 @@ namespace Hedwig.RTSCore.Controller
 
         const int defaultSpeed = 3;
 
+        [Inject]
+        readonly ITimeManager _timeManager;
+
+        ILauncherController? _launcherContorller = null;
+
         void Awake()
         {
             _transform.Initialize(transform);
@@ -50,6 +56,8 @@ namespace Hedwig.RTSCore.Controller
 
             var mr = GetComponent<MeshRenderer>();
             mr.material.color = UnityEngine.Random.ColorHSV();
+
+            _launcherContorller = GetComponentInChildren<ILauncherController>();
         }
 
         void OnDestroy()
@@ -239,7 +247,9 @@ namespace Hedwig.RTSCore.Controller
             }).AddTo(this);
         }
 
-        void IUnitController.Initialize(IUnitControllerCallback callback, Vector3? position, string? name, ITimeManager? timeManager)
+        ILauncherController? IUnitController.LauncherController { get => _launcherContorller; }
+
+        void IUnitController.Initialize(IUnitControllerCallback callback, Vector3? position, string? name)
         {
             if (name != null)
             {
@@ -248,7 +258,7 @@ namespace Hedwig.RTSCore.Controller
             _name = gameObject.name;
             this._callback = callback;
             this.initialize(position);
-            timeManager?.Paused.Subscribe(v => pause(v)).AddTo(this);
+            _timeManager.Paused.Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
     }

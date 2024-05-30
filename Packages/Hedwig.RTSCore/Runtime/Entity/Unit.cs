@@ -49,7 +49,7 @@ namespace Hedwig.RTSCore
 
     public interface IUnitController : ITransformProvider
     {
-        void Initialize(IUnitControllerCallback callback, Vector3? position, string? name, ITimeManager? timeManager);
+        void Initialize(IUnitControllerCallback callback, Vector3? position, string? name);
 
         string Name { get; }
         void SetDestination(Vector3 pos);
@@ -62,6 +62,8 @@ namespace Hedwig.RTSCore
         GameObject Context { get; }
 
         void SeDebugUnit(IUnitActionRunner unit);
+
+        ILauncherController? LauncherController { get; }
     }
 
     public interface IUnitControllerRepository
@@ -113,7 +115,7 @@ namespace Hedwig.RTSCore
     #endregion
 
 
-    #region UnitData, UnitFactory
+    #region UnitData
     public interface IUnitData
     {
         string Name { get; }
@@ -122,13 +124,7 @@ namespace Hedwig.RTSCore
         int Deffence { get; }
         IUnitActionStateHolder StateHolder { get; }
     }
-
-    public interface IUnitFactory
-    {
-        IUnit? Create(IUnitManager manager, IUnitCallback callback,
-            Vector3? position = null,
-            string? name = null,
-            IUnitController? unitController = null);
-    }
     #endregion
+
+    public delegate IUnit? IUnitFacory(IUnitData unitData, Vector3? position, string? name, IUnitController? unitController);
 }
