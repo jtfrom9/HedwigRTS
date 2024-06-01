@@ -1,18 +1,15 @@
 #nullable enable
 
 using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
-using System;
 
 namespace Hedwig.RTSCore.Impl
 {
     public class BurstLauncherHandler : ILauncherHandler
     {
-        readonly ILauncherHandlerCallback handlerEvent;
-        readonly IProjectileData projectileObject;
+        readonly ILauncherHandlerCallback _handlerEvent;
+        readonly IProjectileData _projectileObject;
 
         CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -24,12 +21,12 @@ namespace Hedwig.RTSCore.Impl
         {
             UniTask.Create(async () =>
             {
-                handlerEvent.OnBeforeFire();
+                _handlerEvent.OnBeforeFire();
                 while (true)
                 {
-                    var projectile = handlerEvent.CreateProjectile(start.Position, name: null);
+                    var projectile = _handlerEvent.CreateProjectile(start.Position, name: null);
                     projectile.Start(target);
-                    handlerEvent.OnFired(projectile);
+                    _handlerEvent.OnFired(projectile);
                     try
                     {
                         await UniTask.Delay(100, cancellationToken: cts.Token);
@@ -39,7 +36,7 @@ namespace Hedwig.RTSCore.Impl
                         break;
                     }
                 }
-                handlerEvent.OnAfterFire();
+                _handlerEvent.OnAfterFire();
             }).Forget();
         }
 
@@ -64,8 +61,8 @@ namespace Hedwig.RTSCore.Impl
             ILauncherHandlerCallback handlerEvent,
             IProjectileData projectileObject)
         {
-            this.handlerEvent = handlerEvent;
-            this.projectileObject = projectileObject;
+            this._handlerEvent = handlerEvent;
+            this._projectileObject = projectileObject;
         }
     }
 }

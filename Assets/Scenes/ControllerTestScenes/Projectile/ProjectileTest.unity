@@ -234,6 +234,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 253982898}
     m_Modifications:
+    - target: {fileID: 2187726802396775544, guid: 8e92bdc89cc064600a03877e9a4b006d, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2489900876656539108, guid: 8e92bdc89cc064600a03877e9a4b006d, type: 3}
       propertyPath: m_Name
       value: CubeEnemy
@@ -535,10 +539,14 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 1209448252}
-  defaultUnitObject: {fileID: 11400000, guid: b35217afaef584842b03ff3843c9968b, type: 2}
+  defaultUnitObject: {fileID: 11400000, guid: 8b952aea4c64e452385ec297012fc2e0, type: 2}
   unitManagerObject: {fileID: 11400000, guid: c5f90ba20c9a246d0a125bd56e1a4b84, type: 2}
   globalVisualizersObject: {fileID: 11400000, guid: 726823c6a48144c5ba35c46af50a08b4, type: 2}
-  projectileObjects: []
+  projectileObjects:
+  - {fileID: 11400000, guid: 5c5dcbfea5e2f4c4681f8f9c5c2a604f, type: 2}
+  - {fileID: 11400000, guid: e933b279aa5f5411ca66fb326c732c32, type: 2}
+  - {fileID: 11400000, guid: 1d29de1e7ac8f42aa9507a2a41b94c41, type: 2}
+  - {fileID: 11400000, guid: 0b90f6bb46ba5471bac623959808c14b, type: 2}
   textMesh: {fileID: 1544323828}
 --- !u!4 &1209448254
 Transform:

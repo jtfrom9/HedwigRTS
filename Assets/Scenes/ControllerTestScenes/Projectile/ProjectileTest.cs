@@ -209,7 +209,7 @@ namespace Hedwig.RTSCore.Test
                     if (pos.z > 1)
                     {
                         Debug.LogWarning($"[{projectile.GetHashCode():x}] frame:{Time.frameCount} {pos}");
-                        Debug.Break();
+                        // Debug.Break();
                         projectile.Dispose();
                     }
                 }).AddTo(this);

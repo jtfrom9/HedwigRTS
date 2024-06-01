@@ -13,6 +13,7 @@ using VContainer;
 using VContainer.Unity;
 using UniRx;
 using UniRx.Triggers;
+using UnityExtensions;
 
 using Hedwig.RTSCore.Model;
 using Hedwig.RTSCore.Impl;
@@ -21,16 +22,16 @@ namespace Hedwig.RTSCore.Test
 {
     public class TrajectoryComparison : LifetimeScope
     {
-        [SerializeField]
+        [SerializeField, InspectInline]
         UnitObject? defaultUnitObject;
 
-        [SerializeField]
+        [SerializeField, InspectInline]
         UnitManagerObject? unitManagerObject;
 
-        [SerializeField]
+        [SerializeField, InspectInline]
         GlobalVisualizersObject? globalVisualizersObject;
 
-        [SerializeField]
+        [SerializeField, InspectInline]
         List<ProjectileObject> projectileObjects = new List<ProjectileObject>();
 
         [SerializeField]
