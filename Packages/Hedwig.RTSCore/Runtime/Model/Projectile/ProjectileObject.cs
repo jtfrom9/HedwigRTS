@@ -10,6 +10,7 @@ using UniRx;
 using UnityExtensions;
 using VContainer;
 using VContainer.Unity;
+using NaughtyAttributes;
 
 using Hedwig.RTSCore.Impl;
 
@@ -19,6 +20,7 @@ namespace Hedwig.RTSCore.Model
     public class ProjectileObject : ScriptableObject, IProjectileData
     {
         [SerializeField, SearchContext("t:prefab Projectile")]
+        [Required]
         GameObject? prefab;
 
         [SerializeField]
@@ -57,11 +59,7 @@ namespace Hedwig.RTSCore.Model
 
         private IProjectileController? createController()
         {
-            if (prefab != null)
-            {
-                return Instantiate(prefab).GetComponent<IProjectileController>();
-            }
-            return null;
+            return Instantiate(prefab!).GetComponent<IProjectileController>();
         }
 
         Subject<IProjectile> onCreated = new Subject<IProjectile>();
@@ -107,11 +105,7 @@ namespace Hedwig.RTSCore.Model
 
         public IProjectile Create(Vector3 start, string? name)
         {
-            var projectileController = createController();
-            if (projectileController == null)
-            {
-                throw new InvalidConditionException("No ProjectileController");
-            }
+            var projectileController = createController() ?? throw new InvalidConditionException("No ProjectileController");
             var projectile = new ProjectileImpl(projectileController, this);
             projectileController.Initialize(
                 projectile,
@@ -121,17 +115,15 @@ namespace Hedwig.RTSCore.Model
             return projectile;
         }
 
-        public IProjectile? CreateProjectileWithResolver(
+        public IProjectile CreateProjectileWithResolver(
             IObjectResolver resolver,
             Vector3 start,
             string? name)
         {
-            if (prefab == null) return null;
-            var go = resolver.Instantiate(prefab);
-            var projectileController = go.GetComponent<IProjectileController>();
-            if (projectileController == null) {
+            var go = resolver.Instantiate(prefab!);
+            if (!go.TryGetComponent<IProjectileController>(out var projectileController)) {
                 Destroy(go);
-                return null;
+                throw new InvalidConditionException("No IProjectileController");
             }
             resolver.Inject(projectileController);
             var projectile = new ProjectileImpl(projectileController, this);

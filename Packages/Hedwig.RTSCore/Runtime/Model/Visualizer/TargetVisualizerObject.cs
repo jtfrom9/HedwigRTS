@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Search;
+using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -9,13 +10,16 @@ namespace Hedwig.RTSCore.Model
     public class TargetVisualizerObject : ScriptableObject
     {
         [SerializeField, SearchContext("t:prefab visualizer")]
+        [Required]
         GameObject? prefab;
 
-        public ITargetVisualizer? Create(IVisualizerTarget target)
+        public ITargetVisualizer Create(IVisualizerTarget target)
         {
-            if (prefab == null) return null;
-            var visualizer = Instantiate(prefab).GetComponent<ITargetVisualizer>();
-            visualizer?.Initialize(target);
+            if (!Instantiate(prefab!).TryGetComponent<ITargetVisualizer>(out var visualizer))
+            {
+                throw new InvalidConditionException("No ITargetVisualizer");
+            }
+            visualizer.Initialize(target);
             return visualizer;
         }
     }

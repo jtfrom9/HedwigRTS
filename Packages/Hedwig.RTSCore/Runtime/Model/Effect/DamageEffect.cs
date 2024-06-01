@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Search;
+using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -9,17 +10,19 @@ namespace Hedwig.RTSCore.Model
     public class DamageEffect : ScriptableObject
     {
         [SerializeField, SearchContext("t:prefab effect")]
-        protected GameObject? prefab;
+        [Required]
+        public GameObject? prefab;
 
         [SerializeField]
         DamageEffectParameter? damageEffectParameter;
 
-        public virtual IEffect? Create(ITransformProvider parent, int damage)
+        public virtual IEffect Create(ITransformProvider parent, int damage)
         {
-            if (prefab == null) return null;
-            if (damageEffectParameter == null) return null;
-            var effect = Instantiate(prefab).GetComponent<IDamageEffect>();
-            effect?.Initialize(parent, damageEffectParameter, damage);
+            if (!Instantiate(prefab!).TryGetComponent<IDamageEffect>(out var effect))
+            {
+                throw new InvalidConditionException("No IDamageEffect");
+            }
+            effect.Initialize(parent, damageEffectParameter!, damage);
             return effect;
         }
     }

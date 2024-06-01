@@ -17,12 +17,12 @@ namespace Hedwig.RTSCore.Model
     {
         #region IEnemyAttackedEffectFactory
         [SerializeField, InspectInline]
-        List<DamageEffect> damageEffects = new List<DamageEffect>();
+        List<DamageEffect> damageEffects;
 
         [SerializeField, InspectInline]
-        List<HitEffect> hitEffects = new List<HitEffect>();
+        List<HitEffect> hitEffects;
 
-        IEnumerable<IEffect?> createEffects(IUnit unit, IHitObject? hitObject, DamageEvent e)
+        IEnumerable<IEffect> CreateEffects(IUnit unit, IHitObject? hitObject, DamageEvent e)
         {
             foreach (var damageEffect in damageEffects)
             {
@@ -37,8 +37,7 @@ namespace Hedwig.RTSCore.Model
         }
 
         IEffect[] IUnitAttackedEffectFactory.CreateAttackedEffects(IUnit unit, IHitObject? hitObject, in DamageEvent e)
-            => createEffects(unit, hitObject, e)
-                .WhereNotNull()
+            => CreateEffects(unit, hitObject, e)
                 .ToArray();
         #endregion
 
@@ -46,7 +45,7 @@ namespace Hedwig.RTSCore.Model
         [SerializeField, InspectInline]
         List<TargetVisualizerObject> targetVisualizers = new List<TargetVisualizerObject>();
 
-        IEnumerable<ITargetVisualizer?> createVisualizers(IVisualizerTarget target)
+        IEnumerable<ITargetVisualizer> createVisualizers(IVisualizerTarget target)
         {
             foreach (var vobj in targetVisualizers)
             {
@@ -55,7 +54,7 @@ namespace Hedwig.RTSCore.Model
         }
 
         IEnumerable<ITargetVisualizer> ITargetVisualizerFactory.CreateTargetVisualizers(IVisualizerTarget target)
-            => createVisualizers(target).WhereNotNull();
+            => createVisualizers(target);
         #endregion
     }
 

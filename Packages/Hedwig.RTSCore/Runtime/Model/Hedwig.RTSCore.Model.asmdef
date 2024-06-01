@@ -9,7 +9,8 @@
         "Hedwig.RTSCore.Utility",
         "Hedwig.RTSCore.Entity",
         "Hedwig.RTSCore.Impl",
-        "MackySoft.SerializeReferenceExtensions"
+        "MackySoft.SerializeReferenceExtensions",
+        "NaughtyAttributes.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

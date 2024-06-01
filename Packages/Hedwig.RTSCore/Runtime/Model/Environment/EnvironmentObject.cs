@@ -1,14 +1,15 @@
 #nullable enable
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 using UnityExtensions;
 using VContainer;
+using NaughtyAttributes;
 
 using Hedwig.RTSCore.Impl;
-using System;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -16,12 +17,13 @@ namespace Hedwig.RTSCore.Model
     public class EnvironmentObject : ScriptableObject, IEnvironmentFactory, IEnvironmentEffectFactory
     {
         [SerializeField, SearchContext("t:prefab environment")]
+        [Required]
         GameObject? prefab;
 
         [SerializeField, InspectInline]
         List<HitEffect> hitEffects = new List<HitEffect>();
 
-        IEnumerable<IEffect?> createEffects(IEnvironment environment, Vector3 position, Vector3 direction)
+        IEnumerable<IEffect> createEffects(IEnvironment environment, Vector3 position, Vector3 direction)
         {
             foreach (var effect in hitEffects)
             {
@@ -31,14 +33,14 @@ namespace Hedwig.RTSCore.Model
 
         IEffect[] IEnvironmentEffectFactory.CreateEffects(IEnvironment environment, Vector3 position, Vector3 direction)
             => createEffects(environment, position, direction)
-                .WhereNotNull()
                 .ToArray();
 
-        IEnvironment? IEnvironmentFactory.Create()
+        IEnvironment IEnvironmentFactory.Create()
         {
-            if (prefab == null) return null;
-            var environmentController = Instantiate(prefab).GetComponent<IEnvironmentController>();
-            if (environmentController == null) return null;
+            if (!Instantiate(prefab!).TryGetComponent<IEnvironmentController>(out var environmentController))
+            {
+                throw new InvalidConditionException("No IEnvironmentController");
+            }
             var environment = new EnvironmentImpl(this, environmentController);
             environmentController.Initialize(environment);
             return environment;

@@ -24,9 +24,9 @@ namespace Hedwig.RTSCore.InputObservable
         Subject<MouseMoveEvent> onMove = new Subject<MouseMoveEvent>();
 
         [Inject]
-        readonly ITimeManager timeManager;
+        readonly ITimeManager? timeManager;
 
-        bool TimePaused { get => timeManager.Paused.Value; }
+        bool TimePaused { get => timeManager?.Paused.Value ?? false; }
 
         void Start()
         {

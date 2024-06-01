@@ -2,7 +2,8 @@
     "name": "Hedwig.RTSCore.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:e1a5be51ec4c64be683e19f99fb8a2e6"
+        "GUID:e1a5be51ec4c64be683e19f99fb8a2e6",
+        "GUID:776d03a35f1b52c4a9aed9f56d7b4229"
     ],
     "includePlatforms": [
         "Editor"

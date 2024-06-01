@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Search;
+using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -9,13 +10,16 @@ namespace Hedwig.RTSCore.Model
     public class HitEffect : ScriptableObject
     {
         [SerializeField, SearchContext("t:prefab effect")]
+        [Required]
         GameObject? prefab;
 
-        public IEffect? Create(ITransformProvider parent, Vector3 position, Vector3 direction)
+        public IEffect Create(ITransformProvider parent, Vector3 position, Vector3 direction)
         {
-            if (prefab == null) return null;
-            var effect = Instantiate(prefab).GetComponent<IHitEffect>();
-            effect?.Initialize(parent, position, direction);
+            if (!Instantiate(prefab!).TryGetComponent<IHitEffect>(out var effect))
+            {
+                throw new InvalidConditionException("No IHitEffect");
+            }
+            effect.Initialize(parent, position, direction);
             return effect;
         }
     }

@@ -15,7 +15,7 @@ namespace Hedwig.RTSCore
 
     public interface IEnvironmentFactory
     {
-        IEnvironment? Create();
+        IEnvironment Create();
     }
 
     public interface IEnvironment
