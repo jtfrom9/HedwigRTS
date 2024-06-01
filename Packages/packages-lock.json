@@ -207,6 +207,13 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "jp.amagamina.reference-viewer": {
+      "version": "https://github.com/ina-amagami/unity-reference-viewer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "be5f50d07781e355512130902d3a996f8cff86c6"
+    },
     "jp.hadashikick.vcontainer": {
       "version": "1.11.0",
       "depth": 0,
