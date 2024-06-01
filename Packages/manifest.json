@@ -50,27 +50,29 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0",
     "com.mackysoft.serializereference-extensions": "1.3.1",
-    "jp.amagamina.reference-viewer": "https://github.com/ina-amagami/unity-reference-viewer.git"
+    "jp.amagamina.reference-viewer": "https://github.com/ina-amagami/unity-reference-viewer.git",
+    "com.dbrizov.naughtyattributes": "2.1.4"
   },
   "scopedRegistries": [
+    {
+      "name": "Keijiro",
+      "url": "https://registry.npmjs.com",
+      "scopes": [
+        "jp.keijiro"
+      ]
+    },
     {
       "name": "package.openupm.com",
       "url": "https://package.openupm.com",
       "scopes": [
         "com.cysharp.unitask",
+        "com.dbrizov.naughtyattributes",
         "com.jtfrom9.input-observable",
         "com.mackysoft.serializereference-extensions",
         "com.neuecc.unirx",
         "com.openupm",
         "garettbass.unity-extensions.inspect-in-line",
         "jp.hadashikick.vcontainer"
-      ]
-    },
-    {
-      "name": "Keijiro",
-      "url": "https://registry.npmjs.com",
-      "scopes": [
-        "jp.keijiro"
       ]
     }
   ]
