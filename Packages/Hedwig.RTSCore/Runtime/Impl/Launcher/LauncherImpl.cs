@@ -133,12 +133,14 @@ namespace Hedwig.RTSCore.Impl
             _target = target;
             _trajectoryVisualizer?.SetEndTarget(target?.Transform);
             setCanFire();
-            if(_target!=null) {
+            if (_target != null)
+            {
                 handleTriggerOn();
-            } else {
+            }
+            else
+            {
                 handleError();
             }
-            handleError();
             onTargetChanged.OnNext(_target);
         }
 
@@ -170,14 +172,9 @@ namespace Hedwig.RTSCore.Impl
 
         void handleError()
         {
-            // Debug.Log($"handleError. error:{!canFire.Value}");
             if (!canFire.Value)
             {
-                if (_launcherHandler == null)
-                {
-                    throw new InvalidConditionException("fail to fire");
-                }
-                _launcherHandler.Error();
+                _launcherHandler?.Error();
             }
         }
 
