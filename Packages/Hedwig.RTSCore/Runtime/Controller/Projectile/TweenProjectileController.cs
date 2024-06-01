@@ -8,6 +8,7 @@ using UnityEngine;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using UniRx;
+using VContainer;
 
 namespace Hedwig.RTSCore.Controller
 {
@@ -18,7 +19,8 @@ namespace Hedwig.RTSCore.Controller
         float castingEveryFrameSpeed = 50;
 
         readonly ITransform _transform = new CachedTransform();
-        string _name;
+        string _name = "";
+        IProjectile? _projectile;
 
         bool _disposed = false;
         bool _willHit = false;
@@ -28,6 +30,9 @@ namespace Hedwig.RTSCore.Controller
         bool _timePaused = false;
 
         Subject<ProjectileEventArg> onEvent = new Subject<ProjectileEventArg>();
+
+        [Inject]
+        readonly ITimeManager? _timeManager;
 
         void Awake() {
             _transform.Initialize(transform);
@@ -240,15 +245,16 @@ namespace Hedwig.RTSCore.Controller
         UniTask IProjectileController.LastMove(float speed) => lastMove(speed);
         IObservable<ProjectileEventArg> IProjectileController.OnEvent { get => onEvent; }
 
-        void IProjectileController.Initialize(Vector3 initial, string? name, ITimeManager? timeManager)
+        void IProjectileController.Initialize(IProjectile projectile, Vector3 initial, string? name)
         {
             if (name != null)
             {
                 gameObject.name = name;
             }
             _name = gameObject.name;
+            _projectile = projectile;
             transform.position = initial;
-            timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
+            _timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
 

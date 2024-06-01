@@ -18,7 +18,7 @@ namespace Hedwig.RTSCore.Controller
         readonly ITransform _transform = new CachedTransform();
         readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-        string _name;
+        string _name = "";
         IUnitControllerCallback? _callback;
         NavMeshAgent? _agent;
         Rigidbody? _rigidbody;
@@ -34,14 +34,14 @@ namespace Hedwig.RTSCore.Controller
         float? _distanceToHead;
 
         [SerializeField]
-        string CurrentState;
+        string? CurrentState;
         [SerializeField]
-        string Target;
+        string? Target;
 
         const int defaultSpeed = 3;
 
         [Inject]
-        readonly ITimeManager _timeManager;
+        readonly ITimeManager? _timeManager;
 
         ILauncherController? _launcherContorller = null;
 
@@ -258,7 +258,7 @@ namespace Hedwig.RTSCore.Controller
             _name = gameObject.name;
             this._callback = callback;
             this.initialize(position);
-            _timeManager.Paused.Subscribe(v => pause(v)).AddTo(this);
+            _timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
     }

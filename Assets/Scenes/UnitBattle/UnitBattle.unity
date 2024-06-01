@@ -1692,6 +1692,8 @@ MonoBehaviour:
   enemyObject: {fileID: 11400000, guid: b563a118843e648e0a16fe2ba16ee28d, type: 2}
   globalVisualizersObject: {fileID: 11400000, guid: 726823c6a48144c5ba35c46af50a08b4, type: 2}
   inputObservableCusrorManager: {fileID: 1543154967}
+  projectileObjects:
+  - {fileID: 11400000, guid: 5c5dcbfea5e2f4c4681f8f9c5c2a604f, type: 2}
 --- !u!4 &1543154966
 Transform:
   m_ObjectHideFlags: 0

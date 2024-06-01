@@ -62,6 +62,7 @@ namespace Hedwig.RTSCore.Test
             if (root == null) { throw new InvalidConditionException("no root"); }
 
             builder.Setup(timeManager: null,
+                projectiles: projectileObjects,
                 launcherController: null,
                 unit: defaultUnitObject,
                 unitManager: unitManagerObject,
@@ -72,10 +73,12 @@ namespace Hedwig.RTSCore.Test
             {
                 return (x) =>
                 {
-                    var go = Instantiate(launcherPrefab, x.pos, Quaternion.identity, root.transform);
+                    var go = resolver.Instantiate(launcherPrefab, x.pos, Quaternion.identity, root.transform);
                     var launcherController = go.GetComponent<ILauncherController>();
                     addConfigInfo(go, x.config);
-                    return new LauncherImpl(launcherController, timeManager: resolver.Resolve<ITimeManager>());
+                    return new LauncherImpl(launcherController,
+                        timeManager: resolver.Resolve<ITimeManager>(),
+                        projectileFactory: resolver.Resolve<IProjectileFactory>());
                 };
             }, Lifetime.Transient);
         }

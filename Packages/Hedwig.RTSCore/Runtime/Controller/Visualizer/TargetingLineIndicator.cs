@@ -11,7 +11,7 @@ namespace Hedwig.RTSCore.Controller
     public class TargetingLineIndicator : MonoBehaviour, ITargetVisualizer
     {
         ITransform _transform = new CachedTransform();
-        LineRenderer _lineRenderer;
+        LineRenderer? _lineRenderer;
         bool _disposed = false;
 
         void Awake()
@@ -54,14 +54,14 @@ namespace Hedwig.RTSCore.Controller
             }
             points.Add(p2);
 
-            _lineRenderer.positionCount = N+1;
+            _lineRenderer!.positionCount = N+1;
             _lineRenderer.SetPositions(points.ToArray());
             _lineRenderer.enabled = true;
         }
 
         void hideLine()
         {
-            _lineRenderer.positionCount = 0;
+            _lineRenderer!.positionCount = 0;
             _lineRenderer.enabled = false;
         }
 

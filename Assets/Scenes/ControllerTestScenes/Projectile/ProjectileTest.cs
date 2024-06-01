@@ -43,15 +43,14 @@ namespace Hedwig.RTSCore.Test
         [Inject] readonly IUnitManager? enemyManager;
         [Inject] readonly ILauncher? launcher;
 
-        IProjectileFactory? projectileFactory;
-
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Setup(timeManager: null,
                 launcherController: ControllerBase.Find<ILauncherController>(),
                 unit: defaultUnitObject,
                 unitManager: unitManagerObject,
-                visualizers: globalVisualizersObject);
+                visualizers: globalVisualizersObject,
+                projectiles: projectileObjects);
         }
 
         void Start()
@@ -84,7 +83,7 @@ namespace Hedwig.RTSCore.Test
             projectileSelection.OnCurrentChanged
              .Subscribe(async projectile =>
             {
-                projectileFactory = projectile;
+                // projectileFactory = projectile;
                 cts?.Cancel();
                 cts = new CancellationTokenSource();
                 await launcher.SetProjectileAsync(projectile, cancellationToken: cts.Token);
@@ -144,7 +143,7 @@ namespace Hedwig.RTSCore.Test
             }
         }
 
-        void setupDebug(IProjectileFactory projectileFactory)
+        void setupDebug(ProjectileObject projectileFactory)
         {
             projectileFactory.OnCreated.Subscribe(projectile =>
             {

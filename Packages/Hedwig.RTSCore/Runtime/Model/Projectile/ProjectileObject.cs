@@ -1,19 +1,22 @@
 #nullable enable
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Search;
 using UniRx;
 using UnityExtensions;
+using VContainer;
+using VContainer.Unity;
 
 using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Model
 {
     [CreateAssetMenu(menuName = "Hedwig/Projectile/Projectile", fileName = "Projectile")]
-    public class ProjectileObject : ScriptableObject, IProjectileData, IProjectileFactory
+    public class ProjectileObject : ScriptableObject, IProjectileData
     {
         [SerializeField, SearchContext("t:prefab Projectile")]
         GameObject? prefab;
@@ -98,27 +101,64 @@ namespace Hedwig.RTSCore.Model
             return trajectory.ToMap(from, to, baseSpeed);
         }
 
-        public IProjectileFactory Factory { get => this; }
         #endregion
 
-        #region IProjectileFactory
         public IObservable<IProjectile> OnCreated { get => onCreated; }
 
-        public IProjectile Create(Vector3 start, string? name, ITimeManager? timeManager)
+        public IProjectile Create(Vector3 start, string? name)
         {
             var projectileController = createController();
             if (projectileController == null)
             {
                 throw new InvalidConditionException("No ProjectileController");
             }
-            projectileController.Initialize(
-                initial: start,
-                name: name ?? this.name,
-                timeManager);
             var projectile = new ProjectileImpl(projectileController, this);
+            projectileController.Initialize(
+                projectile,
+                initial: start,
+                name: name ?? this.name);
             onCreated.OnNext(projectile);
             return projectile;
         }
-        #endregion
+
+        public IProjectile? CreateProjectileWithResolver(
+            IObjectResolver resolver,
+            Vector3 start,
+            string? name)
+        {
+            if (prefab == null) return null;
+            var go = resolver.Instantiate(prefab);
+            var projectileController = go.GetComponent<IProjectileController>();
+            if (projectileController == null) {
+                Destroy(go);
+                return null;
+            }
+            resolver.Inject(projectileController);
+            var projectile = new ProjectileImpl(projectileController, this);
+            projectileController.Initialize(
+                    projectile,
+                    initial: start,
+                    name: name ?? this.name);
+            onCreated.OnNext(projectile);
+            return projectile;
+        }
+    }
+
+    public static class ProjectileObjectDIExtension
+    {
+        public static void RegisterProjectiles(this IContainerBuilder builder, IEnumerable<ProjectileObject> projectileObjects)
+        {
+            var dict = projectileObjects.ToDictionary(pobj => pobj as IProjectileData, pobj => pobj);
+
+            builder.Register<IProjectileFactory>(resolver => (projectileData, start, name) =>
+            {
+                if(dict.TryGetValue(projectileData, out var projectileObject))
+                {
+                    return projectileObject.CreateProjectileWithResolver(resolver, start, name);
+                }else {
+                    return null;
+                }
+            }, Lifetime.Transient);
+        }
     }
 }

@@ -14,7 +14,8 @@ namespace Hedwig.RTSCore.Model
             builder.Register<ILaunherFactory>(container => (launcherController) =>
             {
                 var timeManager = container.Resolve<ITimeManager>();
-                return new LauncherImpl(launcherController, timeManager);
+                var projectileFactory = container.Resolve<IProjectileFactory>();
+                return new LauncherImpl(launcherController, projectileFactory, timeManager);
             }, Lifetime.Singleton);
         }
 

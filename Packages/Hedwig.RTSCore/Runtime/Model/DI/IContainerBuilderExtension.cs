@@ -39,7 +39,8 @@ namespace Hedwig.RTSCore.Model
             UnitManagerObject? unitManager,
             GlobalVisualizersObject? visualizers,
             IEnumerable<UnitObject>? units = null,
-            UnitObject? unit = null)
+            UnitObject? unit = null,
+            IEnumerable<ProjectileObject>? projectiles = null)
         {
             builder.RegisterTimeManager(timeManager);
             if (launcherController != null)
@@ -65,6 +66,10 @@ namespace Hedwig.RTSCore.Model
             if (units != null)
             {
                 builder.RegisterUnits(units);
+            }
+            if (projectiles != null)
+            {
+                builder.RegisterProjectiles(projectiles);
             }
         }
     }

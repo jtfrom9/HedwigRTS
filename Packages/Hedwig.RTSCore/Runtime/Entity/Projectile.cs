@@ -70,12 +70,6 @@ namespace Hedwig.RTSCore
         ITrajectoryMap ToMap(Vector3 from, Vector3 to);
     }
 
-    public interface IProjectileFactory
-    {
-        IProjectile Create(Vector3 start, string? name, ITimeManager? timeManager);
-        IObservable<IProjectile> OnCreated { get; }
-    }
-
     public enum ProjectileEndReason
     {
         CharactorHit,
@@ -124,7 +118,7 @@ namespace Hedwig.RTSCore
 
     public interface IProjectileController : ITransformProvider
     {
-        void Initialize(Vector3 initial, string? name, ITimeManager? timeManager);
+        void Initialize(IProjectile projectile, Vector3 initial, string? name);
 
         string Name { get; }
         UniTask<bool> Move(Vector3 to, float speed);
@@ -150,6 +144,8 @@ namespace Hedwig.RTSCore
 
         void Start(ITransform target, in ProjectileOption? option = null);
     }
+
+    public delegate IProjectile? IProjectileFactory(IProjectileData projectileData, Vector3 start, string? name);
 
     public interface ITrajectoryVisualizer
     {

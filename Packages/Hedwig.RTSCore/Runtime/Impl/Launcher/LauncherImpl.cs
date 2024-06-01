@@ -13,6 +13,7 @@ namespace Hedwig.RTSCore.Impl
     public class LauncherImpl : ILauncher, ILauncherHandlerCallback
     {
         readonly ILauncherController _launcherController;
+        readonly IProjectileFactory _projectileFactory;
         readonly ITimeManager? _timeManager;
         readonly ITrajectoryVisualizer? _trajectoryVisualizer;
 
@@ -64,14 +65,16 @@ namespace Hedwig.RTSCore.Impl
 
         IProjectile createProjectile(Vector3 position, string? name)
         {
-            if (_projectileData is IProjectileFactory factory)
+            if (_projectileData == null)
             {
-                return factory.Create(position, name, _timeManager);
+                throw new InvalidCastException("No projectileData");
             }
-            else
+            var projectile = _projectileFactory.Invoke(_projectileData, position, name);
+            if (projectile == null)
             {
                 throw new InvalidCastException("Failed to createProjectile");
             }
+            return projectile;
         }
 
         void setProjectileCore(IProjectileData? projectileData, ProjectileOption? option)
@@ -273,9 +276,10 @@ namespace Hedwig.RTSCore.Impl
         }
         #endregion
 
-        public LauncherImpl(ILauncherController launcherController, ITimeManager timeManager)
+        public LauncherImpl(ILauncherController launcherController, IProjectileFactory projectileFactory, ITimeManager timeManager)
         {
             this._launcherController = launcherController;
+            this._projectileFactory = projectileFactory;
             this._timeManager = timeManager;
             this._trajectoryVisualizer = ControllerBase.Find<ITrajectoryVisualizer>();
             this.initialize();

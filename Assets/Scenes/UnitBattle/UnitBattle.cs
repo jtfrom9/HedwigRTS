@@ -22,8 +22,7 @@ public class UnitBattle : LifetimeScope
     [SerializeField, InspectInline] UnitObject? enemyObject;
     [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
     [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
-
-    // [SerializeField, InspectInline] List<ProjectileObject> projectiles = new List<ProjectileObject>();
+    [SerializeField, InspectInline] List<ProjectileObject>? projectileObjects;
     // [SerializeField] List<Vector3> spawnPoints = new List<Vector3>();
 
 #pragma warning disable CS8618
@@ -38,7 +37,8 @@ public class UnitBattle : LifetimeScope
             launcherController: null,
             units: new List<UnitObject>() { playerObject!, enemyObject! },
             unitManager: unitManagerObject,
-            visualizers: globalVisualizersObject);
+            visualizers: globalVisualizersObject,
+            projectiles: projectileObjects);
         builder.Setup(inputObservableCusrorManager);
     }
 

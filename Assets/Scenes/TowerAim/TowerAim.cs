@@ -67,7 +67,8 @@ public class TowerAim : LifetimeScope
             launcherController: ControllerBase.Find<ILauncherController>(),
             unit: defaultUnitObject,
             unitManager: unitManagerObject,
-            visualizers: globalVisualizersObject);
+            visualizers: globalVisualizersObject,
+            projectiles: projectiles);
         builder.Setup(inputObservableCusrorManager);
     }
 
