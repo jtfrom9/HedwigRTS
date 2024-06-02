@@ -48,6 +48,30 @@ namespace Hedwig.Editor
                             isValid = false;
                         }
                     }
+                    if (Attribute.IsDefined(field, typeof(SerializeReference)))
+                    {
+                        var serRefVal = field.GetValue(so);
+                        if (serRefVal != null || serRefVal is UnityEngine.Object unityObject && unityObject == null)
+                        {
+                            var actualType = serRefVal.GetType();
+                            var subFields = actualType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                            foreach (var subField in subFields)
+                            {
+                                if (subField.IsDefined(typeof(RTSCore.SerializableRequiredAttribute), true))
+                                {
+                                    var subFieldValue = subField.GetValue(serRefVal);
+                                    // Debug.Log($"    >>> {subField} value = {subFieldValue}");
+
+                                    if (subFieldValue == null || subFieldValue is UnityEngine.Object subUnityObject && subUnityObject == null)
+                                    {
+                                        // EditorGUILayout.HelpBox($"Field '{subField.Name}' in '{actualType.Name}' is required.", MessageType.Error);
+                                        Debug.LogError($"The field '{subField.Name}' in '{so.name}.{actualType.Name}' ({so.GetType().Name}) is required but not assigned.", so);
+                                        isValid = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return isValid;

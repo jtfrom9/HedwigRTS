@@ -29,7 +29,7 @@ namespace Hedwig.RTSCore.Model
     {
         [SerializeField]
         int msec = 0;
- 
+
         class DelayEffectImpl: IEffect
         {
             public int msec;
@@ -50,8 +50,8 @@ namespace Hedwig.RTSCore.Model
     public class PrefabHitEffect: IHitEffectFactory
     {
         [SerializeField, SearchContext("t:prefab effect")]
-        [Required]
-        GameObject? prefab;
+        [SerializableRequired]
+        public GameObject? prefab;
 
         IEffect IHitEffectFactory.Create(ITransformProvider parent, Vector3 position, Vector3 direction)
         {
