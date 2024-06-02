@@ -15,14 +15,16 @@ namespace Hedwig.RTSCore.Model
     [CreateAssetMenu(menuName = "Hedwig/Unit/UnitManager", fileName = "UnitManager")]
     public class UnitManagerObject : ScriptableObject, IUnitAttackedEffectFactory, ITargetVisualizerFactory
     {
-        #region IEnemyAttackedEffectFactory
         [SerializeField, InspectInline]
         List<DamageEffect> damageEffects;
 
         [SerializeField, InspectInline]
         List<HitEffect> hitEffects;
 
-        IEnumerable<IEffect> CreateEffects(IUnit unit, IHitObject? hitObject, DamageEvent e)
+        [SerializeField, InspectInline]
+        List<HitEffect> deathEffects;
+
+        IEnumerable<IEffect> CreateAttackedEffects(IUnit unit, IHitObject? hitObject, DamageEvent e)
         {
             foreach (var damageEffect in damageEffects)
             {
@@ -36,12 +38,22 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
+        IEnumerable<IEffect> CreateDeathEffects(IUnit unit, IHitObject? hitObject)
+        {
+            foreach (var deathEffect in deathEffects)
+            {
+                yield return deathEffect.Create(unit.Controller, unit.Transform.Position, hitObject?.Direction ?? Vector3.zero);
+            }
+        }
+
+        #region IEnemyAttackedEffectFactory
         IEffect[] IUnitAttackedEffectFactory.CreateAttackedEffects(IUnit unit, IHitObject? hitObject, in DamageEvent e)
-            => CreateEffects(unit, hitObject, e)
+            => CreateAttackedEffects(unit, hitObject, e)
                 .ToArray();
+        IEffect[] IUnitAttackedEffectFactory.CreateDeathEffects(IUnit unit, IHitObject? hitObject)
+            => CreateDeathEffects(unit, hitObject).ToArray();
         #endregion
 
-        #region ITargetVisualizerFactory
         [SerializeField, InspectInline]
         List<TargetVisualizerObject> targetVisualizers = new List<TargetVisualizerObject>();
 
@@ -53,6 +65,7 @@ namespace Hedwig.RTSCore.Model
             }
         }
 
+        #region ITargetVisualizerFactory
         IEnumerable<ITargetVisualizer> ITargetVisualizerFactory.CreateTargetVisualizers(IVisualizerTarget target)
             => createVisualizers(target);
         #endregion

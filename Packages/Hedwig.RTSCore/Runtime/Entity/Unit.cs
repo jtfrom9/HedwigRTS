@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
-using UniRx;
 using UnityEngine;
+
+using Cysharp.Threading.Tasks;
+using UniRx;
 
 namespace Hedwig.RTSCore
 {
@@ -57,7 +59,7 @@ namespace Hedwig.RTSCore
         IVisualProperty GetProperty();
 
         void ResetPos(); // to bedeelted
-        void Knockback(Vector3 direction, float power);
+        UniTask Knockback(Vector3 direction, float power);
 
         GameObject Context { get; }
 
@@ -90,13 +92,21 @@ namespace Hedwig.RTSCore
 
     public interface IUnitCallback
     {
-        void OnAttacked(IUnit unit, IHitObject? hitObject, in DamageEvent damageEvent);
-        void OnDeath(IUnit unit);
+        void OnAttacked(IUnit unit, IHitObject? hitObject, DamageEvent damageEvent);
+        void OnDying(IUnit unit, IHitObject? hitObject);
+    }
+
+    public enum UnitStatus
+    {
+        Spawned,
+        Dying,
+        Dead,
     }
 
     public interface IUnit : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget
     {
         string Name { get; }
+        IReadOnlyReactiveProperty<UnitStatus> Status { get; }
 
         IUnitManager Manager { get; }
 

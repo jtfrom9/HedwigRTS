@@ -181,7 +181,8 @@ namespace Hedwig.RTSCore.Controller
             transform.SetPositionAndRotation(initialPosition, initialRotation);
             transform.localScale = initialScale;
         }
-        void IUnitController.Knockback(Vector3 direction, float power)
+
+        async UniTask IUnitController.Knockback(Vector3 direction, float power)
         {
             if (_timePaused) return;
             if (cts.IsCancellationRequested)
@@ -189,7 +190,8 @@ namespace Hedwig.RTSCore.Controller
             Debug.Log($"{_name}: AddShock: ${direction}, ${power}");
             if (_rigidbody != null && _agent!=null && _collider != null)
             {
-                UniTask.Create(async () => {
+                await UniTask.Create(async () =>
+                {
                     // _agent.isStopped = true;
                     _agent.enabled = false;
                     _rigidbody.isKinematic = false;
@@ -228,7 +230,7 @@ namespace Hedwig.RTSCore.Controller
                     _rigidbody.useGravity = false;
                     // _agent.isStopped = false;
                     _agent.enabled = true;
-                }).Forget();
+                });
             }
         }
 

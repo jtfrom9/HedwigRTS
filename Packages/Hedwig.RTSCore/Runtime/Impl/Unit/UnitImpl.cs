@@ -11,6 +11,7 @@ namespace Hedwig.RTSCore.Impl
     {
         readonly IUnitManager _unitManager;
         readonly string? _name;
+        readonly ReactiveProperty<UnitStatus> _status = new(UnitStatus.Spawned);
         readonly IUnitData _unitData;
         readonly IUnitController _unitController;
         readonly IUnitCallback _callback;
@@ -49,13 +50,19 @@ namespace Hedwig.RTSCore.Impl
             doDamage(damage, out damageEvent);
         }
 
+        void onDying(IHitObject? hitObject)
+        {
+            _status.Value = UnitStatus.Dying;
+            _callback.OnDying(this, hitObject);
+        }
+
         void raiseEvent(IHitObject? hitObject, in DamageEvent damageEvent)
         {
             _callback.OnAttacked(this, hitObject, damageEvent);
 
             if (_health.Value == 0)
             {
-                _callback.OnDeath(this);
+                onDying(hitObject);
             }
         }
 
@@ -63,6 +70,11 @@ namespace Hedwig.RTSCore.Impl
         {
             doDamage(damage, out DamageEvent damageEvent);
             raiseEvent(null, damageEvent);
+        }
+
+        public void ApplyDead()
+        {
+            _status.Value = UnitStatus.Dead;
         }
 
         public class UnitActionStateRunningStore : IUnitActionStateExecutorStatus
@@ -134,6 +146,12 @@ namespace Hedwig.RTSCore.Impl
         #region IUnitControllerCallback
         void IUnitControllerCallback.OnHit(IHitObject hitObject)
         {
+            switch (_status.Value)
+            {
+                case UnitStatus.Dying:
+                case UnitStatus.Dead:
+                    return;
+            }
             doDamage(hitObject, out DamageEvent damageEvent);
             raiseEvent(hitObject, damageEvent);
         }
@@ -152,6 +170,9 @@ namespace Hedwig.RTSCore.Impl
             {
                 visualizer.Dispose();
             }
+            _selected.Dispose();
+            _health.Dispose();
+            _launcher?.Dispose();
         }
         #endregion
 
@@ -161,6 +182,7 @@ namespace Hedwig.RTSCore.Impl
 
         #region IUnit
         public string Name { get => _name ?? Controller.Name; }
+        public IReadOnlyReactiveProperty<UnitStatus> Status { get => _status; }
         public IUnitManager Manager { get => _unitManager; }
         public void SetDestination(Vector3 pos) => _unitController.SetDestination(pos);
         public void Stop() => _unitController.Stop();

@@ -23,7 +23,7 @@ namespace Hedwig.RTSCore.Model
         {
             builder.RegisterLauncherFactory();
             builder.RegisterInstance<ILauncherController>(launcherController);
-            builder.Register<ILauncher, LauncherImpl>(Lifetime.Singleton);
+            builder.Register<ILauncher, LauncherImpl>(Lifetime.Transient);
         }
     }
 }

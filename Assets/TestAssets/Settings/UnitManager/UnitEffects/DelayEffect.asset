@@ -10,6 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 864e0edd55ea54051a9277a1565b1f68, type: 3}
-  m_Name: DefaultHitEffect
+  m_Name: DelayEffect
   m_EditorClassIdentifier: 
-  prefab: {fileID: 8575580264491783551, guid: 9c9eafce25a50459bb5b257b4c75a12b, type: 3}
+  Factory:
+    rid: 1502634432815431681
+  references:
+    version: 2
+    RefIds:
+    - rid: 1502634432815431681
+      type: {class: DelayHitEffect, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        msec: 500

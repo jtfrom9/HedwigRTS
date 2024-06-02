@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 2489900876656539108, guid: 8e92bdc89cc064600a03877e9a4b006d, type: 3}
   _MaxHealth: 100
-  _Attack: 0
   _Deffence: 0
+  _Speed: 5
   _unitAction: {fileID: 11400000, guid: e394df219f2b745d9a8ab293377c24d5, type: 2}

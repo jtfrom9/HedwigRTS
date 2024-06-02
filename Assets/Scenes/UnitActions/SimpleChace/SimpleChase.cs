@@ -104,15 +104,33 @@ public class SimpleChase : LifetimeScope
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player");
         var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy");
+        var enemy2 = enemyManager.Spawn(enemyObject, new Vector3(-21f, 3, 15f), "Enemy2");
+
+        bool run = true;
+        var (pos, rot) = (Camera.main.transform.position, Camera.main.transform.rotation);
+        player.Status.SkipLatestValueOnSubscribe().Subscribe(status => {
+            if (status == UnitStatus.Dying)
+            {
+                Debug.Log("Dying!!");
+            }
+            if (status == UnitStatus.Dead)
+            {
+                Debug.Log("Dead!!");
+                Camera.main.ResetPosition(pos, rot);
+                run = false;
+            }
+        }).AddTo(this);
 
         setupMouse(mouseOperation, globalVisualizerFactory, player);
 
         await UniTask.NextFrame();
 
-        UniTask.Create(async () =>
+        Camera.main.Tracking(player.Transform, new Vector3(0, 15, -8), Vector3.right * 60, 1);
+
+        await UniTask.Create(async () =>
         {
             int tick = 100;
-            while (true)
+            while (run)
             {
                 foreach (var enemy in enemyManager.Units)
                 {
@@ -120,7 +138,9 @@ public class SimpleChase : LifetimeScope
                 }
                 await UniTask.Delay(tick);
             }
-        }).Forget();
+        });
+
+        Debug.Log("Game End");
     }
 }
 
