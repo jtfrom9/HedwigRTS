@@ -6,11 +6,11 @@
         "UniRx",
         "VContainer",
         "UnityExtensions.InspectInline",
+        "MackySoft.SerializeReferenceExtensions",
+        "NaughtyAttributes.Core",
         "Hedwig.RTSCore.Utility",
         "Hedwig.RTSCore.Entity",
-        "Hedwig.RTSCore.Impl",
-        "MackySoft.SerializeReferenceExtensions",
-        "NaughtyAttributes.Core"
+        "Hedwig.RTSCore.Impl"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

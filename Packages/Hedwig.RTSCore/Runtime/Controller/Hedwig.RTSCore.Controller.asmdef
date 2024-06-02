@@ -9,6 +9,7 @@
         "DOTween.Modules",
         "VContainer",
         "UnityExtensions.InspectInline",
+        "NaughtyAttributes.Core",
         "Hedwig.RTSCore.Model",
         "Hedwig.RTSCore.Utility",
         "Hedwig.RTSCore.Entity"

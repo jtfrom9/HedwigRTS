@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using VContainer;
+using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Controller
 {
@@ -33,9 +34,9 @@ namespace Hedwig.RTSCore.Controller
         float? _distanceToGround;
         float? _distanceToHead;
 
-        [SerializeField]
+        [SerializeField, ReadOnly]
         string? CurrentState;
-        [SerializeField]
+        [SerializeField, ReadOnly]
         string? Target;
 
         const int defaultSpeed = 3;

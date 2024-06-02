@@ -120,7 +120,6 @@ namespace Hedwig.RTSCore
     {
         string Name { get; }
         int MaxHealth { get; }
-        int Attack { get; }
         int Deffence { get; }
         IUnitActionStateHolder StateHolder { get; }
     }

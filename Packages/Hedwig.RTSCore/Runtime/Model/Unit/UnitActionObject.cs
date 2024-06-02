@@ -72,29 +72,6 @@ namespace Hedwig.RTSCore.Model
     }
 
     [Serializable]
-    public class RandomMoveAction : IUnitActionStateExecutor
-    {
-        [SerializeField] Vector2 Min = Vector2.zero;
-        [SerializeField] Vector2 Max = Vector2.one;
-        [SerializeField] int msec;
-        [SerializeField] int nextIndex;
-
-        public string Name { get => "Random"; }
-
-        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
-        {
-            if (state.ElapsedMsec > msec)
-            {
-                return nextIndex;
-            }
-            var x = UnityEngine.Random.Range(Min.x, Max.y);
-            var z = UnityEngine.Random.Range(Max.x, Max.y);
-            unit.SetDestination(new Vector3(x, 0, z));
-            return -1;
-        }
-    }
-
-    [Serializable]
     public class AttackAction : IUnitActionStateExecutor
     {
         [SerializeField] ProjectileObject? projectile;

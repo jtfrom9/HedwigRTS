@@ -25,9 +25,6 @@ namespace Hedwig.RTSCore.Model
         int _MaxHealth;
 
         [SerializeField]
-        int _Attack;
-
-        [SerializeField]
         int _Deffence;
 
         [SerializeField, InspectInline]
@@ -35,7 +32,6 @@ namespace Hedwig.RTSCore.Model
 
         public string Name { get => name; }
         public int MaxHealth { get => _MaxHealth; }
-        public int Attack { get => _Attack; }
         public int Deffence { get => _Deffence; }
         public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
