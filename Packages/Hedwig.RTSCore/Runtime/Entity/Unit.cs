@@ -49,7 +49,7 @@ namespace Hedwig.RTSCore
 
     public interface IUnitController : ITransformProvider
     {
-        void Initialize(IUnitControllerCallback callback, Vector3? position, string? name);
+        void Initialize(IUnitData unit, IUnitControllerCallback callback, Vector3? position, string? name);
 
         string Name { get; }
         void SetDestination(Vector3 pos);
@@ -121,6 +121,7 @@ namespace Hedwig.RTSCore
         string Name { get; }
         int MaxHealth { get; }
         int Deffence { get; }
+        float Speed { get; }
         IUnitActionStateHolder StateHolder { get; }
     }
     #endregion

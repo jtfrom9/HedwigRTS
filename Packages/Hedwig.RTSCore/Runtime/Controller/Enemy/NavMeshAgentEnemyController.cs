@@ -39,8 +39,6 @@ namespace Hedwig.RTSCore.Controller
         [SerializeField, ReadOnly]
         string? Target;
 
-        const int defaultSpeed = 3;
-
         [Inject]
         readonly ITimeManager? _timeManager;
 
@@ -50,7 +48,7 @@ namespace Hedwig.RTSCore.Controller
         {
             _transform.Initialize(transform);
             _agent = GetComponent<NavMeshAgent>();
-            _agent.speed = defaultSpeed;
+            _agent.speed = 0;
 
             _rigidbody = GetComponent<Rigidbody>();
             _collider = GetComponent<Collider>();
@@ -75,7 +73,7 @@ namespace Hedwig.RTSCore.Controller
             }
         }
 
-        void initialize(Vector3? position)
+        void initialize(IUnitData unitData, Vector3? position)
         {
             if (position.HasValue)
             {
@@ -86,6 +84,8 @@ namespace Hedwig.RTSCore.Controller
             this.initialPosition = transform.position;
             this.initialRotation = transform.rotation;
             this.initialScale = transform.localScale;
+
+            _agent!.speed = unitData.Speed;
         }
 
         void pause(bool pause)
@@ -250,15 +250,15 @@ namespace Hedwig.RTSCore.Controller
 
         ILauncherController? IUnitController.LauncherController { get => _launcherContorller; }
 
-        void IUnitController.Initialize(IUnitControllerCallback callback, Vector3? position, string? name)
+        void IUnitController.Initialize(IUnitData unitData, IUnitControllerCallback callback, Vector3? position, string? name)
         {
-            if (name != null)
+             if (name != null)
             {
                 gameObject.name = name;
             }
-            _name = gameObject.name;
+            this._name = gameObject.name;
             this._callback = callback;
-            this.initialize(position);
+            this.initialize(unitData, position);
             _timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion

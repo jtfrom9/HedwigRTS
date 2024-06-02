@@ -27,12 +27,16 @@ namespace Hedwig.RTSCore.Model
         [SerializeField]
         int _Deffence;
 
+        [SerializeField]
+        float _Speed = 3.0f;
+
         [SerializeField, InspectInline]
         UnitActionObject _unitAction;
 
         public string Name { get => name; }
         public int MaxHealth { get => _MaxHealth; }
         public int Deffence { get => _Deffence; }
+        public float Speed { get => _Speed; }
         public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
         IUnit? CreateUnit(IUnitManager unitManager, IUnitCallback unitCallback,
@@ -56,6 +60,7 @@ namespace Hedwig.RTSCore.Model
                 name: name,
                 launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null);
             unitController.Initialize(
+                this,
                 callback: unit,
                 position,
                 name);

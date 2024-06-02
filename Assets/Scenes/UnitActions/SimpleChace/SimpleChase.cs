@@ -18,7 +18,7 @@ using Hedwig.RTSCore.InputObservable;
 
 using Cysharp.Threading.Tasks;
 
-public class UnitBattle : LifetimeScope
+public class SimpleChase : LifetimeScope
 {
     // Inject
     [SerializeField, InspectInline, Required] UnitManagerObject? UnitManagerObject;
