@@ -12,6 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33a9e35dabea147f493d68450548e549, type: 3}
   m_Name: DefaultDamageEffect
   m_EditorClassIdentifier: 
-  prefab: {fileID: 4371376129200516975, guid: 4d4c2821ed11140319ffe9e274181ea2, type: 3}
-  damageEffectParameter:
-    duration: 1
+  Factory:
+    rid: 1502634432815431684
+  references:
+    version: 2
+    RefIds:
+    - rid: 1502634432815431684
+      type: {class: PrefabDamageEffect, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        prefab: {fileID: 4371376129200516975, guid: 4d4c2821ed11140319ffe9e274181ea2, type: 3}
+        damageEffectParameter:
+          duration: 1

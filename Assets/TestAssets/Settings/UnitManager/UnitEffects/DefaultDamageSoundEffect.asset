@@ -9,11 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f41939eca22f444c6bea8f64bc5dc50d, type: 3}
+  m_Script: {fileID: 11500000, guid: 33a9e35dabea147f493d68450548e549, type: 3}
   m_Name: DefaultDamageSoundEffect
   m_EditorClassIdentifier: 
-  prefab: {fileID: 4611438227778132450, guid: 176205b491f6145efb5c566fa64c449d, type: 3}
-  damageEffectParameter:
-    duration: 1
-  audioClip: {fileID: 8300000, guid: e3666c4a90a1a4ffcad52866fb073ade, type: 3}
-  volume: 0.1
+  Factory:
+    rid: 1502634432815431685
+  references:
+    version: 2
+    RefIds:
+    - rid: 1502634432815431685
+      type: {class: SoundDamageEffect, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        prefab: {fileID: 4611438227778132450, guid: 176205b491f6145efb5c566fa64c449d, type: 3}
+        audioClip: {fileID: 8300000, guid: e3666c4a90a1a4ffcad52866fb073ade, type: 3}
+        volume: 0.1

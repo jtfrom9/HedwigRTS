@@ -17,6 +17,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8dc70f72ff8be484084fcee65726a383, type: 2}
   hitEffects:
   - {fileID: 11400000, guid: 3cd4d04697c26453bb6f96d2c70dcd45, type: 2}
+  deathEffects:
+  - {fileID: 11400000, guid: aea6b7cd23ff9431384ce718d8ab6ba7, type: 2}
   targetVisualizers:
   - {fileID: 11400000, guid: 3f29026d7a89e4e20b2cc97e776f0270, type: 2}
   - {fileID: 11400000, guid: 3454dad39d66a48ebaba10a4cf86e2cd, type: 2}
