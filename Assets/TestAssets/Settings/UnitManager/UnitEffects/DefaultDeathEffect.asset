@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: DefaultDeathEffect
   m_EditorClassIdentifier: 
   Factory:
-    rid: 1502634432815431683
+    rid: 1502634434578612224
   references:
     version: 2
     RefIds:
-    - rid: 1502634432815431683
-      type: {class: DelayHitEffect, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+    - rid: 1502634434578612224
+      type: {class: PrefabHitEffect, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
       data:
-        msec: 0
+        prefab: {fileID: 242478275196748034, guid: 3edc8fbe528ee4f838ab33b71daa062b, type: 3}

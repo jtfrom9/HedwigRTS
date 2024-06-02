@@ -53,5 +53,10 @@ namespace Hedwig.RTSCore.Controller
             }
             init(target.Transform, target.VisualProperty);
         }
+
+        void ITargetVisualizer.SetVisibility(bool v)
+        {
+            if (_textMesh != null) _textMesh.enabled = v;
+        }
     }
 }

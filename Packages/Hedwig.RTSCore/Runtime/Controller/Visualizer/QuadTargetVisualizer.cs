@@ -55,5 +55,11 @@ namespace Hedwig.RTSCore.Controller
             }).AddTo(this);
             init(target.Transform, visualProp);
         }
+
+        void ITargetVisualizer.SetVisibility(bool v)
+        {
+            GetComponentInChildren<Renderer>().enabled = v;
+        }
+
     }
 }

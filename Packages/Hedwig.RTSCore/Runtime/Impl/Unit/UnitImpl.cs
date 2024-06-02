@@ -186,6 +186,14 @@ namespace Hedwig.RTSCore.Impl
         public IUnitManager Manager { get => _unitManager; }
         public void SetDestination(Vector3 pos) => _unitController.SetDestination(pos);
         public void Stop() => _unitController.Stop();
+        public void SetVisibility(bool v)
+        {
+            _unitController.SetVisibility(v);
+            foreach (var visualizer in _visualizers)
+            {
+                visualizer.SetVisibility(v);
+            }
+        }
 
         public IUnitController Controller { get => _unitController; }
 

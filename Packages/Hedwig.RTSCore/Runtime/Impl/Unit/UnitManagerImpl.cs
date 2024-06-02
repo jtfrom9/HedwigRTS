@@ -70,6 +70,9 @@ namespace Hedwig.RTSCore.Impl
                 await attackedEffectTask;
             }
 
+            // make invisible
+            unit.SetVisibility(false);
+
             // begin death effect
             deathEffectTask = playDeathEffect(unit, hitObject);
             _deathEffectTasks[unit] = deathEffectTask;

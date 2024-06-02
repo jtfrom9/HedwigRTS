@@ -93,5 +93,10 @@ namespace Hedwig.RTSCore.Controller
             }
             init(target.Transform, target.VisualProperty);
         }
+
+        void ITargetVisualizer.SetVisibility(bool v)
+        {
+            if (_lineRenderer != null) _lineRenderer.enabled = v;
+        }
     }
 }

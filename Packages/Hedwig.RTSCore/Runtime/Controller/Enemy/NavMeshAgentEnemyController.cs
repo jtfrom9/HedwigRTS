@@ -175,6 +175,13 @@ namespace Hedwig.RTSCore.Controller
             _agent!.isStopped = true;
             _agent?.SetDestination(_transform.Position);
         }
+        void IUnitController.SetVisibility(bool v)
+        {
+            // gameObject.SetActive(v);
+            var renderers = GetComponents<Renderer>();
+            foreach (var r in renderers) r.enabled = v;
+        }
+
         void IUnitController.ResetPos()
         {
             if (_timePaused) return;

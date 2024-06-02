@@ -30,6 +30,7 @@ namespace Hedwig.RTSCore
     public interface ITargetVisualizer: IDisposable
     {
         void Initialize(IVisualizerTarget target);
+        void SetVisibility(bool v);
     }
 
     public interface ITargetVisualizerFactory

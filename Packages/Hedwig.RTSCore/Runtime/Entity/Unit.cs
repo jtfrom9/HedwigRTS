@@ -57,6 +57,7 @@ namespace Hedwig.RTSCore
         void SetDestination(Vector3 pos);
         void Stop();
         IVisualProperty GetProperty();
+        void SetVisibility(bool v);
 
         void ResetPos(); // to bedeelted
         UniTask Knockback(Vector3 direction, float power);
@@ -112,6 +113,7 @@ namespace Hedwig.RTSCore
 
         void SetDestination(Vector3 pos);
         void Stop();
+        void SetVisibility(bool v);
 
         IUnitController Controller { get; }
 
