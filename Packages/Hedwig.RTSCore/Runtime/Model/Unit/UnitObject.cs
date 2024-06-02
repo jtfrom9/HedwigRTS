@@ -41,7 +41,7 @@ namespace Hedwig.RTSCore.Model
 
         IUnit? CreateUnit(IUnitManager unitManager, IUnitCallback unitCallback,
             IUnitController unitController,
-            ILaunherFactory launcherFactory,
+            ILauncherFactory launcherFactory,
             Vector3? position,
             string? name)
         {
@@ -74,7 +74,7 @@ namespace Hedwig.RTSCore.Model
         {
             var manager = resolver.Resolve<IUnitManager>();
             var unitCallback = resolver.Resolve<IUnitCallback>();
-            var launcherFactory = resolver.Resolve<ILaunherFactory>();
+            var launcherFactory = resolver.Resolve<ILauncherFactory>();
             if (unitController == null)
             {
                 if (prefab == null) return null;

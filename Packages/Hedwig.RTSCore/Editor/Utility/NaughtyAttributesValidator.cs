@@ -18,7 +18,7 @@ namespace Hedwig.Editor
         {
             if (state == PlayModeStateChange.ExitingEditMode || state==PlayModeStateChange.EnteredPlayMode)
             {
-                if (!ValidateRequiredFields())
+                if (!ValidateRequiredScriptableObjectFields() || !ValidateRequiredMonoBehaviourFields())
                 {
                     Debug.LogError("Play mode cannot start because there are unassigned required fields.");
                     EditorApplication.isPlaying = false;
@@ -26,7 +26,7 @@ namespace Hedwig.Editor
             }
         }
 
-        private static bool ValidateRequiredFields()
+        private static bool ValidateRequiredScriptableObjectFields()
         {
             bool isValid = true;
 
@@ -50,9 +50,33 @@ namespace Hedwig.Editor
                     }
                 }
             }
+            return isValid;
+        }
 
+        private static bool ValidateRequiredMonoBehaviourFields()
+        {
+            bool isValid = true;
+            var monoBehaviours = GameObject.FindObjectsOfType<MonoBehaviour>();
+
+            foreach (var monoBehaviour in monoBehaviours)
+            {
+                var fields = monoBehaviour.GetType().GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+
+                foreach (var field in fields)
+                {
+                    if (Attribute.IsDefined(field, typeof(RequiredAttribute)))
+                    {
+                        var value = field.GetValue(monoBehaviour);
+
+                        if (value == null)
+                        {
+                            Debug.LogError($"The field '{field.Name}' in '{monoBehaviour.GetType().Name}' is required but not assigned.", monoBehaviour);
+                            isValid = false;
+                        }
+                    }
+                }
+            }
             return isValid;
         }
     }
-
 }

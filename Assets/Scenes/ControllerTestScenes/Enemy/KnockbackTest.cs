@@ -13,7 +13,6 @@ using VContainer.Unity;
 using UnityExtensions;
 
 using Hedwig.RTSCore.Model;
-using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Test
 {

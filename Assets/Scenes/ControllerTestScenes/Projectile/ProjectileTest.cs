@@ -5,10 +5,8 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
-using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using VContainer;
 using VContainer.Unity;
@@ -17,7 +15,6 @@ using UniRx.Triggers;
 using UnityExtensions;
 
 using Hedwig.RTSCore.Model;
-using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Test
 {

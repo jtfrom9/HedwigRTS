@@ -16,7 +16,6 @@ using UniRx.Triggers;
 using UnityExtensions;
 
 using Hedwig.RTSCore.Model;
-using Hedwig.RTSCore.Impl;
 
 namespace Hedwig.RTSCore.Test
 {
@@ -52,7 +51,8 @@ namespace Hedwig.RTSCore.Test
         [SerializeField]
         Button? triggerButton;
 
-        [Inject] System.Func<(Vector3 pos, ProjectileObject config), ILauncher>? launcherFactory;
+        [Inject] ILauncherFactory? launcherFactory;
+        [Inject] System.Func<(Vector3 pos, ProjectileObject config), ILauncher>? lfactory;
         [Inject] IUnitManager? enemyManager;
 
         List<(ILauncher launcher, ITransformProvider target)> pairs = new List<(ILauncher launcher, ITransformProvider target)>();
@@ -77,9 +77,7 @@ namespace Hedwig.RTSCore.Test
                     var go = resolver.Instantiate(launcherPrefab, x.pos, Quaternion.identity, root.transform);
                     var launcherController = go.GetComponent<ILauncherController>();
                     addConfigInfo(go, x.config);
-                    return new LauncherImpl(launcherController,
-                        timeManager: resolver.Resolve<ITimeManager>(),
-                        projectileFactory: resolver.Resolve<IProjectileFactory>());
+                    return launcherFactory!.Invoke(launcherController);
                 };
             }, Lifetime.Transient);
         }
@@ -111,7 +109,7 @@ namespace Hedwig.RTSCore.Test
         {
             var root = GameObject.Find("Root");
             if (root == null) { throw new InvalidConditionException("no root"); }
-            if (launcherFactory == null) { throw new InvalidConditionException("launcherFactory is null"); }
+            if (lfactory == null) { throw new InvalidConditionException("launcherFactory is null"); }
             var pos = new Vector3(index * 5, 0.5f, 0);
 
             if (targetPrefab == null) { throw new InvalidConditionException("targetprefab is null"); }
@@ -119,7 +117,7 @@ namespace Hedwig.RTSCore.Test
             var cube = Instantiate(targetPrefab, pos + Vector3.forward * 10, Quaternion.identity, root.transform);
             if (cube == null) throw new InvalidConditionException("fail to instantiate target");
             var target = cube.GetComponent<ITransformProvider>();
-            var launcher = launcherFactory.Invoke((pos, config));
+            var launcher = lfactory.Invoke((pos, config));
             launcher.SetProjectile(config, new ProjectileOption() { destroyAtEnd = false });
             launcher.SetTarget(target);
 

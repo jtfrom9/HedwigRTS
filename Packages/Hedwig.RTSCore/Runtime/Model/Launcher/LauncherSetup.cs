@@ -11,7 +11,7 @@ namespace Hedwig.RTSCore.Model
     {
         public static void RegisterLauncherFactory(this IContainerBuilder builder)
         {
-            builder.Register<ILaunherFactory>(container => (launcherController) =>
+            builder.Register<ILauncherFactory>(container => (launcherController) =>
             {
                 var timeManager = container.Resolve<ITimeManager>();
                 var projectileFactory = container.Resolve<IProjectileFactory>();

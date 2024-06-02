@@ -18,7 +18,6 @@ using Hedwig.RTSCore;
 using Hedwig.RTSCore.InputObservable;
 using Hedwig.RTSCore.Usecase;
 using Hedwig.RTSCore.Model;
-using Hedwig.RTSCore.Impl;
 
 public class TowerAim : LifetimeScope
 {

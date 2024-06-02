@@ -1,27 +1,31 @@
 #nullable enable
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
 using VContainer;
 using VContainer.Unity;
 using UnityExtensions;
 using UniRx;
+using NaughtyAttributes;
 
 using Hedwig.RTSCore;
 using Hedwig.RTSCore.Model;
 using Hedwig.RTSCore.InputObservable;
 
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 
 public class UnitBattle : LifetimeScope
 {
     // Inject
-    [SerializeField, InspectInline] UnitManagerObject? unitManagerObject;
-    [SerializeField, InspectInline] UnitObject? playerObject;
-    [SerializeField, InspectInline] UnitObject? enemyObject;
-    [SerializeField, InspectInline] GlobalVisualizersObject? globalVisualizersObject;
-    [SerializeField] InputObservableMouseHandler? inputObservableCusrorManager;
+    [SerializeField, InspectInline, Required] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline, Required] UnitObject? playerObject;
+    [SerializeField, InspectInline, Required] UnitObject? enemyObject;
+    [SerializeField, InspectInline, Required] GlobalVisualizersObject? globalVisualizersObject;
+    [SerializeField, Required] InputObservableMouseHandler? inputObservableCusrorManager;
     [SerializeField, InspectInline] List<ProjectileObject>? projectileObjects;
     // [SerializeField] List<Vector3> spawnPoints = new List<Vector3>();
 
@@ -36,7 +40,7 @@ public class UnitBattle : LifetimeScope
         builder.Setup(timeManager: null,
             launcherController: null,
             units: new List<UnitObject>() { playerObject!, enemyObject! },
-            unitManager: unitManagerObject,
+            unitManager: UnitManagerObject,
             visualizers: globalVisualizersObject,
             projectiles: projectileObjects);
         builder.Setup(inputObservableCusrorManager);

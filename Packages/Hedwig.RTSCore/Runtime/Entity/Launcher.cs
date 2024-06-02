@@ -54,5 +54,5 @@ namespace Hedwig.RTSCore
         IObservable<IProjectile> OnFired { get; }
     }
 
-    public delegate ILauncher? ILaunherFactory(ILauncherController launcherController);
+    public delegate ILauncher ILauncherFactory(ILauncherController launcherController);
 }
