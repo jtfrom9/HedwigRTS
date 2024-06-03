@@ -2,6 +2,7 @@
     "name": "Hedwig.RTSCore.Model",
     "rootNamespace": "Hedwig.RTSCore.Model",
     "references": [
+        "Unity.Timeline",
         "UniTask",
         "UniRx",
         "VContainer",

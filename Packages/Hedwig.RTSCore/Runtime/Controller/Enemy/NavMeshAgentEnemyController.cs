@@ -194,7 +194,7 @@ namespace Hedwig.RTSCore.Controller
             if (_timePaused) return;
             if (cts.IsCancellationRequested)
                 return;
-            Debug.Log($"{_name}: AddShock: ${direction}, ${power}");
+            Debug.Log($"{_name}: AddShock: {direction}, {power}");
             if (_rigidbody != null && _agent!=null && _collider != null)
             {
                 await UniTask.Create(async () =>
@@ -205,7 +205,7 @@ namespace Hedwig.RTSCore.Controller
                     _rigidbody.useGravity = true;
                     _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
                     _collider.isTrigger = false;
-                    var vec = direction * power * 2;
+                    var vec = direction.normalized * power;
                     vec.y = 0;
                     Debug.Log($"AddForce: {vec}");
                     _rigidbody.AddForce(vec, ForceMode.Impulse);
