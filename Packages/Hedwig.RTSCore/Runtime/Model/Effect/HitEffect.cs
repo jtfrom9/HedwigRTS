@@ -100,27 +100,21 @@ namespace Hedwig.RTSCore.Model
         {
             var go = parent.Transform.Raw.gameObject;
             var director = go.AddComponent<PlayableDirector>();
-            // Debug.Break();
 
-            foreach(var track in _timeline!.GetOutputTracks()) {
+            director.playableAsset = _timeline!;
+
+            foreach (var track in _timeline!.GetOutputTracks()) {
                 if(track is ControlTrack) {
                     foreach (var clip in track.GetClips())
                     {
                         if (clip.asset is ControlPlayableAsset controlPlayableAsset)
                         {
-                            // controlPlayableAsset.prefabGameObject = go;
-                            controlPlayableAsset.sourceGameObject.exposedName = UnityEditor.GUID.Generate().ToString();
-                            // controlPlayableAsset.sourceGameObject.exposedName = UnityEditor.GUID.Generate().ToString();
+                            // controlPlayableAsset.sourceGameObject.defaultValue = go.transform;
                             director.SetReferenceValue(controlPlayableAsset.sourceGameObject.exposedName, go);
-
-                            // ここで、ParentObjectを設定
-                            controlPlayableAsset.updateDirector = true;
                         }
                     }
                 }
             }
-
-            director.playableAsset = _timeline!;
             return new PlayableDirectorEffect(director);
         }
     }
