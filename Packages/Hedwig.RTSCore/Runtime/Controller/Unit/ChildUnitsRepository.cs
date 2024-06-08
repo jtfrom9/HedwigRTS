@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class ChildEnemiesRepository : ControllerBase, IUnitControllerRepository
+    public class ChildUnitsRepository : ControllerBase, IUnitControllerRepository
     {
         IUnitController[] IUnitControllerRepository.GetUnitControllers()
         {

@@ -14,7 +14,7 @@ using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Controller
 {
-    public class NavMeshAgentEnemyController : ControllerBase, IUnitController, IVisualProperty, IHitHandler
+    public class NavMeshAgentUnitController : ControllerBase, IUnitController, IVisualProperty, IHitHandler
     {
         readonly ITransform _transform = new CachedTransform();
         readonly CancellationTokenSource cts = new CancellationTokenSource();
