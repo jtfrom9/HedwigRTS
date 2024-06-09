@@ -7,6 +7,7 @@ using UnityEngine.Search;
 using UnityEditor;
 
 using System;
+using System.Linq;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -75,6 +76,7 @@ namespace Hedwig.RTSCore.Model
     public class AttackAction : IUnitActionStateExecutor
     {
         [SerializeField] ProjectileObject? projectile;
+        [SerializeField] bool keepTarget = true;
         [SerializeField] int nextIndex;
 
         public string Name { get => "Attack"; }
@@ -92,10 +94,79 @@ namespace Hedwig.RTSCore.Model
                 {
                     Debug.Log($"Fire: {state.Target.Transform.Position}");
                     launcher.Fire();
-                    state.Target = null;
+                    if (!keepTarget)
+                    {
+                        state.Target = null;
+                    }
                 }
             }
             return nextIndex;
+        }
+    }
+
+    [Serializable]
+    public class FindOtherTagAction : IUnitActionStateExecutor
+    {
+        [SerializeField] float SearchRadius;
+        [SerializeField] bool nearest = true;
+        [SerializeField] int nextIndex;
+        [SerializeField] int notFoundIndex;
+
+        public string Name { get => "FindOtherTag"; }
+
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
+        {
+            if (state.Target != null)
+            {
+                return nextIndex;
+            }
+            IUnit? target = null;
+            float minDist = 0;
+            foreach (var other in unit.Manager.Units)
+            {
+                if (other == unit) continue;
+                if (other.Tag == null) continue;
+                if (other.Tag == unit.Tag) continue;
+                var dist = Vector3.Distance(unit.Transform.Position, other.Transform.Position);
+                if (target == null)
+                {
+                    target = other;
+                    minDist = dist;
+                }
+                else if (minDist > dist)
+                {
+                    target = other;
+                    minDist = dist;
+                }
+            }
+            if (target != null)
+            {
+                state.Target = target;
+                return nextIndex;
+            }
+            return notFoundIndex;
+        }
+    }
+
+    [Serializable]
+    public class ApproachToTargetAction : IUnitActionStateExecutor
+    {
+        [SerializeField] float Distance;
+        [SerializeField] int nextIndex;
+        [SerializeField] int noTargetIndex;
+
+        public string Name { get => "ApproachToTarget"; }
+        public int Execute(IUnit unit, IUnitActionStateExecutorStatus state)
+        {
+            if (state.Target == null) { return noTargetIndex; }
+            var dist = Vector3.Distance(unit.Transform.Position, state.Target.Transform.Position);
+            if (dist <= Distance)
+            {
+                unit.Stop();
+                return nextIndex;
+            }
+            unit.SetDestination(state.Target.Transform.Position);
+            return -1;
         }
     }
 }

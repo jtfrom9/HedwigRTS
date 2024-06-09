@@ -101,9 +101,9 @@ namespace Hedwig.RTSCore.Impl
         #region IUnitManager
         IReadOnlyReactiveCollection<IUnit> IUnitManager.Units { get => _units; }
 
-        IUnit IUnitManager.Spawn(IUnitData unitData, Vector3 position, string? name)
+        IUnit IUnitManager.Spawn(IUnitData unitData, Vector3 position, string? name, string? tag)
         {
-            var unit = _unitFactory.Invoke(unitData, position, name, null);
+            var unit = _unitFactory.Invoke(unitData, position, name, tag, null);
             if (unit == null)
             {
                 throw new InvalidCastException("fail to spwawn");
@@ -114,7 +114,7 @@ namespace Hedwig.RTSCore.Impl
 
         void IUnitManager.Register(IUnitController unitController, IUnitData unitData)
         {
-            var unit = _unitFactory.Invoke(unitData, position: null, name: null, unitController);
+            var unit = _unitFactory.Invoke(unitData, position: null, name: null, tag: null, unitController);
             if (unit == null)
             {
                 throw new InvalidCastException("fail to spwawn");

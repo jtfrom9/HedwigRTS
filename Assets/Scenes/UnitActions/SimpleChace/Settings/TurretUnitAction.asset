@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5edb68b20b08b4046bf8f90172d64c90, type: 3}
+  m_Name: TurretUnitAction
+  m_EditorClassIdentifier: 
+  states:
+  - rid: 1502634582870065152
+  - rid: 1502634582870065153
+  - rid: 1502634582870065154
+  - rid: 1502634582870065155
+  references:
+    version: 2
+    RefIds:
+    - rid: 1502634582870065152
+      type: {class: IdleState, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        msec: 1000
+        nextIndex: 1
+    - rid: 1502634582870065153
+      type: {class: FindOtherTagAction, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        distance: 20
+        nearest: 1
+        nextIndex: 0
+        notFoundIndex: 0
+    - rid: 1502634582870065154
+      type: {class: AttackAction, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        projectile: {fileID: 11400000, guid: 0b90f6bb46ba5471bac623959808c14b, type: 2}
+        keepTarget: 1
+        nextIndex: 3
+    - rid: 1502634582870065155
+      type: {class: IdleState, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        msec: 500
+        nextIndex: 2

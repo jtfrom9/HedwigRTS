@@ -11,6 +11,7 @@ namespace Hedwig.RTSCore.Impl
     {
         readonly IUnitManager _unitManager;
         readonly string? _name;
+        readonly string? _tag;
         readonly ReactiveProperty<UnitStatus> _status = new(UnitStatus.Spawned);
         readonly IUnitData _unitData;
         readonly IUnitController _unitController;
@@ -182,6 +183,7 @@ namespace Hedwig.RTSCore.Impl
 
         #region IUnit
         public string Name { get => _name ?? Controller.Name; }
+        public string? Tag { get => _tag; }
         public IReadOnlyReactiveProperty<UnitStatus> Status { get => _status; }
         public IUnitManager Manager { get => _unitManager; }
         public void SetDestination(Vector3 pos) => _unitController.SetDestination(pos);
@@ -228,6 +230,7 @@ namespace Hedwig.RTSCore.Impl
         public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController,
             IUnitCallback callback,
             string? name = null,
+            string? tag = null,
             ILauncher? launcher = null)
         {
             this._unitManager = unitManager;

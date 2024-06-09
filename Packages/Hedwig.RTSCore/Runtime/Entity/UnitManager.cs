@@ -14,7 +14,7 @@ namespace Hedwig.RTSCore
     public interface IUnitManager : IDisposable
     {
         IReadOnlyReactiveCollection<IUnit> Units { get; }
-        IUnit Spawn(IUnitData unitData, Vector3 position, string? name = null);
+        IUnit Spawn(IUnitData unitData, Vector3 position, string? name = null, string? tag = null);
 
         void Register(IUnitController unitController, IUnitData data);
     }

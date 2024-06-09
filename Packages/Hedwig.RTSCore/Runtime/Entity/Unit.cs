@@ -105,6 +105,7 @@ namespace Hedwig.RTSCore
     public interface IUnit : IDisposable, ITransformProvider, ICharactor, IVisualizerTarget
     {
         string Name { get; }
+        string? Tag { get; }
         IReadOnlyReactiveProperty<UnitStatus> Status { get; }
 
         IUnitManager Manager { get; }
@@ -136,5 +137,5 @@ namespace Hedwig.RTSCore
     }
     #endregion
 
-    public delegate IUnit? IUnitFacory(IUnitData unitData, Vector3? position, string? name, IUnitController? unitController);
+    public delegate IUnit? IUnitFacory(IUnitData unitData, Vector3? position, string? name, string? tag, IUnitController? unitController);
 }

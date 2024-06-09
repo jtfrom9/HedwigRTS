@@ -43,7 +43,8 @@ namespace Hedwig.RTSCore.Model
             IUnitController unitController,
             ILauncherFactory launcherFactory,
             Vector3? position,
-            string? name)
+            string? name,
+            string? tag)
         {
             if (unitController == null)
             {
@@ -58,12 +59,13 @@ namespace Hedwig.RTSCore.Model
             }
             var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
                 name: name,
+                tag: tag,
                 launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null);
             unitController.Initialize(
                 this,
                 callback: unit,
                 position,
-                name);
+                name: tag == null ? name : $"{tag}/{name}");
             return unit;
         }
 
@@ -71,6 +73,7 @@ namespace Hedwig.RTSCore.Model
             IObjectResolver resolver,
             Vector3? position,
             string? name,
+            string? tag,
             IUnitController? unitController = null)
         {
             var manager = resolver.Resolve<IUnitManager>();
@@ -89,7 +92,7 @@ namespace Hedwig.RTSCore.Model
             } else {
                 resolver.Inject(unitController);
             }
-            return CreateUnit(manager, unitCallback, unitController, launcherFactory, position, name);
+            return CreateUnit(manager, unitCallback, unitController, launcherFactory, position, name, tag);
         }
     }
 
@@ -99,13 +102,14 @@ namespace Hedwig.RTSCore.Model
         {
             var unitObjectDict = unitObjects.ToDictionary(uobj => uobj as IUnitData, uobj => uobj);
 
-            builder.Register<IUnitFacory>(resolver => (unitData, position, name, unitController) =>
+            builder.Register<IUnitFacory>(resolver => (unitData, position, name, tag, unitController) =>
             {
                 if (unitObjectDict.TryGetValue(unitData, out var unitObject))
                 {
                     return unitObject.CreateUnitWithResolver(resolver,
                         position,
                         name,
+                        tag,
                         unitController);
                 }
                 else

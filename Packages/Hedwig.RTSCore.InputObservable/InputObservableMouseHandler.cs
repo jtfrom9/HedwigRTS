@@ -22,6 +22,7 @@ namespace Hedwig.RTSCore.InputObservable
         Subject<Unit> onRightClick = new Subject<Unit>();
         Subject<bool> onRightTrigger = new Subject<bool>();
         Subject<MouseMoveEvent> onMove = new Subject<MouseMoveEvent>();
+        Subject<Vector2> onMoveVec2 = new Subject<Vector2>();
 
         [Inject]
         readonly ITimeManager? timeManager;
@@ -62,6 +63,13 @@ namespace Hedwig.RTSCore.InputObservable
                 {
                     onLeftTrigger.OnNext(false);
                 }).AddTo(this);
+            lmb.Difference()
+                .Where(_ => !TimePaused)
+                .Where(_ => lmb.IsBegin)
+                .Subscribe(v =>
+                {
+                    onMoveVec2.OnNext(v);
+                }).AddTo(this);
 
             // rmb: right mouse button
             rmb.OnBegin
@@ -87,7 +95,7 @@ namespace Hedwig.RTSCore.InputObservable
         {
             var enter = false;
             var lastPos = Vector3.zero;
-            this.UpdateAsObservable().Where(_ => !timeManager.Paused.Value).Subscribe(_ =>
+            this.UpdateAsObservable().Where(_ => !TimePaused).Subscribe(_ =>
             {
                 var pos = Input.mousePosition;
                 var ray = camera.ScreenPointToRay(pos);
@@ -143,6 +151,7 @@ namespace Hedwig.RTSCore.InputObservable
         IObservable<Unit> IMouseOperation.OnRightClick { get => onRightClick; }
         IObservable<bool> IMouseOperation.OnRightTrigger { get => onRightTrigger; }
         IObservable<MouseMoveEvent> IMouseOperation.OnMove { get => onMove; }
+        IObservable<Vector2> IMouseOperation.OnMoveVec2 { get => onMoveVec2; }
         #endregion
     }
 }

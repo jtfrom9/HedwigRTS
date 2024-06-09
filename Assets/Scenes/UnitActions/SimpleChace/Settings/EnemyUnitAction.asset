@@ -10,28 +10,37 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5edb68b20b08b4046bf8f90172d64c90, type: 3}
-  m_Name: LauncherEnemyUnitAction
+  m_Name: EnemyUnitAction
   m_EditorClassIdentifier: 
   states:
   - rid: 8071053480613904386
-  - rid: 8071053480613904387
+  - rid: 1502634582870065156
+  - rid: 1502634582870065157
   - rid: 8071053624820367360
   references:
     version: 2
     RefIds:
+    - rid: 1502634582870065156
+      type: {class: FindOtherTagAction, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        SearchRadius: 10
+        nearest: 1
+        nextIndex: 2
+        notFoundIndex: 0
+    - rid: 1502634582870065157
+      type: {class: ApproachToTargetAction, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+      data:
+        Distance: 5
+        nextIndex: 3
+        noTargetIndex: 0
     - rid: 8071053480613904386
       type: {class: IdleState, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
       data:
         msec: 1000
         nextIndex: 1
-    - rid: 8071053480613904387
-      type: {class: ApproachState, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
-      data:
-        distance: 10
-        notFoundIndex: -1
-        onReachedNextIndex: 2
     - rid: 8071053624820367360
       type: {class: AttackAction, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
       data:
         projectile: {fileID: 11400000, guid: 5c5dcbfea5e2f4c4681f8f9c5c2a604f, type: 2}
-        nextIndex: 0
+        keepTarget: 1
+        nextIndex: 2

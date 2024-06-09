@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f3adb55a0f6d4119a90a74b8aaba46c, type: 3}
-  m_Name: LauncherEnemy
+  m_Name: TurretUnit
   m_EditorClassIdentifier: 
-  prefab: {fileID: 2489900876656539108, guid: 63e6d5c372dc3491da179650f87b38e0, type: 3}
-  _MaxHealth: 100
-  _Attack: 0
-  _Deffence: 0
-  _unitAction: {fileID: 11400000, guid: b2181cd2b8a3e4668a27d9cf6c7c3464, type: 2}
+  prefab: {fileID: 0}
+  _MaxHealth: 10
+  _Deffence: 10
+  _Speed: 0
+  _unitAction: {fileID: 11400000, guid: 9b766f5721f7c4d3280807ae7d72b928, type: 2}

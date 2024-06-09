@@ -26,5 +26,6 @@ namespace Hedwig.RTSCore
         IObservable<bool> OnRightTrigger { get; }
 
         IObservable<MouseMoveEvent> OnMove { get; }
+        IObservable<Vector2> OnMoveVec2 { get; }
     }
 }
