@@ -234,7 +234,6 @@ namespace Hedwig.RTSCore.Impl
             this._name = name;
             this._unitData = unitData;
             this._unitController = unitController;
-            this._unitController.SeDebugUnit(this);
             this._callback = callback;
             this._launcher = launcher;
             this._health = new ReactiveProperty<int>(unitData.MaxHealth);

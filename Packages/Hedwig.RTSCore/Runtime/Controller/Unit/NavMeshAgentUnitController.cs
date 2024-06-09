@@ -26,6 +26,8 @@ namespace Hedwig.RTSCore.Controller
         Collider? _collider;
 
         bool _timePaused = false;
+        bool _knockback = false;
+        Vector3 _destination = default;
         Vector3 _velocityBackup = default;
 
         Vector3 initialPosition;
@@ -33,11 +35,6 @@ namespace Hedwig.RTSCore.Controller
         Vector3 initialScale;
         float? _distanceToGround;
         float? _distanceToHead;
-
-        [SerializeField, ReadOnly]
-        string? CurrentState;
-        [SerializeField, ReadOnly]
-        string? Target;
 
         [Inject]
         readonly ITimeManager? _timeManager;
@@ -166,15 +163,30 @@ namespace Hedwig.RTSCore.Controller
         void IUnitController.SetDestination(Vector3 pos)
         {
             if (_timePaused) return;
-            _agent!.isStopped = false;
-            _agent?.SetDestination(pos);
+            if (_agent != null)
+            {
+                if (_knockback)
+                {
+                    _destination = pos;
+                }
+                else
+                {
+                    _agent.isStopped = false;
+                    _agent.SetDestination(pos);
+                }
+            }
         }
+
         void IUnitController.Stop()
         {
             if (_timePaused) return;
-            _agent!.isStopped = true;
-            _agent?.SetDestination(_transform.Position);
+            if (_agent != null && !_knockback)
+            {
+                _agent.isStopped = true;
+                _agent.SetDestination(_transform.Position);
+            }
         }
+
         void IUnitController.SetVisibility(bool v)
         {
             // gameObject.SetActive(v);
@@ -194,9 +206,12 @@ namespace Hedwig.RTSCore.Controller
             if (_timePaused) return;
             if (cts.IsCancellationRequested)
                 return;
-            Debug.Log($"{_name}: AddShock: {direction}, {power}");
+            Debug.Log($"{_name}: Knockback: {direction}, {power}");
             if (_rigidbody != null && _agent!=null && _collider != null)
             {
+                _knockback = true;
+                _destination = _agent.destination;
+
                 await UniTask.Create(async () =>
                 {
                     // _agent.isStopped = true;
@@ -237,6 +252,8 @@ namespace Hedwig.RTSCore.Controller
                     _rigidbody.useGravity = false;
                     // _agent.isStopped = false;
                     _agent.enabled = true;
+                    _agent.destination = _destination; // restore
+                    _knockback = false;
                 });
             }
         }
@@ -247,15 +264,6 @@ namespace Hedwig.RTSCore.Controller
         }
 
         GameObject IUnitController.Context { get => gameObject; }
-
-        void IUnitController.SeDebugUnit(IUnitActionRunner unit) {
-            unit.OnStateChanged.Subscribe(state => {
-                CurrentState = state.Name;
-            }).AddTo(this);
-            unit.OnTargetChanged.Subscribe(unit => {
-                Target = unit?.Name ?? "";
-            }).AddTo(this);
-        }
 
         ILauncherController? IUnitController.LauncherController { get => _launcherContorller; }
 
@@ -271,5 +279,16 @@ namespace Hedwig.RTSCore.Controller
             _timeManager?.Paused.SkipLatestValueOnSubscribe().Subscribe(v => pause(v)).AddTo(this);
         }
         #endregion
+
+        private void OnDrawGizmos()
+        {
+            if (_agent == null) return;
+            Gizmos.color = Color.red;
+            var pos = transform.position;
+            foreach(var p in _agent.path.corners) {
+                Gizmos.DrawLine(pos, p);
+                pos = p;
+            }
+        }
     }
 }

@@ -64,8 +64,6 @@ namespace Hedwig.RTSCore
 
         GameObject Context { get; }
 
-        void SeDebugUnit(IUnitActionRunner unit);
-
         ILauncherController? LauncherController { get; }
     }
 
