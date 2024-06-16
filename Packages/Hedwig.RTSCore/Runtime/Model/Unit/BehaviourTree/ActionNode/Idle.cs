@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace Hedwig.RTSCore.Model.UnitBehaviourTree
+namespace Hedwig.RTSCore.Model.BehaviourTree
 {
     [Serializable]
     public class IdleNode : ActionNode

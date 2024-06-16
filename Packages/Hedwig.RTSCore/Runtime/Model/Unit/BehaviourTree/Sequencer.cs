@@ -3,7 +3,7 @@
 using System;
 using Codice.Client.Commands;
 
-namespace Hedwig.RTSCore.Model.UnitBehaviourTree
+namespace Hedwig.RTSCore.Model.BehaviourTree
 {
     [Serializable]
     public class Sequencer : CompositeNode

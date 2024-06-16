@@ -14,7 +14,7 @@ namespace Hedwig.RTSCore.Impl
         readonly string? _tag;
         readonly ReactiveProperty<UnitStatus> _status = new(UnitStatus.Spawned);
         readonly IUnitData _unitData;
-        readonly IUnitBehaviourExecutor _behaviourExecutor;
+        readonly IUnitBehaviourExecutor? _behaviourExecutor;
         readonly IUnitController _unitController;
         readonly IUnitCallback _callback;
         readonly ILauncher? _launcher;
@@ -205,7 +205,7 @@ namespace Hedwig.RTSCore.Impl
         void IUnit.ResetPos() => _unitController.ResetPos();
 
         IUnitActionRunner IUnit.ActionRunner { get => this; }
-        IUnitBehaviourExecutor IUnit.BehaviourExecutor { get => _behaviourExecutor; }
+        IUnitBehaviourExecutor? IUnit.BehaviourExecutor { get => _behaviourExecutor; }
         ILauncher? IUnit.Launcher { get => _launcher; }
         #endregion
 
@@ -232,12 +232,12 @@ namespace Hedwig.RTSCore.Impl
 
         public UnitImpl(IUnitManager unitManager,
             IUnitData unitData,
-            IUnitBehaviourExecutor behaviourExecutor,
             IUnitController unitController,
             IUnitCallback callback,
             string? name = null,
             string? tag = null,
-            ILauncher? launcher = null)
+            ILauncher? launcher = null,
+            IUnitBehaviourExecutor? behaviourExecutor = null)
         {
             this._unitManager = unitManager;
             this._name = name;

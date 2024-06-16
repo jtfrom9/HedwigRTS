@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
-using Cinemachine;
 
 using VContainer;
 using VContainer.Unity;
@@ -13,10 +12,12 @@ using UnityExtensions;
 using NaughtyAttributes;
 using Cysharp.Threading.Tasks;
 using UniRx;
-using UniRx.Triggers;
 
 using Hedwig.RTSCore;
 using Hedwig.RTSCore.Model;
+using Hedwig.RTSCore.Model.BehaviourTree;
+
+using Tree = Hedwig.RTSCore.Model.BehaviourTree.Tree;
 
 public class BehaviourTest : LifetimeScope
 {
@@ -36,6 +37,30 @@ public class BehaviourTest : LifetimeScope
             visualizers: null);
     }
 
+    [Serializable]
+    public class TestBehaviour1 : IPredefinedUnitBehaviour
+    {
+        public IUnitBehaviourExecutor Create()
+        {
+            return new Tree(new Sequencer(
+                new IdleNode(1000),
+                new PatrolActionNode(waypoints: new[] {
+                    new Vector3( 5, 0, -5),
+                    new Vector3( 5, 0, 5),
+                    new Vector3( -5, 0, 5),
+                    new Vector3( -5, 0, -5),
+                    Vector3.zero
+                }),
+                new GeneralAction((context, unit) =>
+                {
+                    Debug.Log("OK");
+                    context.Set<bool>("end", true);
+                    return BehaviourStatus.Success;
+                })
+            ));
+        }
+    }
+
     async void Start()
     {
         unitManager.AutoRegisterUnitsInScene(unitObject!);
@@ -43,7 +68,8 @@ public class BehaviourTest : LifetimeScope
         Debug.Log("Start..");
 
         var unit = unitManager.Units.FirstOrDefault();
-        if (unit != null)
+        var behaviourExecutor = unit.BehaviourExecutor;
+        if (unit != null && behaviourExecutor!=null)
         {
             await UniTask.Create(async () =>
             {
@@ -53,7 +79,7 @@ public class BehaviourTest : LifetimeScope
                 {
                     // await UniTask.NextFrame();
                     await UniTask.Delay(100);
-                    var context = unit.BehaviourExecutor.Tick(unit, lastStatus);
+                    var context = behaviourExecutor.Tick(unit, lastStatus);
                     lastStatus = context.Status;
                     var lanode = context.LastActionNode;
                     if (lanode != null)

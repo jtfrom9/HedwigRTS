@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Codice.CM.Common.Tree;
 using UniRx;
 
-namespace Hedwig.RTSCore.Model.UnitBehaviourTree
+namespace Hedwig.RTSCore.Model.BehaviourTree
 {
     class NodeExecuteContext: INodeExecuteContextWriter
     {

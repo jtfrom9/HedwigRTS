@@ -32,7 +32,7 @@ namespace Hedwig.RTSCore.Model
         float _Speed = 3.0f;
 
         [SerializeField, InspectInline, Required]
-        UnitBehaviourObject _unitBehaviour;
+        UnitBehaviourObject? _unitBehaviour;
 
         public string Name { get => name; }
         public int MaxHealth { get => _MaxHealth; }
@@ -58,11 +58,11 @@ namespace Hedwig.RTSCore.Model
                 }
             }
             var unit = new UnitImpl(unitManager, unitData: this,
-                behaviourExecutor: _unitBehaviour!.Create(),
                 unitController, unitCallback,
                 name: name,
                 tag: tag,
-                launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null);
+                launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null,
+                behaviourExecutor: _unitBehaviour?.Create());
             unitController.Initialize(
                 this,
                 callback: unit,

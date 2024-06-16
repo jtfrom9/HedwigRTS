@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Hedwig.RTSCore.Model.UnitBehaviourTree
+namespace Hedwig.RTSCore.Model.BehaviourTree
 {
     [Serializable]
     public class PatrolActionNode : ActionNode

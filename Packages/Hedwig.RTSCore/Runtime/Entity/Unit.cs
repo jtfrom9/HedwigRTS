@@ -156,7 +156,7 @@ namespace Hedwig.RTSCore
         void ResetPos();
 
         IUnitActionRunner ActionRunner { get; }
-        IUnitBehaviourExecutor BehaviourExecutor { get; }
+        IUnitBehaviourExecutor? BehaviourExecutor { get; }
 
         ILauncher? Launcher { get; }
     }

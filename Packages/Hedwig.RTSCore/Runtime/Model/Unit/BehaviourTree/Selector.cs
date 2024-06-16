@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Hedwig.RTSCore.Model.UnitBehaviourTree
+namespace Hedwig.RTSCore.Model.BehaviourTree
 {
     [Serializable]
     public class Selector : CompositeNode

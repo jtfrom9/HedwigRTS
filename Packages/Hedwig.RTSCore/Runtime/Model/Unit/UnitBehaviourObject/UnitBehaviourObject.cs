@@ -1,16 +1,9 @@
 #nullable enable
 
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Search;
 
-using UnityExtensions;
-using NaughtyAttributes;
-
-using Hedwig.RTSCore.Model.UnitBehaviourTree;
+using Hedwig.RTSCore.Model.BehaviourTree;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -22,7 +15,7 @@ namespace Hedwig.RTSCore.Model
 
         public virtual IUnitBehaviourExecutor Create()
         {
-            return new UnitBehaviourTree.Tree(rootNodes.Count > 1 ? new Selector(rootNodes.ToArray()) : rootNodes[0]);
+            return new Hedwig.RTSCore.Model.BehaviourTree.Tree(rootNodes.Count > 1 ? new Selector(rootNodes.ToArray()) : rootNodes[0]);
         }
     }
 }
