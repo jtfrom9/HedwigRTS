@@ -35,9 +35,15 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
             _firstTime = -1;
         }
 
+        public override Node Clone()
+        {
+            return new IdleNode(_msec);
+        }
+
         public IdleNode(float msec)
         {
             _msec = msec;
+            _firstTime = -1;
         }
 
         public IdleNode()

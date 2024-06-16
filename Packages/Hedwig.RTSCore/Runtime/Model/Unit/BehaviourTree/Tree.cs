@@ -74,7 +74,8 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
 
         public Tree(Node rootNode)
         {
-            _root = rootNode;
+            _root = rootNode.Clone();
+            // _root = rootNode;
             scanNodes(_root);
             Initialize();
         }

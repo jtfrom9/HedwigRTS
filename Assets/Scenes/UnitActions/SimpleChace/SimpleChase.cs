@@ -139,7 +139,7 @@ public class SimpleChase : LifetimeScope
         enemyManager.AutoRegisterUnitsInScene(enemyObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player", tag: "P");
-        // var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy", tag: "E");
+        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy1", tag: "E");
         var enemy2 = enemyManager.Spawn(enemyObject, new Vector3(-21f, 3, 15f), "Enemy2", tag: "E");
         // enemyManager.AutoRegisterUnitsInScene(turretObject);
 

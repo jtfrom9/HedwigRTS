@@ -13,6 +13,10 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
             return _func.Invoke(context, unit);
         }
         public override void DoReset() { }
+        public override Node Clone()
+        {
+            return new GeneralAction(_func);
+        }
         public GeneralAction(Func<INodeExecuteContextWriter, IUnit, BehaviourStatus> action)
         {
             _func = action;

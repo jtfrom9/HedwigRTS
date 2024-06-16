@@ -30,7 +30,7 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
             var dset = _waypoints[currentIndex];
             var pos = unit.Transform.Position;
             var dist = Vector3.Distance(unit.Transform.Position.Y(0), dset);
-            if (dist < 0.01f)
+            if (dist < 0.5f)
             {
                 currentIndex++;
                 if (currentIndex >= _waypoints.Count) {
@@ -45,6 +45,11 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
         public override void DoReset()
         {
             currentIndex = -1;
+        }
+
+        public override Node Clone()
+        {
+            return new PatrolActionNode(_waypoints?.ToArray() ?? new Vector3[] { });
         }
 
         public PatrolActionNode(params Vector3[] waypoints)

@@ -24,6 +24,7 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
 
         public abstract BehaviourStatus DoExecute(INodeExecuteContextWriter context, IUnit unit);
         public abstract void DoReset();
+        public abstract Node Clone();
 
         public BehaviourStatus Execute(INodeExecuteContextWriter context, IUnit unit)
         {

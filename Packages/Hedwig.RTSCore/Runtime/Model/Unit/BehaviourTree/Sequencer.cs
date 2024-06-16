@@ -1,7 +1,7 @@
 #nullable enable
 
 using System;
-using Codice.Client.Commands;
+using System.Linq;
 
 namespace Hedwig.RTSCore.Model.BehaviourTree
 {
@@ -41,5 +41,9 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
         }
 
         public override void DoReset() { }
+        public override Node Clone()
+        {
+            return new Sequencer(_chidren.Select(child => child.Clone()).ToArray());
+        }
     }
 }
