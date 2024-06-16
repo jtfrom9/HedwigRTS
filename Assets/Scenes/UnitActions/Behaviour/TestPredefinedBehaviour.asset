@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c0ccf54ee05e4379b7c89248b2d33c5, type: 3}
   m_Name: TestPredefinedBehaviour
   m_EditorClassIdentifier: 
+  rootNodes: []
   PredefinedBehaviour:
-    rid: 1502634745134317569
+    rid: 1502634749005398016
   references:
     version: 2
     RefIds:
-    - rid: 1502634745134317569
-      type: {class: TestBehaviour1, ns: Hedwig.RTSCore.Model, asm: Hedwig.RTSCore.Model}
+    - rid: 1502634749005398016
+      type: {class: BehaviourTest/TestBehaviour1, ns: , asm: Assembly-CSharp}
       data: 

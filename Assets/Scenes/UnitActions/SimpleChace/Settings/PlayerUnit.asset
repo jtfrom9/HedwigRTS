@@ -16,4 +16,4 @@ MonoBehaviour:
   _MaxHealth: 100
   _Deffence: 19
   _Speed: 5
-  _unitBehaviour: {fileID: 11400000, guid: 1b9f8afe5288f49c480cccddf7acc10a, type: 2}
+  _unitBehaviour: {fileID: 0}

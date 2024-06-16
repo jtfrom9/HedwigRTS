@@ -18,7 +18,9 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
         public override BehaviourStatus DoExecute(INodeExecuteContextWriter context, IUnit unit)
         {
             if (_waypoints == null)
+            {
                 return BehaviourStatus.Failure;
+            }
             if (currentIndex < 0)
             {
                 currentIndex = 0;
@@ -27,15 +29,16 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
             }
             var dset = _waypoints[currentIndex];
             var pos = unit.Transform.Position;
-            if (Vector3.Distance(unit.Transform.Position.Y(0), dset) < 0.01f)
+            var dist = Vector3.Distance(unit.Transform.Position.Y(0), dset);
+            if (dist < 0.01f)
             {
                 currentIndex++;
                 if (currentIndex >= _waypoints.Count) {
                     return BehaviourStatus.Success;
                 }
-                Debug.Log($"NextIndex = {currentIndex}");
                 unit.SetDestination(_waypoints[currentIndex]);
             }
+            // Debug.Log($"Patrol Running dist = {dist}");
             return BehaviourStatus.Running;
         }
 
@@ -51,6 +54,7 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
 
         public PatrolActionNode()
         {
+            currentIndex = -1;
         }
     }
 }

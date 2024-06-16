@@ -61,7 +61,7 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
         {
             get
             {
-                if (name == null)
+                if (string.IsNullOrEmpty(name))
                 {
                     name = GetType().Name;
                 }

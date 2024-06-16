@@ -8,6 +8,7 @@ using UnityEngine;
 using UniRx;
 using Cysharp.Threading.Tasks;
 using PlasticGui.WorkspaceWindow;
+using System.Linq;
 
 namespace Hedwig.RTSCore
 {
@@ -74,6 +75,33 @@ namespace Hedwig.RTSCore
                 }
             }
             return null;
+        }
+
+        public static async UniTask RunBehaviourLoop(this IUnitManager manager, int msec, CancellationToken ct = default)
+        {
+            var tasks = new List<UniTask>();
+            foreach (var unit in manager.Units.Where(unit => unit.BehaviourExecutor != null))
+            {
+                tasks.Add(UniTask.Create(async () =>
+                {
+                    BehaviourStatus lastStatus = BehaviourStatus.InActive;
+                    while (!ct.IsCancellationRequested)
+                    {
+                        var context = unit.BehaviourExecutor!.Tick(unit, lastStatus);
+                        var lastAction = context.LastActionNode;
+                        lastStatus = context.Status;
+                        if (lastAction != null)
+                        {
+                            Debug.Log($"{unit.Name}[Tick] Action: {lastAction.Name}, Status:{lastStatus}");
+                        } else {
+                            Debug.Log($"{unit.Name}[Tick] Action: N/A");
+                        }
+
+                        await UniTask.Delay(msec, cancellationToken: ct);
+                    }
+                }));
+            }
+            await UniTask.WhenAll(tasks);
         }
     }
 }

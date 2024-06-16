@@ -65,10 +65,18 @@ namespace Hedwig.RTSCore.Model.BehaviourTree
             if (node is CompositeNode cnode) scanNodes(cnode);
         }
 
+        public void Initialize()
+        {
+            foreach(var node in _nodeList){
+                node.DoReset();
+            }
+        }
+
         public Tree(Node rootNode)
         {
             _root = rootNode;
             scanNodes(_root);
+            Initialize();
         }
 
         private void ClearStatus()

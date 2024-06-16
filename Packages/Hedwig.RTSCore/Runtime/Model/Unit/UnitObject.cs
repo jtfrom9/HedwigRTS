@@ -31,7 +31,7 @@ namespace Hedwig.RTSCore.Model
         [SerializeField]
         float _Speed = 3.0f;
 
-        [SerializeField, InspectInline, Required]
+        [SerializeField, InspectInline]
         UnitBehaviourObject? _unitBehaviour;
 
         public string Name { get => name; }

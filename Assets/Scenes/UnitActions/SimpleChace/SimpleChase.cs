@@ -19,6 +19,8 @@ using Hedwig.RTSCore.InputObservable;
 
 using Cysharp.Threading.Tasks;
 using UniRx.Triggers;
+using MackySoft.SerializeReferenceExtensions.Editor;
+using System.Threading;
 
 public class SimpleChase : LifetimeScope
 {
@@ -137,11 +139,12 @@ public class SimpleChase : LifetimeScope
         enemyManager.AutoRegisterUnitsInScene(enemyObject);
 
         var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player", tag: "P");
-        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy", tag: "E");
+        // var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy", tag: "E");
         var enemy2 = enemyManager.Spawn(enemyObject, new Vector3(-21f, 3, 15f), "Enemy2", tag: "E");
-        enemyManager.AutoRegisterUnitsInScene(turretObject);
+        // enemyManager.AutoRegisterUnitsInScene(turretObject);
 
         bool run = true;
+        var source = new CancellationTokenSource();
         var (pos, rot) = (Camera.main.transform.position, Camera.main.transform.rotation);
         player.Status.SkipLatestValueOnSubscribe().Subscribe(status => {
             if (status == UnitStatus.Dying)
@@ -153,6 +156,7 @@ public class SimpleChase : LifetimeScope
                 Debug.Log("Dead!!");
                 // Camera.main.ResetPosition(pos, rot);
                 run = false;
+                source.Cancel();
             }
         }).AddTo(this);
 
@@ -162,19 +166,20 @@ public class SimpleChase : LifetimeScope
 
         // Camera.main.Tracking(player.Transform, new Vector3(0, 15, -8), Vector3.right * 60, 1);
 
-        await UniTask.Create(async () =>
-        {
-            int tick = 100;
-            while (run)
-            {
-                foreach (var enemy in enemyManager.Units)
-                {
-                    enemy.ActionRunner.DoAction(tick);
-                }
-                await UniTask.Delay(tick);
-            }
-        });
+        // await UniTask.Create(async () =>
+        // {
+        //     int tick = 100;
+        //     while (run)
+        //     {
+        //         foreach (var enemy in enemyManager.Units)
+        //         {
+        //             enemy.ActionRunner.DoAction(tick);
+        //         }
+        //         await UniTask.Delay(tick);
+        //     }
+        // });
 
+        await enemyManager.RunBehaviourLoop(100, source.Token);
         Debug.Log("Game End");
     }
 }

@@ -69,7 +69,7 @@ public class BehaviourTest : LifetimeScope
 
         var unit = unitManager.Units.FirstOrDefault();
         var behaviourExecutor = unit.BehaviourExecutor;
-        if (unit != null && behaviourExecutor!=null)
+        if (unit != null && behaviourExecutor != null)
         {
             await UniTask.Create(async () =>
             {
