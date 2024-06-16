@@ -14,6 +14,7 @@ namespace Hedwig.RTSCore.Impl
         readonly string? _tag;
         readonly ReactiveProperty<UnitStatus> _status = new(UnitStatus.Spawned);
         readonly IUnitData _unitData;
+        readonly IUnitBehaviourExecutor _behaviourExecutor;
         readonly IUnitController _unitController;
         readonly IUnitCallback _callback;
         readonly ILauncher? _launcher;
@@ -112,6 +113,7 @@ namespace Hedwig.RTSCore.Impl
 
         void doAction(int msecToNextTick)
         {
+/*
             if (_unitData.StateHolder.States.Count == 0)
             {
                 Debug.LogError($"Invalid States Count", context: Controller.Context);
@@ -141,7 +143,7 @@ namespace Hedwig.RTSCore.Impl
                 _state.CountTick++;
                 _state.ElapsedMsec += msecToNextTick;
                 // Debug.Log($"[{Name}][State] {currentState.Name}");
-            }
+            }*/
         }
 
         #region IUnitControllerCallback
@@ -203,6 +205,7 @@ namespace Hedwig.RTSCore.Impl
         void IUnit.ResetPos() => _unitController.ResetPos();
 
         IUnitActionRunner IUnit.ActionRunner { get => this; }
+        IUnitBehaviourExecutor IUnit.BehaviourExecutor { get => _behaviourExecutor; }
         ILauncher? IUnit.Launcher { get => _launcher; }
         #endregion
 
@@ -227,7 +230,10 @@ namespace Hedwig.RTSCore.Impl
             return $"{Controller.Name}.Impl({_unitData.Name})";
         }
 
-        public UnitImpl(IUnitManager unitManager, IUnitData unitData, IUnitController unitController,
+        public UnitImpl(IUnitManager unitManager,
+            IUnitData unitData,
+            IUnitBehaviourExecutor behaviourExecutor,
+            IUnitController unitController,
             IUnitCallback callback,
             string? name = null,
             string? tag = null,
@@ -236,6 +242,7 @@ namespace Hedwig.RTSCore.Impl
             this._unitManager = unitManager;
             this._name = name;
             this._unitData = unitData;
+            this._behaviourExecutor = behaviourExecutor;
             this._unitController = unitController;
             this._callback = callback;
             this._launcher = launcher;

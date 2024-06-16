@@ -12,6 +12,7 @@ using VContainer;
 using VContainer.Unity;
 
 using Hedwig.RTSCore.Impl;
+using NaughtyAttributes;
 
 namespace Hedwig.RTSCore.Model
 {
@@ -30,14 +31,13 @@ namespace Hedwig.RTSCore.Model
         [SerializeField]
         float _Speed = 3.0f;
 
-        [SerializeField, InspectInline]
-        UnitActionObject _unitAction;
+        [SerializeField, InspectInline, Required]
+        UnitBehaviourObject _unitBehaviour;
 
         public string Name { get => name; }
         public int MaxHealth { get => _MaxHealth; }
         public int Deffence { get => _Deffence; }
         public float Speed { get => _Speed; }
-        public IUnitActionStateHolder StateHolder { get => _unitAction; }
 
         IUnit? CreateUnit(IUnitManager unitManager, IUnitCallback unitCallback,
             IUnitController unitController,
@@ -57,7 +57,9 @@ namespace Hedwig.RTSCore.Model
                     return null;
                 }
             }
-            var unit = new UnitImpl(unitManager, this, unitController, unitCallback,
+            var unit = new UnitImpl(unitManager, unitData: this,
+                behaviourExecutor: _unitBehaviour!.Create(),
+                unitController, unitCallback,
                 name: name,
                 tag: tag,
                 launcher: unitController.LauncherController != null ? launcherFactory.Invoke(unitController.LauncherController) : null);

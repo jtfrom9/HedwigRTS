@@ -40,6 +40,42 @@ namespace Hedwig.RTSCore
     }
     #endregion
 
+    #region UnitBehaviour
+    //
+    // UnitBehaviour
+    //
+    public enum BehaviourStatus
+    {
+        InActive = 0,
+        Success,
+        Failure,
+        Running
+    }
+
+    public interface IUnitBehaviourNode
+    {
+        string Name { get; }
+        BehaviourStatus LastStatus { get; }
+    }
+
+    public interface INodeExecuteContext
+    {
+        BehaviourStatus Status { get; }
+        IUnitBehaviourNode? LastActionNode { get; }
+        bool TryGet<T>(string key, out T value);
+    }
+
+    public interface IUnitBehaviourExecutor
+    {
+        INodeExecuteContext Tick(IUnit unit, BehaviourStatus lastStatus);
+    }
+
+    public interface IUnitBehaviourExecutorFactory
+    {
+        IUnitBehaviourExecutor Create();
+    }
+    #endregion
+
     #region UnitController
     //
     // UnitController
@@ -120,6 +156,7 @@ namespace Hedwig.RTSCore
         void ResetPos();
 
         IUnitActionRunner ActionRunner { get; }
+        IUnitBehaviourExecutor BehaviourExecutor { get; }
 
         ILauncher? Launcher { get; }
     }
@@ -133,7 +170,6 @@ namespace Hedwig.RTSCore
         int MaxHealth { get; }
         int Deffence { get; }
         float Speed { get; }
-        IUnitActionStateHolder StateHolder { get; }
     }
     #endregion
 
