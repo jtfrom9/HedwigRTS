@@ -44,6 +44,23 @@ public class BehaviourTest : LifetimeScope
         {
             return new Tree(new Sequencer(
                 new IdleNode(1000),
+                new Selector(
+                    new Sequencer(
+                        new FindUnitNode(searchRadius: 10, findNew: true),
+                        new GeneralAction((context, unit) =>
+                        {
+                            if (context.TryGet<IUnit>("Target", out var target))
+                            {
+                                return BehaviourStatus.Failure;
+                            }
+                            unit.SetDestination(target.Transform.Position);
+                            return BehaviourStatus.Success;
+                        }),
+                        new IdleNode(500)
+                    ),
+                    new Sequencer(
+                    )
+                ),
                 new PatrolActionNode(waypoints: new[] {
                     new Vector3( 5, 0, -5),
                     new Vector3( 5, 0, 5),
