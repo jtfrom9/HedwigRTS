@@ -431,7 +431,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 729870629}
-  m_LocalRotation: {x: 0.24922359, y: -0.57691365, z: 0.19065818, w: 0.75412714}
+  m_LocalRotation: {x: 0.24922359, y: -0.57691365, z: 0.19065815, w: 0.75412714}
   m_LocalPosition: {x: 23.151655, y: 8, z: 7.8835993}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -669,7 +669,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 763929544}
-  m_LocalRotation: {x: 0.23550163, y: -0.58027756, z: 0.18016075, w: 0.75852424}
+  m_LocalRotation: {x: 0.23550162, y: -0.58027756, z: 0.18016075, w: 0.7585243}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2008,7 +2008,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 1543154964}
-  UnitManagerObject: {fileID: 11400000, guid: c5f90ba20c9a246d0a125bd56e1a4b84, type: 2}
+  unitManagerObject: {fileID: 11400000, guid: c5f90ba20c9a246d0a125bd56e1a4b84, type: 2}
   playerObject: {fileID: 11400000, guid: c76123baf11d04b0587f18be1464b185, type: 2}
   enemyObject: {fileID: 11400000, guid: b563a118843e648e0a16fe2ba16ee28d, type: 2}
   turretObject: {fileID: 11400000, guid: 882a7e83381b6442eb48057b238d06e7, type: 2}
@@ -2387,7 +2387,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1871327652}
-  m_LocalRotation: {x: 0.24922362, y: -0.57691365, z: 0.19065814, w: 0.75412714}
+  m_LocalRotation: {x: 0.24922359, y: -0.57691365, z: 0.19065815, w: 0.75412714}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

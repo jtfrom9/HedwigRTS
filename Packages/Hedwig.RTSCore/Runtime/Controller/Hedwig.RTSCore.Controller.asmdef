@@ -12,7 +12,8 @@
         "NaughtyAttributes.Core",
         "Hedwig.RTSCore.Model",
         "Hedwig.RTSCore.Utility",
-        "Hedwig.RTSCore.Entity"
+        "Hedwig.RTSCore.Entity",
+        "Hedwig.RTSCore.Impl"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -5,7 +5,8 @@
         "UniRx",
         "VContainer",
         "InputObservable",
-        "Hedwig.RTSCore.Entity"
+        "Hedwig.RTSCore.Entity",
+        "Hedwig.RTSCore.Utility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

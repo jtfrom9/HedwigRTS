@@ -25,7 +25,7 @@ using System.Threading;
 public class SimpleChase : LifetimeScope
 {
     // Inject
-    [SerializeField, InspectInline, Required] UnitManagerObject? UnitManagerObject;
+    [SerializeField, InspectInline, Required] UnitManagerObject? unitManagerObject;
     [SerializeField, InspectInline, Required] UnitObject? playerObject;
     [SerializeField, InspectInline, Required] UnitObject? enemyObject;
     [SerializeField, InspectInline, Required] UnitObject? turretObject;
@@ -35,7 +35,7 @@ public class SimpleChase : LifetimeScope
     [SerializeField, Required] CinemachineFreeLook? freeLookCamera;
 
 #pragma warning disable CS8618
-    [Inject] IUnitManager enemyManager;
+    [Inject] IUnitManager unitManager;
     [Inject] IGlobalVisualizerFactory globalVisualizerFactory;
     [Inject] IMouseOperation mouseOperation;
 #pragma warning restore CS8618
@@ -45,7 +45,7 @@ public class SimpleChase : LifetimeScope
         builder.Setup(timeManager: null,
             launcherController: null,
             units: new List<UnitObject>() { playerObject!, enemyObject!, turretObject! },
-            unitManager: UnitManagerObject,
+            unitManager: unitManagerObject,
             visualizers: globalVisualizersObject,
             projectiles: projectileObjects);
         builder.Setup(inputObservableCusrorManager);
@@ -135,12 +135,12 @@ public class SimpleChase : LifetimeScope
             Debug.LogError("Invalid");
             return;
         }
-        Debug.Log($"enemyManager = {enemyManager}");
-        enemyManager.AutoRegisterUnitsInScene(enemyObject);
+        Debug.Log($"enemyManager = {unitManager}");
+        unitManager.AutoRegisterUnitsInScene(enemyObject);
 
-        var player = enemyManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player", tag: "P");
-        var enemy = enemyManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy1", tag: "E");
-        var enemy2 = enemyManager.Spawn(enemyObject, new Vector3(-21f, 3, 15f), "Enemy2", tag: "E");
+        var player = unitManager.Spawn(playerObject, new Vector3(13.5f, 3, 10.5f), "Player", tag: "P");
+        var enemy = unitManager.Spawn(enemyObject, new Vector3(-10f, 3, -10f), "Enemy1", tag: "E");
+        var enemy2 = unitManager.Spawn(enemyObject, new Vector3(-21f, 3, 15f), "Enemy2", tag: "E");
         // enemyManager.AutoRegisterUnitsInScene(turretObject);
 
         bool run = true;
@@ -179,7 +179,7 @@ public class SimpleChase : LifetimeScope
         //     }
         // });
 
-        await enemyManager.RunBehaviourLoop(100, source.Token);
+        await unitManager.RunBehaviourLoop(100, source.Token);
         Debug.Log("Game End");
     }
 }

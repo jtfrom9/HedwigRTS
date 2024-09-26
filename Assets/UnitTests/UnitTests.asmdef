@@ -8,7 +8,8 @@
         "UniRx",
         "Hedwig.RTSCore.Entity",
         "Hedwig.RTSCore.Model",
-        "Hedwig.RTSCore.Utility"
+        "Hedwig.RTSCore.Utility",
+        "Hedwig.RTSCore.Impl"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
