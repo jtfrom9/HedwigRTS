@@ -14,13 +14,6 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
-    "com.demigiant.dotween": {
-      "version": "git+https://github.com/yoshida190/dotween.git#v1.2.632-upm",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "9f1c3648a838f759c70b08bb66468532951e0ea7"
-    },
     "com.jtfrom9.hedwig.rtscore": {
       "version": "file:Hedwig.RTSCore",
       "depth": 0,
@@ -181,9 +174,9 @@
       "depth": 0,
       "source": "registry",
       "dependencies": {
+        "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.director": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0"
       },
       "url": "https://packages.unity.com"

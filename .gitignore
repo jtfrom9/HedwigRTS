@@ -80,3 +80,5 @@ crashlytics-build.properties
 
 Assets/3rdParty*
 Assets/MyAssets*
+Assets/Plugins/Demigiant*
+Assets/Resources/DOTweenSettings.asset*
